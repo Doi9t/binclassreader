@@ -17,20 +17,21 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.interfaces.SelfReader;
+import org.binclassreader.utils.GeneralUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
-public class ConstUtf8Info {
+public class ConstUtf8Info implements SelfReader {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] length;
 
     private byte[] bytes;
-
-    public void initBytes(int length) {
-        bytes = new byte[length];
-    }
 
     public int[] getLength_data() {
         return length;
@@ -38,5 +39,29 @@ public class ConstUtf8Info {
 
     public byte[] getBytes() {
         return bytes;
+    }
+
+    public void initReading(InputStream currentStream) {
+        int lengthArray = GeneralUtils.combineBytes(length);
+
+        if (lengthArray > 0) {
+            bytes = new byte[lengthArray];
+            try {
+                currentStream.read(bytes, 0, lengthArray);
+
+                //No byte may have the value (byte)0 or lie in the range (byte)0xf0 - (byte)0xff
+                if (bytes != null) {
+                    for (int i = 0; i < bytes.length; ++i) {
+                        byte aByte = bytes[i];
+
+                        if (aByte == 0x00 || aByte >= 0xf0) {
+                            bytes[i] = 0x20; //Put a space char for the invalid byte
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -33,8 +33,14 @@ import java.util.List;
  */
 public class ConstPoolInfo implements SelfReader {
 
+    private List<Object> poolObjects;
+
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] bytes;
+
+    public ConstPoolInfo() {
+        poolObjects = new ArrayList<Object>();
+    }
 
     public int[] getBytes() {
         return bytes;
@@ -45,17 +51,11 @@ public class ConstPoolInfo implements SelfReader {
     }
 
     public void initReading(InputStream currentStream) {
-        initPoolIndex(currentStream);
-        initPoolValues(currentStream);
-    }
-
-    private void initPoolIndex(InputStream currentStream) {
-
         try {
-            List<Object> objectsList = new ArrayList<Object>();
-
+            byte read;
             while (true) {
-                ConstValuesEnum valuesEnum = GeneralUtils.getConstTypeByValue((byte) currentStream.read());
+                read = (byte) currentStream.read();
+                ConstValuesEnum valuesEnum = GeneralUtils.getConstTypeByValue(read);
 
                 if (valuesEnum == ConstValuesEnum.UNKNOWN) {
                     break;
@@ -107,19 +107,11 @@ public class ConstPoolInfo implements SelfReader {
                         obj = new ConstInvokeDynamicInfo();
                         break;
                 }
-
-                objectsList.addAll(Arrays.asList(ClassReader.read(currentStream, obj)));
+                poolObjects.addAll(Arrays.asList(ClassReader.read(currentStream, obj)));
             }
-
-            System.out.println(objectsList);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void initPoolValues(InputStream currentStream) {
-
     }
 
     @Override
