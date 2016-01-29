@@ -16,15 +16,14 @@
 
 package org.binclassreader.structs;
 
-import org.binclassreader.abstracts.AbstractGenericConst;
 import org.binclassreader.annotations.BinClassParser;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
-public class ConstMethodTypeInfo extends AbstractGenericConst {
+public class ConstMethodTypeInfo {
 
-    @BinClassParser(readOrder = 2, byteToRead = 2)
+    @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] descriptor_index;
 
     public int[] getDescriptor_index_data() {

@@ -16,17 +16,16 @@
 
 package org.binclassreader.structs;
 
-import org.binclassreader.abstracts.AbstractGenericConst;
 import org.binclassreader.annotations.BinClassParser;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
-public class ConstInvokeDynamicInfo extends AbstractGenericConst {
-    @BinClassParser(readOrder = 2, byteToRead = 2)
+public class ConstInvokeDynamicInfo {
+    @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] bootstrap_method_attr_index;
 
-    @BinClassParser(readOrder = 3, byteToRead = 2)
+    @BinClassParser(readOrder = 2, byteToRead = 2)
     private int[] name_and_type_index;
 
     public int[] getBootstrap_method_attr_index_data() {

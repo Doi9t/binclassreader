@@ -21,9 +21,9 @@ import org.binclassreader.annotations.BinClassParser;
 /**
  * Created by Yannick on 1/25/2016.
  */
-public abstract class AbstractIntFloatConst extends AbstractGenericConst {
+public abstract class AbstractIntFloatConst {
 
-    @BinClassParser(readOrder = 2, byteToRead = 4)
+    @BinClassParser(readOrder = 1, byteToRead = 4)
     protected int[] bytes;
 
     protected int[] getBytes() {

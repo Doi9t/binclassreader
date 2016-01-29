@@ -67,7 +67,6 @@ public class ClassReader {
                         int[] buffer = new int[nbByteToRead];
 
                         try {
-
                             for (int i = 0; i < nbByteToRead; i++) {
                                 buffer[i] = classData.read();
                             }
@@ -79,7 +78,6 @@ public class ClassReader {
                             e.printStackTrace();
                         }
                     }
-
 
                     if (obj instanceof SelfReader) {
                         ((SelfReader) obj).initReading(classData);

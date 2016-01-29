@@ -21,11 +21,11 @@ import org.binclassreader.annotations.BinClassParser;
 /**
  * Created by Yannick on 1/25/2016.
  */
-public abstract class AbstractLongDoubleConst extends AbstractGenericConst {
-    @BinClassParser(readOrder = 2, byteToRead = 4)
+public abstract class AbstractLongDoubleConst {
+    @BinClassParser(readOrder = 1, byteToRead = 4)
     protected int[] high_bytes;
 
-    @BinClassParser(readOrder = 3, byteToRead = 4)
+    @BinClassParser(readOrder = 2, byteToRead = 4)
     protected int[] low_bytes;
 
 

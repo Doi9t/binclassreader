@@ -16,14 +16,13 @@
 
 package org.binclassreader.structs;
 
-import org.binclassreader.abstracts.AbstractGenericConst;
 import org.binclassreader.annotations.BinClassParser;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
-public class ConstClassInfo extends AbstractGenericConst {
-    @BinClassParser(readOrder = 2, byteToRead = 2)
+public class ConstClassInfo {
+    @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] name_index;
 
     public int[] getName_index() {

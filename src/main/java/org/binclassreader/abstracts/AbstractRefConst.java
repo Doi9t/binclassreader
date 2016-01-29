@@ -21,12 +21,12 @@ import org.binclassreader.annotations.BinClassParser;
 /**
  * Created by Yannick on 1/25/2016.
  */
-public abstract class AbstractRefConst extends AbstractGenericConst {
+public abstract class AbstractRefConst  {
 
-    @BinClassParser(readOrder = 2, byteToRead = 2)
+    @BinClassParser(readOrder = 1, byteToRead = 2)
     protected int[] class_index;
 
-    @BinClassParser(readOrder = 3, byteToRead = 2)
+    @BinClassParser(readOrder = 2, byteToRead = 2)
     protected int[] name_and_type_index;
 
     protected int[] getClass_index_data() {
