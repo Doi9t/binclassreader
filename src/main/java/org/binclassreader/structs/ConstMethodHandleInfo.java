@@ -30,11 +30,11 @@ public class ConstMethodHandleInfo {
     private int[] reference_index;
 
 
-    public int[] getReference_kind_data() {
+    public int[] getReference_kind() {
         return reference_kind;
     }
 
-    public int[] getReference_index_data() {
+    public int[] getReference_index() {
         return reference_index;
     }
 }

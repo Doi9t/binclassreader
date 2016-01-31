@@ -52,15 +52,9 @@ public class ConstPoolInfo implements SelfReader {
 
     public void initReading(InputStream currentStream) {
         try {
-            byte read;
-            while (true) {
-                read = (byte) currentStream.read();
-                ConstValuesEnum valuesEnum = GeneralUtils.getConstTypeByValue(read);
-
-                if (valuesEnum == ConstValuesEnum.UNKNOWN) {
-                    break;
-                }
-
+            short idx = getCount();
+            for (int i = 0; i < idx; i++) {
+                ConstValuesEnum valuesEnum = GeneralUtils.getConstTypeByValue((byte) currentStream.read());
                 Object obj = null;
 
                 switch (valuesEnum) {
@@ -107,8 +101,9 @@ public class ConstPoolInfo implements SelfReader {
                         obj = new ConstInvokeDynamicInfo();
                         break;
                 }
-                poolObjects.addAll(Arrays.asList(ClassReader.read(currentStream, obj)));
+                poolObjects.addAll(Arrays.asList(ClassReader.read(obj)));
             }
+            System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }

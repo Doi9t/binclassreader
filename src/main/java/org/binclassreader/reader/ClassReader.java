@@ -33,13 +33,19 @@ import java.util.TreeMap;
 public class ClassReader {
 
     private static Map<Short, FieldPojo> fieldSorter;
+    private static InputStream classData;
 
     static {
         fieldSorter = new TreeMap<Short, FieldPojo>();
     }
 
-    public static Object[] read(InputStream classData, Object... type) {
-        if (classData != null && type != null) {
+    public static void init(InputStream is) {
+        classData = is;
+    }
+
+    public static Object[] read(Object... type) {
+        if (type != null) {
+
             for (Object obj : type) {
                 fieldSorter.clear();
 

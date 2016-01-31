@@ -20,7 +20,6 @@ package org.binclassreader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.*;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
@@ -220,13 +219,17 @@ public class App {
     };
 
     public static void main(String[] args) {
+        ClassReader.init(new ByteArrayInputStream(rawData));
         Object[] read = ClassReader.read(
-                new BufferedInputStream(new ByteArrayInputStream(rawData)),
                 new ConstMagicNumberInfo(),
                 new ConstMinorVersionInfo(),
                 new ConstMajorVersionInfo(),
                 new ConstPoolInfo(),
-                new ConstAccessFlagsInfo());
+                new ConstAccessFlagsInfo(),
+                new ConstThisClassInfo(),
+                new ConstSuperClassInfo(),
+                new ConstInterfacesInfo(),
+                new ConstFieldsParserInfo());
 
         System.out.println(Arrays.toString(read));
     }

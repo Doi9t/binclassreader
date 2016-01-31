@@ -21,7 +21,7 @@ import org.binclassreader.annotations.BinClassParser;
 /**
  * Created by Yannick on 1/25/2016.
  */
-public abstract class AbstractRefConst  {
+public abstract class AbstractRefConst {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
     protected int[] class_index;

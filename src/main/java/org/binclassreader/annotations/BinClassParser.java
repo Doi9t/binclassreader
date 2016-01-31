@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface BinClassParser {
     short readOrder() default 1;
+
     byte byteToRead();
 }

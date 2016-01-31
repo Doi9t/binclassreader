@@ -28,11 +28,11 @@ public class ConstInvokeDynamicInfo {
     @BinClassParser(readOrder = 2, byteToRead = 2)
     private int[] name_and_type_index;
 
-    public int[] getBootstrap_method_attr_index_data() {
+    public int[] getBootstrap_method_attr_index() {
         return bootstrap_method_attr_index;
     }
 
-    public int[] getName_and_type_index_data() {
+    public int[] getName_and_type_index() {
         return name_and_type_index;
     }
 }

@@ -19,14 +19,14 @@ package org.binclassreader.structs;
 import org.binclassreader.annotations.BinClassParser;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 1/31/2016.
  */
-public class ConstMethodTypeInfo {
-
+public class ConstAttributeInfo {
     @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] descriptor_index;
+    private int[] attribute_name_index;
 
-    public int[] getDescriptor_index() {
-        return descriptor_index;
-    }
+    @BinClassParser(readOrder = 1, byteToRead = 4)
+    private int[] attribute_length;
+
+
 }

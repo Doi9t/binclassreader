@@ -21,20 +21,45 @@ import org.binclassreader.annotations.BinClassParser;
 import java.util.Arrays;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 1/30/2016.
  */
-public class ConstClassInfo {
+public class ConstFieldInfo {
+
     @BinClassParser(readOrder = 1, byteToRead = 2)
+    private int[] access_flags;
+
+    @BinClassParser(readOrder = 2, byteToRead = 2)
     private int[] name_index;
+
+    @BinClassParser(readOrder = 3, byteToRead = 2)
+    private int[] descriptor_index;
+
+    @BinClassParser(readOrder = 4, byteToRead = 2)
+    private int[] attributes_count;
+
+    public int[] getAccess_flags() {
+        return access_flags;
+    }
 
     public int[] getName_index() {
         return name_index;
     }
 
+    public int[] getDescriptor_index() {
+        return descriptor_index;
+    }
+
+    public int[] getAttributes_count() {
+        return attributes_count;
+    }
+
     @Override
     public String toString() {
-        return "ConstClassInfo{" +
-                "name_index=" + Arrays.toString(name_index) +
+        return "ConstFieldInfo{" +
+                "access_flags=" + Arrays.toString(access_flags) +
+                ", name_index=" + Arrays.toString(name_index) +
+                ", descriptor_index=" + Arrays.toString(descriptor_index) +
+                ", attributes_count=" + Arrays.toString(attributes_count) +
                 '}';
     }
 }
