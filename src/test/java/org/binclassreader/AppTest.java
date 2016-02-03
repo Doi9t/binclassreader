@@ -16,12 +16,10 @@
 
 package org.binclassreader;
 
-import org.binclassreader.reader.ClassReader;
 import org.binclassreader.services.ClassReadingService;
 import org.junit.Assert;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 /**
  * Created by Yannick on 2/3/2016.
@@ -939,14 +937,20 @@ public class AppTest {
     };
 
 
-
     @org.junit.Test
     public void init() throws Exception {
         for (int i = 0; i < 10; i++) {
             ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
         }
 
-        List<ClassReader> readerList = ClassReadingService.getReaderList();
-        Assert.assertEquals(10, readerList.size());
+        Assert.assertEquals(10, ClassReadingService.getReaderList().size());
+
+
+        for (int i = 0; i < 30; i++) {
+            ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
+        }
+
+        Assert.assertEquals(30, ClassReadingService.getReaderList().size());
+
     }
 }

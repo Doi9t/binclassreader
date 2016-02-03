@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClassReadingService {
     private final static List<ClassReader> readerList;
-    private final static ExecutorService executorService;
+    private static ExecutorService executorService;
 
     static {
         readerList = Collections.synchronizedList(new ArrayList<ClassReader>());
@@ -40,6 +40,12 @@ public class ClassReadingService {
 
     public static void readNewClass(final InputStream stream) {
         if (stream != null) {
+
+            if (executorService.isShutdown()) {
+                executorService = Executors.newFixedThreadPool(10);
+                readerList.clear();
+            }
+
             executorService.execute(new Runnable() {
                 public void run() {
                     readerList.add(new ClassReader(stream));
