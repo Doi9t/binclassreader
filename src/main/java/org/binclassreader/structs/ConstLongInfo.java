@@ -17,9 +17,20 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.abstracts.AbstractLongDoubleConst;
+import org.binclassreader.utils.GeneralUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
 public class ConstLongInfo extends AbstractLongDoubleConst {
+    public long getLongValue() {
+        return ((long) GeneralUtils.combineBytes(getHigh_bytes_data()) << 32) + GeneralUtils.combineBytes(getLow_bytes_data());
+    }
+
+    @Override
+    public String toString() {
+        return "ConstLongInfo{" +
+                "Str=" + getLongValue() +
+                "}";
+    }
 }

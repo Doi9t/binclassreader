@@ -69,9 +69,11 @@ public class ConstPoolInfo implements SelfReader {
                         break;
                     case LONG:
                         obj = new ConstLongInfo();
+                        i++;
                         break;
                     case DOUBLE:
                         obj = new ConstDoubleInfo();
+                        i++;
                         break;
                     case CLASS:
                         obj = new ConstClassInfo();
@@ -103,7 +105,6 @@ public class ConstPoolInfo implements SelfReader {
                 }
                 poolObjects.addAll(Arrays.asList(ClassReader.read(obj)));
             }
-            System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }

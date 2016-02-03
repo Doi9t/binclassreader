@@ -22,6 +22,7 @@ import org.binclassreader.utils.GeneralUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -39,6 +40,10 @@ public class ConstUtf8Info implements SelfReader {
 
     public byte[] getBytes() {
         return bytes;
+    }
+
+    public String getAsString() {
+        return new String(bytes);
     }
 
     public void initReading(InputStream currentStream) {
@@ -63,5 +68,14 @@ public class ConstUtf8Info implements SelfReader {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ConstUtf8Info{" +
+                "Str=" + getAsString() +
+                ", length=" + Arrays.toString(length) +
+                ", bytes=" + Arrays.toString(bytes) +
+                '}';
     }
 }
