@@ -50,7 +50,7 @@ public class ConstPoolInfo implements SelfReader {
         return (short) (GeneralUtils.combineBytes(bytes) - 1);
     }
 
-    public void initReading(InputStream currentStream) {
+    public void initReading(ClassReader reader, InputStream currentStream) {
         try {
             short idx = getCount();
             for (int i = 0; i < idx; i++) {
@@ -103,7 +103,7 @@ public class ConstPoolInfo implements SelfReader {
                         obj = new ConstInvokeDynamicInfo();
                         break;
                 }
-                poolObjects.addAll(Arrays.asList(ClassReader.read(obj)));
+                poolObjects.addAll(Arrays.asList(reader.read(obj)));
             }
         } catch (IOException e) {
             e.printStackTrace();

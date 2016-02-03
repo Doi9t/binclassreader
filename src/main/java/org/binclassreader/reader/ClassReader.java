@@ -19,6 +19,7 @@ package org.binclassreader.reader;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.pojos.FieldPojo;
+import org.binclassreader.structs.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,18 +33,26 @@ import java.util.TreeMap;
  */
 public class ClassReader {
 
-    private static Map<Short, FieldPojo> fieldSorter;
-    private static InputStream classData;
+    private Map<Short, FieldPojo> fieldSorter;
+    private InputStream classData;
+    private Object[] sections;
 
-    static {
+    public ClassReader(InputStream classData) {
+        this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
+
+        sections = this.read(new ConstMagicNumberInfo(),
+                new ConstMinorVersionInfo(),
+                new ConstMajorVersionInfo(),
+                new ConstPoolInfo(),
+                new ConstAccessFlagsInfo(),
+                new ConstThisClassInfo(),
+                new ConstSuperClassInfo(),
+                new ConstInterfacesInfo(),
+                new ConstFieldsParserInfo());
     }
 
-    public static void init(InputStream is) {
-        classData = is;
-    }
-
-    public static Object[] read(Object... type) {
+    public Object[] read(Object... type) {
         if (type != null) {
 
             for (Object obj : type) {
@@ -86,12 +95,16 @@ public class ClassReader {
                     }
 
                     if (obj instanceof SelfReader) {
-                        ((SelfReader) obj).initReading(classData);
+                        ((SelfReader) obj).initReading(this, classData);
                     }
                 }
             }
         }
 
         return type;
+    }
+
+    public Object[] getSections() {
+        return sections;
     }
 }

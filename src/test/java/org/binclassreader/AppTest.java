@@ -16,17 +16,18 @@
 
 package org.binclassreader;
 
-
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.*;
+import org.binclassreader.services.ClassReadingService;
+import org.junit.Assert;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
+import java.util.List;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 2/3/2016.
  */
-public class App {
+public class AppTest {
+
 
     /*
     private static byte rawData[] = {
@@ -937,19 +938,15 @@ public class App {
             (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x6A
     };
 
-    public static void main(String[] args) {
-        ClassReader.init(new ByteArrayInputStream(rawData));
-        Object[] read = ClassReader.read(
-                new ConstMagicNumberInfo(),
-                new ConstMinorVersionInfo(),
-                new ConstMajorVersionInfo(),
-                new ConstPoolInfo(),
-                new ConstAccessFlagsInfo(),
-                new ConstThisClassInfo(),
-                new ConstSuperClassInfo(),
-                new ConstInterfacesInfo(),
-                new ConstFieldsParserInfo());
 
-        System.out.println(Arrays.toString(read));
+
+    @org.junit.Test
+    public void init() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
+        }
+
+        List<ClassReader> readerList = ClassReadingService.getReaderList();
+        Assert.assertEquals(10, readerList.size());
     }
 }

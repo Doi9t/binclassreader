@@ -16,11 +16,13 @@
 
 package org.binclassreader.interfaces;
 
+import org.binclassreader.reader.ClassReader;
+
 import java.io.InputStream;
 
 /**
  * Created by Yannick on 1/27/2016.
  */
 public interface SelfReader {
-    void initReading(final InputStream currentStream);
+    void initReading(final ClassReader reader, final InputStream currentStream);
 }

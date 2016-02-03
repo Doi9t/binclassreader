@@ -47,10 +47,10 @@ public class ConstFieldsParserInfo implements SelfReader {
         return (short) (GeneralUtils.combineBytes(countData));
     }
 
-    public void initReading(InputStream currentStream) {
+    public void initReading(ClassReader reader, InputStream currentStream) {
         count = getCount();
         for (int i = 0; i < count; i++) {
-            poolObjects.addAll(Arrays.asList(ClassReader.read(new ConstFieldInfo())));
+            poolObjects.addAll(Arrays.asList(reader.read(new ConstFieldInfo())));
         }
     }
 
