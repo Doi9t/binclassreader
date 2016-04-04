@@ -17,9 +17,10 @@
 package org.binclassreader;
 
 import org.binclassreader.services.ClassReadingService;
-import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 /**
  * Created by Yannick on 2/3/2016.
@@ -937,20 +938,17 @@ public class AppTest {
     };
 
 
-    @org.junit.Test
+    @Test
     public void init() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
+
+        ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
+
+        Map<Class<?>, Object> sections = ClassReadingService.getReaderList().get(0).getSections();
+
+        if (sections != null) {
+            for (Object o : sections.values()) {
+                System.out.println(o); //Print one per line
+            }
         }
-
-        Assert.assertEquals(10, ClassReadingService.getReaderList().size());
-
-
-        for (int i = 0; i < 30; i++) {
-            ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
-        }
-
-        Assert.assertEquals(30, ClassReadingService.getReaderList().size());
-
     }
 }

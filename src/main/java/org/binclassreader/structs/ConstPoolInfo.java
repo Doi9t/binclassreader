@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -103,7 +104,7 @@ public class ConstPoolInfo implements SelfReader {
                         obj = new ConstInvokeDynamicInfo();
                         break;
                 }
-                poolObjects.addAll(Arrays.asList(reader.read(obj)));
+                poolObjects.addAll(Collections.singletonList(reader.read(obj)));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class ConstPoolInfo implements SelfReader {
     @Override
     public String toString() {
         return "ConstPoolInfo{" +
-                "bytes=" + bytes +
+                "bytes=" + Arrays.toString(bytes) +
                 ", bytes_data=" + Arrays.toString(bytes) +
                 ", count=" + getCount() +
                 '}';

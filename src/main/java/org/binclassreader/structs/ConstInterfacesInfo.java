@@ -24,6 +24,7 @@ import org.binclassreader.utils.GeneralUtils;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class ConstInterfacesInfo implements SelfReader {
     public void initReading(ClassReader reader, InputStream currentStream) {
         count = getCount();
         for (int i = 0; i < count; i++) {
-            poolObjects.addAll(Arrays.asList(reader.read(new ConstClassInfo())));
+            poolObjects.addAll(Collections.singletonList(reader.read(new ConstClassInfo())));
         }
     }
 

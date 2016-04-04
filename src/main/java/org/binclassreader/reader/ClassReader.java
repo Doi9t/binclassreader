@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,7 +36,7 @@ public class ClassReader {
 
     private Map<Short, FieldPojo> fieldSorter;
     private InputStream classData;
-    private Object[] sections;
+    private Map<Class<?>, Object> sections;
 
     public ClassReader(InputStream classData) {
         this.classData = classData;
@@ -52,13 +53,15 @@ public class ClassReader {
                 new ConstFieldsParserInfo());
     }
 
-    public Object[] read(Object... type) {
+    public Map<Class<?>, Object> read(Object... type) {
+        Map<Class<?>, Object> values = new HashMap<Class<?>, Object>();
         if (type != null) {
-
             for (Object obj : type) {
                 fieldSorter.clear();
 
                 Class<?> currentClass = obj.getClass();
+
+                values.put(currentClass, obj);
 
                 while (currentClass != null) {
                     for (Field field : currentClass.getDeclaredFields()) {
@@ -101,10 +104,10 @@ public class ClassReader {
             }
         }
 
-        return type;
+        return values;
     }
 
-    public Object[] getSections() {
+    public Map<Class<?>, Object> getSections() {
         return sections;
     }
 }
