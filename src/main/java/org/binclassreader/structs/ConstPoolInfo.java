@@ -20,27 +20,26 @@ import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.enums.ConstValuesEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Yannick on 1/26/2016.
  */
 public class ConstPoolInfo implements SelfReader {
 
-    private List<Object> poolObjects;
+    private Map<Short, Object> poolObjects;
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] bytes;
 
     public ConstPoolInfo() {
-        poolObjects = new ArrayList<Object>();
+        poolObjects = new HashMap<Short, Object>();
     }
 
     public int[] getBytes() {
@@ -48,14 +47,14 @@ public class ConstPoolInfo implements SelfReader {
     }
 
     public short getCount() {
-        return (short) (GeneralUtils.combineBytes(bytes) - 1);
+        return (short) (Utilities.combineBytesToInt(bytes) - 1);
     }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         try {
             short idx = getCount();
-            for (int i = 0; i < idx; i++) {
-                ConstValuesEnum valuesEnum = GeneralUtils.getConstTypeByValue((byte) currentStream.read());
+            for (short i = 0; i < idx; i++) {
+                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) currentStream.read());
                 Object obj = null;
 
                 switch (valuesEnum) {
@@ -104,8 +103,10 @@ public class ConstPoolInfo implements SelfReader {
                         obj = new ConstInvokeDynamicInfo();
                         break;
                 }
-                poolObjects.addAll(Collections.singletonList(reader.read(obj)));
+
+                poolObjects.put(i, reader.read(obj));
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,10 +114,17 @@ public class ConstPoolInfo implements SelfReader {
 
     @Override
     public String toString() {
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append("\n~~~~~~~~~~~~ Constant pool [START] ~~~~~~~~~~~~\n");
+        for (Map.Entry<Short, Object> shortObjectEntry : poolObjects.entrySet()) {
+            buffer.append("\t").append(shortObjectEntry.getKey()).append("\t->\t").append(shortObjectEntry.getValue()).append(" ,\n");
+        }
+        buffer.append("~~~~~~~~~~~~~ Constant pool [END] ~~~~~~~~~~~~~\n");
+
         return "ConstPoolInfo{" +
-                "bytes=" + Arrays.toString(bytes) +
-                ", bytes_data=" + Arrays.toString(bytes) +
-                ", count=" + getCount() +
+                "poolObjects=" + buffer.toString() +
+                ", bytes=" + Arrays.toString(bytes) +
                 '}';
     }
 }

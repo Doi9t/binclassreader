@@ -14,23 +14,18 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.structs;
+package org.binclassreader.annotations;
 
-import org.binclassreader.abstracts.AbstractLongDoubleConst;
-import org.binclassreader.utils.Utilities;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 4/9/2016.
  */
-public class ConstLongInfo extends AbstractLongDoubleConst {
-    public long getLongValue() {
-        return (Utilities.combineBytesToLong(getHigh_bytes_data()) << 32) + Utilities.combineBytesToLong(getLow_bytes_data());
-    }
-
-    @Override
-    public String toString() {
-        return "ConstLongInfo{" +
-                "Str=" + getLongValue() +
-                "}";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ConstPoolItemValidation {
+    Class<?>[] mustBeOfType();
 }

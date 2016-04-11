@@ -17,6 +17,10 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.ConstPoolItemValidation;
+import org.binclassreader.utils.Utilities;
+
+import java.util.Arrays;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -26,7 +30,16 @@ public class ConstMethodTypeInfo {
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] descriptor_index;
 
-    public int[] getDescriptor_index() {
-        return descriptor_index;
+    @ConstPoolItemValidation(mustBeOfType = ConstUtf8Info.class)
+    public int getDescriptorIndex() {
+        return Utilities.combineBytesToInt(descriptor_index);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstMethodTypeInfo{" +
+                "descriptor_index=" + Arrays.toString(descriptor_index) +
+                "DescriptorIndex=" + getDescriptorIndex() +
+                '}';
     }
 }

@@ -17,6 +17,10 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.ConstPoolItemValidation;
+import org.binclassreader.structs.ConstClassInfo;
+import org.binclassreader.structs.ConstNameAndTypeInfo;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -29,11 +33,13 @@ public abstract class AbstractRefConst {
     @BinClassParser(readOrder = 2, byteToRead = 2)
     protected int[] name_and_type_index;
 
-    protected int[] getClass_index_data() {
-        return class_index;
+    @ConstPoolItemValidation(mustBeOfType = ConstClassInfo.class)
+    protected int getClassIndex() {
+        return Utilities.combineBytesToInt(class_index);
     }
 
-    protected int[] getName_and_type_index_data() {
-        return name_and_type_index;
+    @ConstPoolItemValidation(mustBeOfType = ConstNameAndTypeInfo.class)
+    protected int getNameAndTypeIndex() {
+        return Utilities.combineBytesToInt(name_and_type_index);
     }
 }

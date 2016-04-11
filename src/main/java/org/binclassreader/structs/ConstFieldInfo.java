@@ -17,15 +17,14 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-
-import java.util.Arrays;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/30/2016.
  */
 public class ConstFieldInfo {
 
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     private int[] access_flags;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
@@ -37,29 +36,29 @@ public class ConstFieldInfo {
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] attributes_count;
 
-    public int[] getAccess_flags() {
-        return access_flags;
+    public int getAccessFlags() {
+        return Utilities.combineBytesToInt(access_flags);
     }
 
-    public int[] getName_index() {
-        return name_index;
+    public int getNameIndex() {
+        return Utilities.combineBytesToInt(name_index);
     }
 
-    public int[] getDescriptor_index() {
-        return descriptor_index;
+    public int getDescriptorIndex() {
+        return Utilities.combineBytesToInt(descriptor_index);
     }
 
-    public int[] getAttributes_count() {
-        return attributes_count;
+    public int getAttributesCount() {
+        return Utilities.combineBytesToInt(attributes_count);
     }
 
     @Override
     public String toString() {
         return "ConstFieldInfo{" +
-                "access_flags=" + Arrays.toString(access_flags) +
-                ", name_index=" + Arrays.toString(name_index) +
-                ", descriptor_index=" + Arrays.toString(descriptor_index) +
-                ", attributes_count=" + Arrays.toString(attributes_count) +
+                "accessFlags=" + getAccessFlags() +
+                ", nameIndex=" + getNameIndex() +
+                ", descriptorIndex=" + getDescriptorIndex() +
+                ", attributesCount()=" + getAttributesCount() +
                 '}';
     }
 }

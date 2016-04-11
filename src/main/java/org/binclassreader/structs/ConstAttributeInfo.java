@@ -17,16 +17,40 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/31/2016.
  */
 public class ConstAttributeInfo {
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     private int[] attribute_name_index;
 
-    @BinClassParser(readOrder = 1, byteToRead = 4)
+    @BinClassParser(readOrder = 2, byteToRead = 4)
     private int[] attribute_length;
 
+    @BinClassParser(readOrder = 3, byteToRead = 2)
+    private int[] constant_value_index;
 
+
+    public int getAttributeNameIndex() {
+        return Utilities.combineBytesToInt(attribute_name_index);
+    }
+
+    public int getAttributeLength() {
+        return Utilities.combineBytesToInt(attribute_length);
+    }
+
+    public int getConstantValueIndex() {
+        return Utilities.combineBytesToInt(constant_value_index);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstAttributeInfo{" +
+                "attribute_name_index=" + getAttributeNameIndex() +
+                ", attribute_length=" + getAttributeLength() +
+                ", constant_value_index=" + getConstantValueIndex() +
+                '}';
+    }
 }

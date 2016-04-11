@@ -17,24 +17,23 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-
-import java.util.Arrays;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/29/2016.
  */
 public class ConstThisClassInfo {
     @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] bytes;
+    private int[] index;
 
-    public int[] getBytes() {
-        return bytes;
+    public int getIndex() {
+        return Utilities.combineBytesToInt(index);
     }
 
     @Override
     public String toString() {
         return "ConstThisClassInfo{" +
-                "bytes=" + Arrays.toString(bytes) +
+                "index=" + getIndex() +
                 '}';
     }
 }

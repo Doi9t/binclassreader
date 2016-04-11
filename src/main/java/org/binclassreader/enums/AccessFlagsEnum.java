@@ -40,4 +40,22 @@ public enum AccessFlagsEnum {
     public byte getValue() {
         return value;
     }
+
+
+    public static AccessFlagsEnum getFlagById(byte id) {
+        AccessFlagsEnum value = AccessFlagsEnum.UNKNOWN;
+
+        if (id < 0) {
+            return value;
+        }
+
+        for (AccessFlagsEnum flag : AccessFlagsEnum.values()) {
+            if (flag.getValue() == id) {
+                value = flag;
+                break;
+            }
+        }
+
+        return value;
+    }
 }

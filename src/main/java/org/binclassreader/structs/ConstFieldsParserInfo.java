@@ -19,7 +19,7 @@ package org.binclassreader.structs;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class ConstFieldsParserInfo implements SelfReader {
 
     private List<Object> poolObjects;
 
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     private int[] countData;
     private int count;
 
@@ -45,7 +45,7 @@ public class ConstFieldsParserInfo implements SelfReader {
     }
 
     public short getCount() {
-        return (short) (GeneralUtils.combineBytes(countData));
+        return (short) (Utilities.combineBytesToInt(countData));
     }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
@@ -59,7 +59,6 @@ public class ConstFieldsParserInfo implements SelfReader {
     public String toString() {
         return "ConstFieldsParserInfo{" +
                 "poolObjects=" + poolObjects +
-                ", countData=" + Arrays.toString(countData) +
                 ", count=" + count +
                 '}';
     }

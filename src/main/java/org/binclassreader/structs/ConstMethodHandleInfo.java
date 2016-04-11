@@ -17,24 +17,36 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.utils.Utilities;
+
+import java.util.Arrays;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
 public class ConstMethodHandleInfo {
 
-    @BinClassParser(readOrder = 1, byteToRead = 1)
+    @BinClassParser(byteToRead = 1)
     private int[] reference_kind;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
     private int[] reference_index;
 
-
-    public int[] getReference_kind() {
-        return reference_kind;
+    public int getReferenceKind() {
+        return Utilities.combineBytesToInt(reference_kind);
     }
 
-    public int[] getReference_index() {
-        return reference_index;
+    public int getReferenceIndex() {
+        return Utilities.combineBytesToInt(reference_index);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstMethodHandleInfo{" +
+                "reference_kind=" + Arrays.toString(reference_kind) +
+                ", reference_index=" + Arrays.toString(reference_index) +
+                ", ReferenceKind=" + getReferenceKind() +
+                ", ReferenceIndex=" + getReferenceIndex() +
+                '}';
     }
 }

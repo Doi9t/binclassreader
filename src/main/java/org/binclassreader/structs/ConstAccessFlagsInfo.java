@@ -18,7 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.enums.AccessFlagsEnum;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 import java.util.Arrays;
 
@@ -26,32 +26,22 @@ import java.util.Arrays;
  * Created by Yannick on 1/29/2016.
  */
 public class ConstAccessFlagsInfo {
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     private int[] flags;
 
-    public int[] getFlags() {
-        return flags;
+    public int getFlagIndex() {
+        return Utilities.combineBytesToInt(flags);
     }
 
-    public AccessFlagsEnum getAccessFlags() {
 
-        AccessFlagsEnum value = AccessFlagsEnum.UNKNOWN;
-
-        for (AccessFlagsEnum flag : AccessFlagsEnum.values()) {
-
-            if (flag.getValue() == GeneralUtils.combineBytes(flags)) {
-                value = flag;
-            }
-        }
-
-        return value;
+    public AccessFlagsEnum getAccessFlag() {
+        return AccessFlagsEnum.getFlagById((byte) getFlagIndex());
     }
 
     @Override
     public String toString() {
         return "ConstAccessFlagsInfo{" +
-                "flags=" + Arrays.toString(flags) +
-                "flag=" + getAccessFlags() +
+                "flag=" + getAccessFlag() +
                 '}';
     }
 }

@@ -57,54 +57,65 @@ public class ClassReader {
         Map<Class<?>, Object> values = new HashMap<Class<?>, Object>();
         if (type != null) {
             for (Object obj : type) {
-                fieldSorter.clear();
-
-                Class<?> currentClass = obj.getClass();
-
-                values.put(currentClass, obj);
-
-                while (currentClass != null) {
-                    for (Field field : currentClass.getDeclaredFields()) {
-                        field.setAccessible(true);
-                        for (Annotation annotation : field.getDeclaredAnnotations()) {
-                            if (annotation instanceof BinClassParser) {
-                                BinClassParser anno = (BinClassParser) annotation;
-                                fieldSorter.put(anno.readOrder(), new FieldPojo(field, anno.byteToRead()));
-                            }
-                        }
-                    }
-                    currentClass = currentClass.getSuperclass();
+                if (obj == null) {
+                    continue;
                 }
-
-                if (!fieldSorter.isEmpty()) {
-                    for (FieldPojo value : fieldSorter.values()) {
-                        Field fieldToWrite = value.getFieldToWrite();
-                        fieldToWrite.setAccessible(true);
-
-                        byte nbByteToRead = value.getNbByteToRead();
-                        int[] buffer = new int[nbByteToRead];
-
-                        try {
-                            for (int i = 0; i < nbByteToRead; i++) {
-                                buffer[i] = classData.read();
-                            }
-                            fieldToWrite.set(obj, buffer);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (obj instanceof SelfReader) {
-                        ((SelfReader) obj).initReading(this, classData);
-                    }
-                }
+                values.put(obj.getClass(), read(obj));
             }
         }
 
         return values;
+    }
+
+    public Object read(Object obj) {
+        fieldSorter.clear();
+
+        if (obj == null) {
+            return null;
+        }
+
+        Class<?> currentClass = obj.getClass();
+
+        while (currentClass != null) {
+            for (Field field : currentClass.getDeclaredFields()) {
+                field.setAccessible(true);
+                for (Annotation annotation : field.getDeclaredAnnotations()) {
+                    if (annotation instanceof BinClassParser) {
+                        BinClassParser anno = (BinClassParser) annotation;
+                        fieldSorter.put(anno.readOrder(), new FieldPojo(field, anno.byteToRead()));
+                    }
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+
+        if (!fieldSorter.isEmpty()) {
+            for (FieldPojo value : fieldSorter.values()) {
+                Field fieldToWrite = value.getFieldToWrite();
+                fieldToWrite.setAccessible(true);
+
+                byte nbByteToRead = value.getNbByteToRead();
+                int[] buffer = new int[nbByteToRead];
+
+                try {
+                    for (int i = 0; i < nbByteToRead; i++) {
+                        buffer[i] = classData.read();
+                    }
+                    fieldToWrite.set(obj, buffer);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (obj instanceof SelfReader) {
+                ((SelfReader) obj).initReading(this, classData);
+            }
+        }
+
+        return obj;
     }
 
     public Map<Class<?>, Object> getSections() {

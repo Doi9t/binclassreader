@@ -18,15 +18,24 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 
+import java.util.Arrays;
+
 /**
  * Created by Yannick on 1/26/2016.
  */
 public class ConstMagicNumberInfo {
 
-    @BinClassParser(readOrder = 1, byteToRead = 4)
+    @BinClassParser(byteToRead = 4)
     private int[] bytes_data;
 
     public int[] getBytes_data() {
         return bytes_data;
+    }
+
+    @Override
+    public String toString() {
+        return "ConstMagicNumberInfo{" +
+                "bytes_data=" + Arrays.toString(bytes_data) +
+                '}';
     }
 }

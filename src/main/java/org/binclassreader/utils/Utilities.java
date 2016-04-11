@@ -21,22 +21,54 @@ import org.binclassreader.enums.ConstValuesEnum;
 /**
  * Created by Yannick on 1/26/2016.
  */
-public class GeneralUtils {
+public class Utilities {
 
-    public static int combineBytes(int[] bytes) {
+    /**
+     * @param bytes - The byte to be merged
+     * @return The combined byte, -1 if the byte array is empty or null
+     */
+    public static int combineBytesToInt(int[] bytes) {
+
+        if (bytes == null || bytes.length == 0) {
+            return -1;
+        }
+
         int value = 0;
 
-        if (bytes != null && bytes.length > 1) {
-            int shiftBytes = (8 * bytes.length) - 8;
-            for (int b : bytes) {
-                value |= (b & 0xFF) << shiftBytes;
-                shiftBytes = (shiftBytes - 8);
-            }
+        int shiftBytes = (8 * bytes.length) - 8;
+        for (int b : bytes) {
+            value |= (b & 0xFF) << shiftBytes;
+            shiftBytes = (shiftBytes - 8);
         }
 
         return value;
     }
 
+    /**
+     * @param bytes - The byte to be merged
+     * @return The combined byte, -1 if the byte array is empty or null
+     */
+    public static long combineBytesToLong(int[] bytes) {
+
+        if (bytes == null || bytes.length == 0) {
+            return -1;
+        }
+
+        long value = 0;
+
+        long shiftBytes = (8 * bytes.length) - 8;
+        for (long b : bytes) {
+            value |= (b & 0xFF) << shiftBytes;
+            shiftBytes = (shiftBytes - 8);
+        }
+
+        return value;
+    }
+
+    /**
+     * @param x - The current byte
+     * @return A ConstValuesEnum if the byte is found, ConstValuesEnum.UNKNOWN if not
+     */
     public static ConstValuesEnum getConstTypeByValue(byte x) {
         ConstValuesEnum value = ConstValuesEnum.UNKNOWN;
 

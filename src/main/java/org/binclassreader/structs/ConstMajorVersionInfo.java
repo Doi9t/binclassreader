@@ -17,9 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.GeneralUtils;
-
-import java.util.Arrays;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/26/2016.
@@ -35,13 +33,12 @@ public class ConstMajorVersionInfo {
     }
 
     public int getMajorVersion() {
-        return GeneralUtils.combineBytes(bytes_data);
+        return Utilities.combineBytesToInt(bytes_data);
     }
 
     @Override
     public String toString() {
         return "ConstMajorVersionInfo{" +
-                ", bytes_data=" + Arrays.toString(bytes_data) +
                 ", MajorVersion=" + getMajorVersion() +
                 '}';
     }

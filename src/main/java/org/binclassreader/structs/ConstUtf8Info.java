@@ -19,7 +19,7 @@ package org.binclassreader.structs;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,20 +35,20 @@ public class ConstUtf8Info implements SelfReader {
 
     private byte[] bytes;
 
-    public int[] getLength_data() {
-        return length;
+    public int getLength() {
+        return Utilities.combineBytesToInt(length);
     }
 
-    public byte[] getBytes() {
+    public byte[] getAsBytes() {
         return bytes;
     }
 
     public String getAsString() {
-        return new String(bytes);
+        return (bytes != null) ? new String(bytes) : null;
     }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
-        int lengthArray = GeneralUtils.combineBytes(length);
+        int lengthArray = Utilities.combineBytesToInt(length);
 
         if (lengthArray > 0) {
             bytes = new byte[lengthArray];

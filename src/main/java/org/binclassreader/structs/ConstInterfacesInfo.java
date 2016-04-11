@@ -19,11 +19,10 @@ package org.binclassreader.structs;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class ConstInterfacesInfo implements SelfReader {
     }
 
     public short getCount() {
-        return (short) (GeneralUtils.combineBytes(countData));
+        return (short) (Utilities.combineBytesToInt(countData));
     }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
@@ -57,7 +56,6 @@ public class ConstInterfacesInfo implements SelfReader {
     public String toString() {
         return "ConstInterfacesInfo{" +
                 "poolObjects=" + poolObjects +
-                ", countData=" + Arrays.toString(countData) +
                 ", count=" + count +
                 '}';
     }

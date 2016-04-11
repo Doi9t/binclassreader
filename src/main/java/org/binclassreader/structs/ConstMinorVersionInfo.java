@@ -17,14 +17,14 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.GeneralUtils;
+import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/26/2016.
  */
 public class ConstMinorVersionInfo {
 
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     private int[] bytes_data;
 
     public int[] getBytes_data() {
@@ -32,6 +32,13 @@ public class ConstMinorVersionInfo {
     }
 
     public int getMinorVersion() {
-        return GeneralUtils.combineBytes(bytes_data);
+        return Utilities.combineBytesToInt(bytes_data);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstMinorVersionInfo{" +
+                "MinorVersion=" + getMinorVersion() +
+                '}';
     }
 }
