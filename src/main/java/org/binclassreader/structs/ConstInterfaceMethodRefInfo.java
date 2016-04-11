@@ -28,8 +28,6 @@ public class ConstInterfaceMethodRefInfo extends AbstractRefConst {
     @Override
     public String toString() {
         return "ConstInterfaceMethodRefInfo{" +
-                "class_index=" + Arrays.toString(class_index) +
-                ", name_and_type_index=" + Arrays.toString(name_and_type_index) +
                 ", ClassIndex=" + getClassIndex() +
                 ", NameAndTypeIndex=" + getNameAndTypeIndex() +
                 '}';

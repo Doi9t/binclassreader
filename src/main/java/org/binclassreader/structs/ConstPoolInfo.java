@@ -124,7 +124,7 @@ public class ConstPoolInfo implements SelfReader {
 
         return "ConstPoolInfo{" +
                 "poolObjects=" + buffer.toString() +
-                ", bytes=" + Arrays.toString(bytes) +
+                ", count=" +  getCount() +
                 '}';
     }
 }

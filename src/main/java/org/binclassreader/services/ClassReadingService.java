@@ -17,6 +17,7 @@
 package org.binclassreader.services;
 
 import org.binclassreader.reader.ClassReader;
+import org.binclassreader.structs.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,10 +33,32 @@ import java.util.concurrent.TimeUnit;
 public class ClassReadingService {
     private final static List<ClassReader> readerList;
     private static ExecutorService executorService;
+    private static final Object[] DEFAULT_SECTIONS;
+    private static Object[] userSections;
 
     static {
         readerList = Collections.synchronizedList(new ArrayList<ClassReader>());
         executorService = Executors.newFixedThreadPool(10);
+        DEFAULT_SECTIONS = new Object[]{
+                new ConstMagicNumberInfo(),
+                new ConstMinorVersionInfo(),
+                new ConstMajorVersionInfo(),
+                new ConstPoolInfo(),
+                new ConstAccessFlagsInfo(),
+                new ConstThisClassInfo(),
+                new ConstSuperClassInfo(),
+                new ConstInterfacesInfo(),
+                new ConstFieldsParserInfo()
+        };
+    }
+
+
+    public static void init(Object... sections) {
+        if (sections == null || sections.length == 0) {
+            return;
+        }
+
+        userSections = sections.clone();
     }
 
     public static void readNewClass(final InputStream stream) {
@@ -48,7 +71,7 @@ public class ClassReadingService {
 
             executorService.execute(new Runnable() {
                 public void run() {
-                    readerList.add(new ClassReader(stream));
+                    readerList.add(new ClassReader(stream, (userSections != null) ? userSections : DEFAULT_SECTIONS));
                 }
             });
         }

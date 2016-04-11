@@ -17,6 +17,7 @@
 package org.binclassreader;
 
 import org.binclassreader.services.ClassReadingService;
+import org.binclassreader.structs.ConstMagicNumberInfo;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

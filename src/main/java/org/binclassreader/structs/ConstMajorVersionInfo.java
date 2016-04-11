@@ -39,7 +39,7 @@ public class ConstMajorVersionInfo {
     @Override
     public String toString() {
         return "ConstMajorVersionInfo{" +
-                ", MajorVersion=" + getMajorVersion() +
+                "MajorVersion=" + getMajorVersion() +
                 '}';
     }
 }

@@ -75,8 +75,7 @@ public class ConstUtf8Info implements SelfReader {
     public String toString() {
         return "ConstUtf8Info{" +
                 "Str=" + getAsString() +
-                ", length=" + Arrays.toString(length) +
-                ", bytes=" + Arrays.toString(bytes) +
+                ", length=" + getLength() +
                 '}';
     }
 }

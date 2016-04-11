@@ -58,7 +58,7 @@ public class ConstFieldInfo {
                 "accessFlags=" + getAccessFlags() +
                 ", nameIndex=" + getNameIndex() +
                 ", descriptorIndex=" + getDescriptorIndex() +
-                ", attributesCount()=" + getAttributesCount() +
+                ", attributesCount=" + getAttributesCount() +
                 '}';
     }
 }
