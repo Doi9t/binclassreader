@@ -88,7 +88,7 @@ public class Utilities {
      * @return An array of object
      */
     public static Object[] createNewArrayOfObject(Class<?>... clazzArr) {
-        if (Assert.isArrayReadable(clazzArr)) {
+        if (!Assert.isArrayReadable(clazzArr)) {
             return null;
         }
 
