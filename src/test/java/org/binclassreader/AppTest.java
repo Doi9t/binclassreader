@@ -16,20 +16,18 @@
 
 package org.binclassreader;
 
+import org.binclassreader.reader.ClassReader;
 import org.binclassreader.services.ClassReadingService;
-import org.binclassreader.structs.ConstMagicNumberInfo;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by Yannick on 2/3/2016.
  */
 public class AppTest {
 
-
-    /*
     private static byte rawData[] = {
             (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x38, (byte) 0x0A, (byte) 0x00,
@@ -218,8 +216,8 @@ public class AppTest {
             (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x1F, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x20
     };
-*/
-    private static byte rawData[] = {
+
+    private static byte rawData2[] = {
             (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x33, (byte) 0x00, (byte) 0x6B, (byte) 0x07, (byte) 0x00,
             (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x33, (byte) 0x6F, (byte) 0x72,
@@ -943,12 +941,14 @@ public class AppTest {
     public void init() throws Exception {
 
         ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
+        ClassReadingService.readNewClass(new ByteArrayInputStream(rawData2));
 
-        Map<Class<?>, Object> sections = ClassReadingService.getReaderList().get(0).getSections();
+        List<ClassReader> readerList = ClassReadingService.getReaderList();
 
-        if (sections != null) {
-            for (Object o : sections.values()) {
-                System.out.println(o); //Print one per line
+        for (ClassReader classReader : readerList) {
+            System.out.println("\n\n--------------------------- NEW CLASS INFO ---------------------------");
+            for (Object item : classReader.getSections().values()) {
+                System.out.println(item); //Print one per line
             }
         }
     }

@@ -49,7 +49,6 @@ public class Utilities {
      * @return The combined byte, -1 if the byte array is empty or null
      */
     public static long combineBytesToLong(int[] bytes) {
-
         if (bytes == null || bytes.length == 0) {
             return -1;
         }
@@ -82,5 +81,35 @@ public class Utilities {
         }
 
         return value;
+    }
+
+    /**
+     * @param clazzArr - An array of class to be transformed into a array of object
+     * @return An array of object
+     */
+    public static Object[] createNewArrayOfObject(Class<?>... clazzArr) {
+        if (Assert.isArrayReadable(clazzArr)) {
+            return null;
+        }
+
+        Object[] values = new Object[clazzArr.length];
+
+        for (int i = 0; i < clazzArr.length; i++) {
+            Class<?> aClass = clazzArr[i];
+
+            if (aClass == null) {
+                continue;
+            }
+
+            try {
+                values[i] = aClass.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return values;
     }
 }

@@ -19,6 +19,8 @@ package org.binclassreader.reader;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.pojos.FieldPojo;
+import org.binclassreader.utils.Assert;
+import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,16 +39,14 @@ public class ClassReader {
     private InputStream classData;
     private Map<Class<?>, Object> sections;
 
-    public ClassReader(InputStream classData, Object[] sectionsParams) {
-
-        if (sectionsParams == null || sectionsParams.length == 0) {
+    public ClassReader(InputStream classData, Class<?>... classSections) {
+        if (Assert.isArrayReadable(classSections)) {
             return;
         }
 
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
-
-        sections = this.read(sectionsParams);
+        sections = this.read(Utilities.createNewArrayOfObject(classSections));
     }
 
     public Map<Class<?>, Object> read(Object... type) {

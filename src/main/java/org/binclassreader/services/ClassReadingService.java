@@ -33,27 +33,28 @@ import java.util.concurrent.TimeUnit;
 public class ClassReadingService {
     private final static List<ClassReader> readerList;
     private static ExecutorService executorService;
-    private static final Object[] DEFAULT_SECTIONS;
-    private static Object[] userSections;
+    private static final Class<?>[] DEFAULT_SECTIONS;
+    private static Class<?>[] userSections;
 
     static {
         readerList = Collections.synchronizedList(new ArrayList<ClassReader>());
         executorService = Executors.newFixedThreadPool(10);
-        DEFAULT_SECTIONS = new Object[]{
-                new ConstMagicNumberInfo(),
-                new ConstMinorVersionInfo(),
-                new ConstMajorVersionInfo(),
-                new ConstPoolInfo(),
-                new ConstAccessFlagsInfo(),
-                new ConstThisClassInfo(),
-                new ConstSuperClassInfo(),
-                new ConstInterfacesInfo(),
-                new ConstFieldsParserInfo()
+
+        DEFAULT_SECTIONS = new Class<?>[]{
+                ConstMagicNumberInfo.class,
+                ConstMinorVersionInfo.class,
+                ConstMajorVersionInfo.class,
+                ConstPoolInfo.class,
+                ConstAccessFlagsInfo.class,
+                ConstThisClassInfo.class,
+                ConstSuperClassInfo.class,
+                ConstInterfacesInfo.class,
+                ConstFieldsParserInfo.class
         };
     }
 
 
-    public static void init(Object... sections) {
+    public static void init(Class<?>... sections) {
         if (sections == null || sections.length == 0) {
             return;
         }
