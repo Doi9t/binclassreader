@@ -40,7 +40,7 @@ public class ClassReader {
     private Map<Class<?>, Object> sections;
 
     public ClassReader(InputStream classData, Class<?>... classSections) {
-        if (!Assert.isArrayReadable(classSections)) {
+        if (!Assert.isArrayReadable(classSections) || classData == null) {
             return;
         }
 

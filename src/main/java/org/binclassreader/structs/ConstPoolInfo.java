@@ -16,7 +16,10 @@
 
 package org.binclassreader.structs;
 
+import org.binclassreader.abstracts.AbstractPoolData;
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.PoolDataOptions;
+import org.binclassreader.enums.CollectionType;
 import org.binclassreader.enums.ConstValuesEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
@@ -24,23 +27,17 @@ import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Yannick on 1/26/2016.
  */
-public class ConstPoolInfo implements SelfReader {
 
-    private Map<Short, Object> poolObjects;
+@PoolDataOptions(storageType = CollectionType.MAP)
+public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] bytes;
-
-    public ConstPoolInfo() {
-        poolObjects = new HashMap<Short, Object>();
-    }
 
     public int[] getBytes() {
         return bytes;
@@ -104,7 +101,7 @@ public class ConstPoolInfo implements SelfReader {
                         break;
                 }
 
-                poolObjects.put(i, reader.read(obj));
+                addItemToMap(i, reader.read(obj));
             }
 
         } catch (IOException e) {
@@ -116,15 +113,22 @@ public class ConstPoolInfo implements SelfReader {
     public String toString() {
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append("\n~~~~~~~~~~~~ Constant pool [START] ~~~~~~~~~~~~\n");
-        for (Map.Entry<Short, Object> shortObjectEntry : poolObjects.entrySet()) {
-            buffer.append("\t").append(shortObjectEntry.getKey()).append("\t->\t").append(shortObjectEntry.getValue()).append(" ,\n");
+
+        Map<Short, Object> pool = (Map<Short, Object>) getPool();
+
+        if (pool != null) {
+            buffer.append("\n~~~~~~~~~~~~ Constant pool [START] ~~~~~~~~~~~~\n");
+            for (Map.Entry<Short, Object> shortObjectEntry : pool.entrySet()) {
+                buffer.append("\t").append(shortObjectEntry.getKey()).append("\t->\t").append(shortObjectEntry.getValue()).append(" ,\n");
+            }
+            buffer.append("~~~~~~~~~~~~~ Constant pool [END] ~~~~~~~~~~~~~\n");
+        } else {
+            buffer.append("~~~~~~~~~~~~~ NO Constant pool values ~~~~~~~~~~~~~\n");
         }
-        buffer.append("~~~~~~~~~~~~~ Constant pool [END] ~~~~~~~~~~~~~\n");
 
         return "ConstPoolInfo{" +
                 "poolObjects=" + buffer.toString() +
-                ", count=" +  getCount() +
+                ", count=" + getCount() +
                 '}';
     }
 }
