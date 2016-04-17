@@ -40,7 +40,13 @@ public abstract class AbstractPoolData {
 
     protected AbstractPoolData() {
         Class<? extends AbstractPoolData> clazz = getClass();
-        ((Map<Class<?>, Object>) POOL.get()).put(clazz, CollectionType.getCollectionByEnum(clazz.getAnnotation(PoolDataOptions.class).storageType()));
+
+        PoolDataOptions annotation = clazz.getAnnotation(PoolDataOptions.class);
+
+        if (annotation == null || !CollectionType.NONE.equals(annotation.storageType())) {
+            ((Map<Class<?>, Object>) POOL.get()).put(clazz, CollectionType.getCollectionByEnum(clazz.getAnnotation(PoolDataOptions.class).storageType()));
+        }
+
     }
 
     protected void addItemToList(Object obj) throws ClassCastException {
@@ -69,6 +75,10 @@ public abstract class AbstractPoolData {
 
     protected Object getPool() {
         return ((Map<Class<?>, Object>) POOL.get()).get(getClass());
+    }
+
+    public Map<Class<?>, Object> getAllPools() {
+        return (Map<Class<?>, Object>) POOL.get();
     }
 
     protected Object getPoolByClass(Class<?> clazz) {

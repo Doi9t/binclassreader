@@ -113,7 +113,6 @@ public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
     public String toString() {
         StringBuilder buffer = new StringBuilder();
 
-
         Map<Short, Object> pool = (Map<Short, Object>) getPool();
 
         if (pool != null) {

@@ -14,21 +14,28 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.annotations;
+package org.binclassreader.services;
 
+import org.binclassreader.abstracts.AbstractPoolData;
+import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Created by Yannick on 4/13/2016.
+ * Created by Yannick on 4/17/2016.
  */
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface PoolDataOptions {
-    CollectionType storageType() default CollectionType.NONE;
+@PoolDataOptions(storageType = CollectionType.NONE)
+public class ClassMappingService extends AbstractPoolData {
+    private static ClassMappingService ourInstance = new ClassMappingService();
+
+    public static ClassMappingService getInstance() {
+        return ourInstance;
+    }
+
+    public Object getPool() {
+        return super.getAllPools();
+    }
+
+    private ClassMappingService() {
+    }
 }

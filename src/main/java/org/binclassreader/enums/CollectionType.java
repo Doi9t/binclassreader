@@ -24,17 +24,25 @@ import java.util.HashSet;
  * Created by Yannick on 4/13/2016.
  */
 public enum CollectionType {
-    LIST, MAP, SET;
+    LIST, MAP, SET, NONE;
 
     public static <T> T getCollectionByEnum(CollectionType type) {
-        T t = (T) new ArrayList<Object>();
+        T t = null;
 
-        if (CollectionType.MAP.equals(type)) {
-            t = (T) new HashMap<Object, Object>();
+        if (type == null) {
+            return null;
         }
 
-        if (CollectionType.SET.equals(type)) {
-            t = (T) new HashSet<Object>();
+        switch (type) {
+            case LIST:
+                t = (T) new ArrayList<Object>();
+                break;
+            case MAP:
+                t = (T) new HashMap<Object, Object>();
+                break;
+            case SET:
+                t = (T) new HashSet<Object>();
+                break;
         }
 
         return t;

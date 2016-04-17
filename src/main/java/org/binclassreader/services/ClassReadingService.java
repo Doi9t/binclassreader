@@ -53,7 +53,6 @@ public class ClassReadingService {
         };
     }
 
-
     public static void init(Class<?>... sections) {
         if (sections == null || sections.length == 0) {
             return;

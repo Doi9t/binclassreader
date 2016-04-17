@@ -19,6 +19,7 @@ package org.binclassreader.structs;
 import org.binclassreader.abstracts.AbstractPoolData;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolDataOptions;
+import org.binclassreader.enums.CollectionType;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
@@ -29,7 +30,7 @@ import java.io.InputStream;
  * Created by Yannick on 1/29/2016.
  */
 
-@PoolDataOptions
+@PoolDataOptions(storageType = CollectionType.LIST)
 public class ConstInterfacesInfo extends AbstractPoolData implements SelfReader {
 
     @BinClassParser(byteToRead = 2)
@@ -45,7 +46,6 @@ public class ConstInterfacesInfo extends AbstractPoolData implements SelfReader 
         for (int i = 0; i < count; i++) {
             addItemToList(reader.read(new ConstClassInfo()));
         }
-        System.out.println();
     }
 
     @Override

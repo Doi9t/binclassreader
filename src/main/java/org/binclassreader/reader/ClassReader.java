@@ -19,6 +19,7 @@ package org.binclassreader.reader;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.pojos.FieldPojo;
+import org.binclassreader.services.ClassMappingService;
 import org.binclassreader.utils.Assert;
 import org.binclassreader.utils.Utilities;
 
@@ -47,6 +48,10 @@ public class ClassReader {
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
         sections = this.read(Utilities.createNewArrayOfObject(classSections));
+
+        //TODO: Implement a way to links all pool object
+        ClassMappingService classMappingServiceInstance = ClassMappingService.getInstance();
+        // Object pool = classMappingServiceInstance.getPool();
     }
 
     public Map<Class<?>, Object> read(Object... type) {
