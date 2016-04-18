@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Created by Yannick on 1/26/2016.
  */
-
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
 @PoolDataOptions(storageType = CollectionType.MAP)
 public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
 

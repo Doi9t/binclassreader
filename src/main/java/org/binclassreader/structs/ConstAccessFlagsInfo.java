@@ -20,8 +20,6 @@ import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.enums.AccessFlagsEnum;
 import org.binclassreader.utils.Utilities;
 
-import java.util.Arrays;
-
 /**
  * Created by Yannick on 1/29/2016.
  */

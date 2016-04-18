@@ -17,11 +17,14 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.ConstPoolItemValidation;
 import org.binclassreader.utils.Utilities;
 
 /**
  * Created by Yannick on 1/31/2016.
  */
+
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.2
 public class ConstAttributeInfo {
     @BinClassParser(byteToRead = 2)
     private int[] attribute_name_index;
@@ -33,6 +36,7 @@ public class ConstAttributeInfo {
     private int[] constant_value_index;
 
 
+    @ConstPoolItemValidation(mustBeOfType = ConstClassInfo.class)
     public int getAttributeNameIndex() {
         return Utilities.combineBytesToInt(attribute_name_index);
     }
@@ -41,6 +45,7 @@ public class ConstAttributeInfo {
         return Utilities.combineBytesToInt(attribute_length);
     }
 
+    @ConstPoolItemValidation(mustBeOfType = {ConstLongInfo.class, ConstFloatInfo.class, ConstDoubleInfo.class, ConstIntegerInfo.class, ConstStringInfo.class})
     public int getConstantValueIndex() {
         return Utilities.combineBytesToInt(constant_value_index);
     }

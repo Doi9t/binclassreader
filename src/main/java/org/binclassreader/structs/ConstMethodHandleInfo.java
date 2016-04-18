@@ -24,6 +24,7 @@ import java.util.Arrays;
 /**
  * Created by Yannick on 1/25/2016.
  */
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.8
 public class ConstMethodHandleInfo {
 
     @BinClassParser(byteToRead = 1)

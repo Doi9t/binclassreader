@@ -22,6 +22,7 @@ import org.binclassreader.utils.Utilities;
 /**
  * Created by Yannick on 1/30/2016.
  */
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5
 public class ConstFieldInfo {
 
     @BinClassParser(byteToRead = 2)

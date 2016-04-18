@@ -27,7 +27,7 @@ import org.binclassreader.utils.Utilities;
  */
 public abstract class AbstractRefConst {
 
-    @BinClassParser(readOrder = 1, byteToRead = 2)
+    @BinClassParser(byteToRead = 2)
     protected int[] class_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)

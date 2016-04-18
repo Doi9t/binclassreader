@@ -23,6 +23,7 @@ import org.binclassreader.utils.Utilities;
 /**
  * Created by Yannick on 1/25/2016.
  */
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.6
 public class ConstNameAndTypeInfo {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)

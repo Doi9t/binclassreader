@@ -19,6 +19,7 @@ package org.binclassreader.enums;
 /**
  * Created by Yannick on 1/29/2016.
  */
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5-200-A.1
 public enum AccessFlagsEnum {
     UNKNOWN((byte) 0x0000),
     ACC_PUBLIC((byte) 0x0001),
