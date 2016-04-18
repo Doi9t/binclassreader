@@ -23,14 +23,14 @@ import org.binclassreader.utils.Utilities;
 /**
  * Created by Yannick on 1/29/2016.
  */
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.1-200-E.1
 public class ConstAccessFlagsInfo {
     @BinClassParser(byteToRead = 2)
     private int[] flags;
 
-    public int getFlagIndex() {
+    private int getFlagIndex() {
         return Utilities.combineBytesToInt(flags);
     }
-
 
     public AccessFlagsEnum getAccessFlag() {
         return AccessFlagsEnum.getFlagById((byte) getFlagIndex());

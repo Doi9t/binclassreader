@@ -17,6 +17,8 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.ConstPoolItemValidation;
+import org.binclassreader.enums.AccessFlagsEnum;
 import org.binclassreader.utils.Utilities;
 
 /**
@@ -37,14 +39,16 @@ public class ConstFieldInfo {
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] attributes_count;
 
-    public int getAccessFlags() {
-        return Utilities.combineBytesToInt(access_flags);
+    public AccessFlagsEnum getAccessFlags() {
+        return AccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
     }
 
+    @ConstPoolItemValidation(mustBeOfType = ConstUtf8Info.class)
     public int getNameIndex() {
         return Utilities.combineBytesToInt(name_index);
     }
 
+    @ConstPoolItemValidation(mustBeOfType = ConstUtf8Info.class)
     public int getDescriptorIndex() {
         return Utilities.combineBytesToInt(descriptor_index);
     }

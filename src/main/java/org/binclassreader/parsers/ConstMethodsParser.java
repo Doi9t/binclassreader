@@ -14,26 +14,19 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.abstracts;
+package org.binclassreader.parsers;
 
-import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.interfaces.SelfReader;
+import org.binclassreader.reader.ClassReader;
+
+import java.io.InputStream;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 4/18/2016.
  */
-public abstract class AbstractLongDoubleConst {
-    @BinClassParser(byteToRead = 4)
-    protected int[] high_bytes;
+public class ConstMethodsParser implements SelfReader {
 
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    protected int[] low_bytes;
+    public void initReading(ClassReader reader, InputStream currentStream) {
 
-
-    protected int[] getHigh_bytes_data() {
-        return high_bytes;
-    }
-
-    protected int[] getLow_bytes_data() {
-        return low_bytes;
     }
 }

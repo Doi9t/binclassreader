@@ -17,23 +17,17 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.utils.Utilities;
 
 /**
- * Created by Yannick on 1/25/2016.
+ * Created by Yannick on 4/18/2016.
  */
-public abstract class AbstractLongDoubleConst {
-    @BinClassParser(byteToRead = 4)
-    protected int[] high_bytes;
+public abstract class AbstactParser {
 
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    protected int[] low_bytes;
+    @BinClassParser(byteToRead = 2)
+    protected int[] countData;
 
-
-    protected int[] getHigh_bytes_data() {
-        return high_bytes;
-    }
-
-    protected int[] getLow_bytes_data() {
-        return low_bytes;
+    protected short getCount() {
+        return (short) (Utilities.combineBytesToInt(countData));
     }
 }
