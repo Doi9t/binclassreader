@@ -49,8 +49,13 @@ public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         try {
-            short idx = getCount();
-            for (short i = 0; i < idx; i++) {
+            int idx = getCount();
+
+            if (idx > 65535) {
+                return;
+            }
+
+            for (int i = 0; i < idx; i++) {
                 ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) currentStream.read());
                 Object obj = null;
 

@@ -16,17 +16,31 @@
 
 package org.binclassreader.parsers;
 
+import org.binclassreader.abstracts.AbstactParser;
+import org.binclassreader.annotations.PoolDataOptions;
+import org.binclassreader.enums.CollectionType;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
+import org.binclassreader.structs.ConstMethodInfo;
 
 import java.io.InputStream;
 
 /**
  * Created by Yannick on 4/18/2016.
  */
-public class ConstMethodsParser implements SelfReader {
+
+@PoolDataOptions(storageType = CollectionType.LIST)
+public class ConstMethodsParser extends AbstactParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
+        count = getCount();
 
+        if (count > 65535) {
+            return;
+        }
+
+        for (int i = 0; i < count; i++) {
+            addItemToList(reader.read(new ConstMethodInfo()));
+        }
     }
 }

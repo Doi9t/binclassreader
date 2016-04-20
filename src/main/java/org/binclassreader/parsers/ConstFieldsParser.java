@@ -17,41 +17,30 @@
 package org.binclassreader.parsers;
 
 import org.binclassreader.abstracts.AbstactParser;
-import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.PoolDataOptions;
+import org.binclassreader.enums.CollectionType;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstFieldInfo;
-import org.binclassreader.utils.Utilities;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Yannick on 1/29/2016.
  */
+
+@PoolDataOptions(storageType = CollectionType.LIST)
 public class ConstFieldsParser extends AbstactParser implements SelfReader {
-
-    private List<Object> poolObjects;
-
-    private int count;
-
-    public ConstFieldsParser() {
-        poolObjects = new ArrayList<Object>();
-    }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         count = getCount();
-        for (int i = 0; i < count; i++) {
-            poolObjects.add(reader.read(new ConstFieldInfo()));
-        }
-    }
 
-    @Override
-    public String toString() {
-        return "ConstFieldsParser{" +
-                "poolObjects=" + poolObjects +
-                ", count=" + count +
-                '}';
+        if (count > 65535) {
+            return;
+        }
+
+        for (int i = 0; i < count; i++) {
+            addItemToList(reader.read(new ConstFieldInfo()));
+        }
     }
 }

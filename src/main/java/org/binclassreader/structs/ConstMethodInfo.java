@@ -14,30 +14,11 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.abstracts;
-
-import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.Utilities;
+package org.binclassreader.structs;
 
 /**
  * Created by Yannick on 4/18/2016.
  */
-public abstract class AbstactParser extends AbstractPoolData {
-
-    @BinClassParser(byteToRead = 2)
-    protected int[] countData;
-
-    protected int count;
-
-    protected short getCount() {
-        return (short) (Utilities.combineBytesToInt(countData));
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName() + "{" +
-                "poolObjects=" + getPool() +
-                ", count=" + count +
-                '}';
-    }
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6
+public class ConstMethodInfo {
 }

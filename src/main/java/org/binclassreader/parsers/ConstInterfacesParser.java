@@ -16,14 +16,12 @@
 
 package org.binclassreader.parsers;
 
-import org.binclassreader.abstracts.AbstractPoolData;
-import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.abstracts.AbstactParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstClassInfo;
-import org.binclassreader.utils.Utilities;
 
 import java.io.InputStream;
 
@@ -32,28 +30,17 @@ import java.io.InputStream;
  */
 
 @PoolDataOptions(storageType = CollectionType.LIST)
-public class ConstInterfacesParser extends AbstractPoolData implements SelfReader {
-
-    @BinClassParser(byteToRead = 2)
-    private int[] countData;
-    private int count;
-
-    public short getCount() {
-        return (short) (Utilities.combineBytesToInt(countData));
-    }
+public class ConstInterfacesParser extends AbstactParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         count = getCount();
+
+        if (count > 65535) {
+            return;
+        }
+
         for (int i = 0; i < count; i++) {
             addItemToList(reader.read(new ConstClassInfo()));
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ConstInterfacesParser{" +
-                "poolObjects=" + getPool() +
-                ", count=" + count +
-                '}';
     }
 }
