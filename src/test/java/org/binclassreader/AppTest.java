@@ -944,7 +944,6 @@ public class AppTest {
         ClassReadingService.readNewClass(new ByteArrayInputStream(rawData2));
 
         List<ClassReader> readerList = ClassReadingService.getReaderList();
-
         for (ClassReader classReader : readerList) {
             System.out.println("\n\n--------------------------- NEW CLASS INFO ---------------------------");
             for (Object item : classReader.getSections().values()) {

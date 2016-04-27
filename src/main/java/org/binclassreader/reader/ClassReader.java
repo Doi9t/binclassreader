@@ -36,9 +36,14 @@ import java.util.TreeMap;
  */
 public class ClassReader {
 
+    private static final ClassMappingService classMappingServiceInstance;
     private Map<Short, FieldPojo> fieldSorter;
     private InputStream classData;
     private Map<Class<?>, Object> sections;
+
+    static {
+        classMappingServiceInstance = ClassMappingService.getInstance();
+    }
 
     public ClassReader(InputStream classData, Class<?>... classSections) {
         if (!Assert.isArrayReadable(classSections) || classData == null) {
@@ -48,10 +53,11 @@ public class ClassReader {
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
         sections = this.read(Utilities.createNewArrayOfObject(classSections));
+        //classMappingServiceInstance.generateTree();
+        //FIXME: Implement a way to links all pool object
 
-        //TODO: Implement a way to links all pool object
-        ClassMappingService classMappingServiceInstance = ClassMappingService.getInstance();
-        // Object pool = classMappingServiceInstance.getPool();
+
+        System.out.println(classMappingServiceInstance.getAllPools());
     }
 
     public Map<Class<?>, Object> read(Object... type) {

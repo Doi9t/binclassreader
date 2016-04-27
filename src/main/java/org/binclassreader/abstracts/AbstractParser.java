@@ -22,7 +22,7 @@ import org.binclassreader.utils.Utilities;
 /**
  * Created by Yannick on 4/18/2016.
  */
-public abstract class AbstactParser extends AbstractPoolData {
+public abstract class AbstractParser extends AbstractPoolData {
 
     @BinClassParser(byteToRead = 2)
     protected int[] countData;

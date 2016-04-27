@@ -81,7 +81,7 @@ public abstract class AbstractPoolData {
         return (Map<Class<?>, Object>) POOL.get();
     }
 
-    protected Object getPoolByClass(Class<?> clazz) {
-        return ((Map<Class<?>, Object>) POOL.get()).get(clazz);
+    protected <T> T getPoolByClass(Class<?> clazz) {
+        return (T) ((Map<Class<?>, Object>) POOL.get()).get(clazz);
     }
 }

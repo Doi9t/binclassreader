@@ -16,10 +16,7 @@
 
 package org.binclassreader.services;
 
-import org.binclassreader.parsers.ConstAttributesParser;
-import org.binclassreader.parsers.ConstFieldsParser;
-import org.binclassreader.parsers.ConstInterfacesParser;
-import org.binclassreader.parsers.ConstMethodsParser;
+import org.binclassreader.parsers.*;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.*;
 
@@ -48,14 +45,14 @@ public class ClassReadingService {
                 ConstMagicNumberInfo.class,
                 ConstMinorVersionInfo.class,
                 ConstMajorVersionInfo.class,
-                ConstPoolInfo.class,
+                PoolParser.class,
                 ConstAccessFlagsInfo.class,
                 ConstThisClassInfo.class,
                 ConstSuperClassInfo.class,
-                ConstInterfacesParser.class,
-                ConstFieldsParser.class,
-                ConstMethodsParser.class,
-                ConstAttributesParser.class
+                InterfacesParser.class,
+                FieldsParser.class,
+                MethodsParser.class,
+                AttributesParser.class
         };
     }
 

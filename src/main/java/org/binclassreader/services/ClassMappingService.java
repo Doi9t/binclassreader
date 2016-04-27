@@ -19,6 +19,9 @@ package org.binclassreader.services;
 import org.binclassreader.abstracts.AbstractPoolData;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
+import org.binclassreader.parsers.PoolParser;
+
+import java.util.Map;
 
 /**
  * Created by Yannick on 4/17/2016.
@@ -32,10 +35,57 @@ public class ClassMappingService extends AbstractPoolData {
         return ourInstance;
     }
 
-    public Object getPool() {
-        return super.getAllPools();
+    private ClassMappingService() {
     }
 
-    private ClassMappingService() {
+    public Object getItemFromConstantPool(int idx) {
+        return ((Map<Object, Object>) getPoolByClass(PoolParser.class)).get(idx);
+    }
+
+
+    /*
+     * Order:
+     * InterfacesParser
+     * FieldsParser
+     * MethodsParser
+     * AttributesParser
+     */
+    public void generateTree() {
+
+        Map<Class<?>, Object> allPools = getAllPools();
+
+        for (Object o : allPools.values()) {
+            System.out.println(o);
+        }
+/*
+        List<Object> interfacePool = getPoolByClass(InterfacesParser.class);
+        List<Object> fieldPool = getPoolByClass(FieldsParser.class);
+        List<Object> methodPool = getPoolByClass(MethodsParser.class);
+        List<Object> attributePool = getPoolByClass(AttributesParser.class);
+
+        if (interfacePool != null) {
+            for (Object interfaceObj : interfacePool) {
+                System.out.println(interfaceObj);
+            }
+        }
+
+        if (fieldPool != null) {
+            for (Object fieldObj : fieldPool) {
+                System.out.println(fieldObj);
+            }
+        }
+
+        if (methodPool != null) {
+            for (Object methodeObj : methodPool) {
+                System.out.println(methodeObj);
+            }
+        }
+
+        if (attributePool != null) {
+            for (Object attributeObj : attributePool) {
+                System.out.println(attributeObj);
+            }
+        }
+*/
     }
 }

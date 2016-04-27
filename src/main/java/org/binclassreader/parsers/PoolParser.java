@@ -14,15 +14,15 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.structs;
+package org.binclassreader.parsers;
 
-import org.binclassreader.abstracts.AbstractPoolData;
-import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
 import org.binclassreader.enums.ConstValuesEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
+import org.binclassreader.structs.*;
 import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
@@ -34,22 +34,11 @@ import java.util.Map;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
 @PoolDataOptions(storageType = CollectionType.MAP)
-public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
-
-    @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] bytes;
-
-    public int[] getBytes() {
-        return bytes;
-    }
-
-    public short getCount() {
-        return (short) (Utilities.combineBytesToInt(bytes) - 1);
-    }
+public class PoolParser extends AbstractParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         try {
-            int idx = getCount();
+            int idx = (getCount() - 1);
 
             if (idx > 65535) {
                 return;
@@ -130,7 +119,7 @@ public class ConstPoolInfo extends AbstractPoolData implements SelfReader {
             buffer.append("~~~~~~~~~~~~~ NO Constant pool values ~~~~~~~~~~~~~\n");
         }
 
-        return "ConstPoolInfo{" +
+        return "PoolParser{" +
                 "poolObjects=" + buffer.toString() +
                 ", count=" + getCount() +
                 '}';

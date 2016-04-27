@@ -16,12 +16,12 @@
 
 package org.binclassreader.parsers;
 
-import org.binclassreader.abstracts.AbstactParser;
+import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.ConstMethodInfo;
+import org.binclassreader.structs.ConstAttributesInfo;
 
 import java.io.InputStream;
 
@@ -30,7 +30,7 @@ import java.io.InputStream;
  */
 
 @PoolDataOptions(storageType = CollectionType.LIST)
-public class ConstMethodsParser extends AbstactParser implements SelfReader {
+public class AttributesParser extends AbstractParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
         count = getCount();
@@ -40,7 +40,7 @@ public class ConstMethodsParser extends AbstactParser implements SelfReader {
         }
 
         for (int i = 0; i < count; i++) {
-            addItemToList(reader.read(new ConstMethodInfo()));
+            addItemToList(reader.read(new ConstAttributesInfo()));
         }
     }
 }
