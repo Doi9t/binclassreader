@@ -27,11 +27,6 @@ public class ConstMajorVersionInfo {
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] bytes_data;
 
-
-    public int[] getBytes_data() {
-        return bytes_data;
-    }
-
     public int getMajorVersion() {
         return Utilities.combineBytesToInt(bytes_data);
     }

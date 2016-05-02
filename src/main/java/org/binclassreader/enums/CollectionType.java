@@ -34,14 +34,14 @@ public enum CollectionType {
         }
 
         switch (type) {
-            case LIST:
-                t = (T) new ArrayList<Object>();
-                break;
             case MAP:
                 t = (T) new HashMap<Object, Object>();
                 break;
             case SET:
                 t = (T) new HashSet<Object>();
+                break;
+            default:
+                t = (T) new ArrayList<Object>();
                 break;
         }
 

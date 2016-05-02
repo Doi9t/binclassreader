@@ -53,11 +53,7 @@ public class ClassReader {
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
         sections = this.read(Utilities.createNewArrayOfObject(classSections));
-        //classMappingServiceInstance.generateTree();
-        //FIXME: Implement a way to links all pool object
-
-
-        System.out.println(classMappingServiceInstance.getAllPools());
+        classMappingServiceInstance.generateTree();
     }
 
     public Map<Class<?>, Object> read(Object... type) {

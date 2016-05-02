@@ -27,7 +27,6 @@ import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * Created by Yannick on 1/26/2016.
@@ -39,6 +38,7 @@ public class PoolParser extends AbstractParser implements SelfReader {
     public void initReading(ClassReader reader, InputStream currentStream) {
         try {
             int idx = (getCount() - 1);
+            Object obj = null;
 
             if (idx > 65535) {
                 return;
@@ -46,7 +46,10 @@ public class PoolParser extends AbstractParser implements SelfReader {
 
             for (int i = 0; i < idx; i++) {
                 ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) currentStream.read());
-                Object obj = null;
+
+                if (ConstValuesEnum.UNKNOWN.equals(valuesEnum)) {
+                    continue;
+                }
 
                 switch (valuesEnum) {
                     case UTF_8:
@@ -93,6 +96,8 @@ public class PoolParser extends AbstractParser implements SelfReader {
                     case INVOKE_DYNAMIC:
                         obj = new ConstInvokeDynamicInfo();
                         break;
+                    default:
+                        continue;
                 }
 
                 addItemToMap(i, reader.read(obj));
@@ -101,27 +106,5 @@ public class PoolParser extends AbstractParser implements SelfReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        Map<Short, Object> pool = (Map<Short, Object>) getPool();
-
-        if (pool != null) {
-            buffer.append("\n~~~~~~~~~~~~ Constant pool [START] ~~~~~~~~~~~~\n");
-            for (Map.Entry<Short, Object> shortObjectEntry : pool.entrySet()) {
-                buffer.append("\t").append(shortObjectEntry.getKey()).append("\t->\t").append(shortObjectEntry.getValue()).append(" ,\n");
-            }
-            buffer.append("~~~~~~~~~~~~~ Constant pool [END] ~~~~~~~~~~~~~\n");
-        } else {
-            buffer.append("~~~~~~~~~~~~~ NO Constant pool values ~~~~~~~~~~~~~\n");
-        }
-
-        return "PoolParser{" +
-                "poolObjects=" + buffer.toString() +
-                ", count=" + getCount() +
-                '}';
     }
 }

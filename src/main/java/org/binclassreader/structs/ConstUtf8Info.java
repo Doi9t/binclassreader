@@ -23,6 +23,7 @@ import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -40,11 +41,20 @@ public class ConstUtf8Info implements SelfReader {
     }
 
     public byte[] getAsBytes() {
-        return bytes;
+        return Utilities.safeArrayClone(bytes);
     }
 
-    public String getAsString() {
-        return (bytes != null) ? new String(bytes) : null;
+    public String getAsNewString() {
+
+        String value = null;
+
+        try {
+            value = (bytes != null) ? new String(bytes, "UTF-8") : null;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return value;
     }
 
     public void initReading(ClassReader reader, InputStream currentStream) {
@@ -53,14 +63,16 @@ public class ConstUtf8Info implements SelfReader {
         if (lengthArray > 0) {
             bytes = new byte[lengthArray];
             try {
-                currentStream.read(bytes, 0, lengthArray);
+                if (lengthArray != currentStream.read(bytes, 0, lengthArray)) {
+                    return;
+                }
 
                 //No byte may have the value (byte)0 or lie in the range (byte)0xf0 - (byte)0xff
                 if (bytes != null) {
                     for (int i = 0; i < bytes.length; ++i) {
                         byte aByte = bytes[i];
 
-                        if (aByte == 0x00 || aByte >= 0xf0) {
+                        if (aByte == 0x00) {
                             bytes[i] = 0x20; //Put a space char for the invalid byte
                         }
                     }
@@ -74,7 +86,7 @@ public class ConstUtf8Info implements SelfReader {
     @Override
     public String toString() {
         return "ConstUtf8Info{" +
-                "Str=" + getAsString() +
+                "Str=" + getAsNewString() +
                 ", length=" + getLength() +
                 '}';
     }

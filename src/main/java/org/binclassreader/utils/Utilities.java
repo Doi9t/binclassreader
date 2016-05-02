@@ -83,6 +83,43 @@ public class Utilities {
         return value;
     }
 
+
+    /**
+     * @param arr - An array of Object to be cloned
+     * @return An array of object
+     */
+    public static <T> T[] safeArrayClone(T[] arr) {
+        if (arr == null) {
+            return null;
+        }
+
+        return arr.clone();
+    }
+
+    /**
+     * @param arr - An array of byte to be cloned
+     * @return An array of object
+     */
+    public static byte[] safeArrayClone(byte[] arr) {
+        if (arr == null) {
+            return null;
+        }
+
+        return arr.clone();
+    }
+
+    /**
+     * @param arr - An array of int to be cloned
+     * @return An array of object
+     */
+    public static int[] safeArrayClone(int[] arr) {
+        if (arr == null) {
+            return null;
+        }
+
+        return arr.clone();
+    }
+
     /**
      * @param clazzArr - An array of class to be transformed into a array of object
      * @return An array of object

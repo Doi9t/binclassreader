@@ -17,6 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.utils.Utilities;
 
 /**
@@ -26,6 +27,7 @@ public class ConstThisClassInfo {
     @BinClassParser(readOrder = 1, byteToRead = 2)
     private int[] index;
 
+    @PoolItemIndex
     public int getIndex() {
         return Utilities.combineBytesToInt(index);
     }

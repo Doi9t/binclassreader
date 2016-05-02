@@ -19,8 +19,13 @@ package org.binclassreader.services;
 import org.binclassreader.abstracts.AbstractPoolData;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionType;
-import org.binclassreader.parsers.PoolParser;
+import org.binclassreader.parsers.*;
+import org.binclassreader.structs.ConstAttributeInfo;
+import org.binclassreader.structs.ConstClassInfo;
+import org.binclassreader.structs.ConstFieldInfo;
+import org.binclassreader.structs.ConstMethodInfo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,11 +43,6 @@ public class ClassMappingService extends AbstractPoolData {
     private ClassMappingService() {
     }
 
-    public Object getItemFromConstantPool(int idx) {
-        return ((Map<Object, Object>) getPoolByClass(PoolParser.class)).get(idx);
-    }
-
-
     /*
      * Order:
      * InterfacesParser
@@ -51,13 +51,12 @@ public class ClassMappingService extends AbstractPoolData {
      * AttributesParser
      */
     public void generateTree() {
+        Map<Integer, Object> constPool = getPoolByClass(PoolParser.class);
 
-        Map<Class<?>, Object> allPools = getAllPools();
-
-        for (Object o : allPools.values()) {
-            System.out.println(o);
+        if (constPool == null || constPool.isEmpty()) {
+            return;
         }
-/*
+
         List<Object> interfacePool = getPoolByClass(InterfacesParser.class);
         List<Object> fieldPool = getPoolByClass(FieldsParser.class);
         List<Object> methodPool = getPoolByClass(MethodsParser.class);
@@ -65,27 +64,35 @@ public class ClassMappingService extends AbstractPoolData {
 
         if (interfacePool != null) {
             for (Object interfaceObj : interfacePool) {
-                System.out.println(interfaceObj);
+                if (interfaceObj != null && interfaceObj instanceof ConstClassInfo) {
+                    System.out.println(interfaceObj);
+                }
             }
         }
 
         if (fieldPool != null) {
             for (Object fieldObj : fieldPool) {
-                System.out.println(fieldObj);
+                if (fieldObj != null && fieldObj instanceof ConstFieldInfo) {
+                    System.out.println(fieldObj);
+                }
             }
         }
 
         if (methodPool != null) {
             for (Object methodeObj : methodPool) {
-                System.out.println(methodeObj);
+                if (methodeObj != null && methodeObj instanceof ConstMethodInfo) {
+                    System.out.println(methodeObj);
+                }
             }
         }
 
         if (attributePool != null) {
             for (Object attributeObj : attributePool) {
-                System.out.println(attributeObj);
+                if (attributeObj != null && attributeObj instanceof ConstAttributeInfo) {
+                    System.out.println(attributeObj);
+                }
             }
         }
-*/
+
     }
 }

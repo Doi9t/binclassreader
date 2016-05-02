@@ -28,7 +28,7 @@ public class ConstMinorVersionInfo {
     private int[] bytes_data;
 
     public int[] getBytes_data() {
-        return bytes_data;
+        return Utilities.safeArrayClone(bytes_data);
     }
 
     public int getMinorVersion() {

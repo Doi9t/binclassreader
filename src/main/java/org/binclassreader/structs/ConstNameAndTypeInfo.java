@@ -17,7 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.annotations.ConstPoolItemValidation;
+import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.utils.Utilities;
 
 /**
@@ -33,12 +33,12 @@ public class ConstNameAndTypeInfo {
     private int[] descriptor_index;
 
 
-    @ConstPoolItemValidation(mustBeOfType = ConstUtf8Info.class)
+    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
     public int getNameIndex() {
         return Utilities.combineBytesToInt(name_index);
     }
 
-    @ConstPoolItemValidation(mustBeOfType = ConstUtf8Info.class)
+    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
     public int getDescriptorIndex() {
         return Utilities.combineBytesToInt(descriptor_index);
     }

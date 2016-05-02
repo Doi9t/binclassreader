@@ -17,6 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.utils.Utilities;
 
 import java.util.Arrays;
@@ -33,10 +34,12 @@ public class ConstMethodHandleInfo {
     @BinClassParser(readOrder = 2, byteToRead = 2)
     private int[] reference_index;
 
+    @PoolItemIndex
     public int getReferenceKind() {
         return Utilities.combineBytesToInt(reference_kind);
     }
 
+    @PoolItemIndex
     public int getReferenceIndex() {
         return Utilities.combineBytesToInt(reference_index);
     }
