@@ -17,7 +17,7 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.PoolDataOptions;
-import org.binclassreader.enums.CollectionType;
+import org.binclassreader.enums.CollectionTypeEnum;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ import java.util.*;
 
 public abstract class AbstractPoolData {
 
-    private static final ThreadLocal POOL;
+    private static final ThreadLocal<Map<Class<?>, Object>> POOL;
 
     static {
         POOL = new ThreadLocal<Map<Class<?>, Object>>() {
@@ -43,8 +43,8 @@ public abstract class AbstractPoolData {
 
         PoolDataOptions annotation = clazz.getAnnotation(PoolDataOptions.class);
 
-        if (annotation == null || !CollectionType.NONE.equals(annotation.storageType())) {
-            ((Map<Class<?>, Object>) POOL.get()).put(clazz, CollectionType.getCollectionByEnum(clazz.getAnnotation(PoolDataOptions.class).storageType()));
+        if (annotation == null || !CollectionTypeEnum.NONE.equals(annotation.storageType())) {
+            (POOL.get()).put(clazz, CollectionTypeEnum.getCollectionByEnum(clazz.getAnnotation(PoolDataOptions.class).storageType()));
         }
 
     }
@@ -54,7 +54,7 @@ public abstract class AbstractPoolData {
             return;
         }
 
-        ((List<Object>) ((Map<Class<?>, Object>) POOL.get()).get(getClass())).add(obj);
+        ((List<Object>) (POOL.get()).get(getClass())).add(obj);
     }
 
     protected void addItemToSet(Object obj) throws ClassCastException {
@@ -62,7 +62,7 @@ public abstract class AbstractPoolData {
             return;
         }
 
-        ((Set<Object>) ((Map<Class<?>, Object>) POOL.get()).get(getClass())).add(obj);
+        ((Set<Object>) (POOL.get()).get(getClass())).add(obj);
     }
 
     protected void addItemToMap(Object key, Object value) throws ClassCastException {
@@ -70,18 +70,18 @@ public abstract class AbstractPoolData {
             return;
         }
 
-        ((Map<Object, Object>) ((Map<Class<?>, Object>) POOL.get()).get(getClass())).put(key, value);
+        ((Map<Object, Object>) (POOL.get()).get(getClass())).put(key, value);
     }
 
     protected Object getPool() {
-        return ((Map<Class<?>, Object>) POOL.get()).get(getClass());
+        return (POOL.get()).get(getClass());
     }
 
     public Map<Class<?>, Object> getAllPools() {
-        return (Map<Class<?>, Object>) POOL.get();
+        return POOL.get();
     }
 
     protected <T> T getPoolByClass(Class<?> clazz) {
-        return (T) ((Map<Class<?>, Object>) POOL.get()).get(clazz);
+        return (T) (POOL.get()).get(clazz);
     }
 }

@@ -32,6 +32,11 @@ public class TreeElement {
         child = new ArrayList<TreeElement>();
     }
 
+    public TreeElement(Object current) {
+        this.current = current;
+        child = new ArrayList<TreeElement>();
+    }
+
     /**
      * @param elements - Add one or more children to the TreeElement
      */
@@ -48,6 +53,12 @@ public class TreeElement {
         parent = elements;
     }
 
+    /**
+     * @param current - Set the current element
+     */
+    public void setCurrent(Object current) {
+        this.current = current;
+    }
 
     /**
      * @return - The parent of the TreeElement

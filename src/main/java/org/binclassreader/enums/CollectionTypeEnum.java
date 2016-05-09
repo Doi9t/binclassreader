@@ -23,10 +23,10 @@ import java.util.HashSet;
 /**
  * Created by Yannick on 4/13/2016.
  */
-public enum CollectionType {
+public enum CollectionTypeEnum {
     LIST, MAP, SET, NONE;
 
-    public static <T> T getCollectionByEnum(CollectionType type) {
+    public static <T> T getCollectionByEnum(CollectionTypeEnum type) {
         T t = null;
 
         if (type == null) {
@@ -49,6 +49,6 @@ public enum CollectionType {
     }
 
     public boolean isCollection() {
-        return CollectionType.LIST.equals(this) || CollectionType.SET.equals(this);
+        return CollectionTypeEnum.LIST.equals(this) || CollectionTypeEnum.SET.equals(this);
     }
 }

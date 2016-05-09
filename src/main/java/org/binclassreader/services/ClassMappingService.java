@@ -18,13 +18,20 @@ package org.binclassreader.services;
 
 import org.binclassreader.abstracts.AbstractPoolData;
 import org.binclassreader.annotations.PoolDataOptions;
-import org.binclassreader.enums.CollectionType;
+import org.binclassreader.annotations.PoolItemIndex;
+import org.binclassreader.enums.CollectionTypeEnum;
+import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.parsers.*;
 import org.binclassreader.structs.ConstAttributeInfo;
 import org.binclassreader.structs.ConstClassInfo;
 import org.binclassreader.structs.ConstFieldInfo;
 import org.binclassreader.structs.ConstMethodInfo;
+import org.binclassreader.tree.Tree;
+import org.binclassreader.tree.TreeElement;
+import org.multiarraymap.MultiArrayMap;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -32,15 +39,16 @@ import java.util.Map;
  * Created by Yannick on 4/17/2016.
  */
 
-@PoolDataOptions(storageType = CollectionType.NONE)
+@PoolDataOptions(storageType = CollectionTypeEnum.NONE)
 public class ClassMappingService extends AbstractPoolData {
     private static ClassMappingService ourInstance = new ClassMappingService();
+    private Map<Integer, Object> constPool;
+
+    private ClassMappingService() {
+    }
 
     public static ClassMappingService getInstance() {
         return ourInstance;
-    }
-
-    private ClassMappingService() {
     }
 
     /*
@@ -50,49 +58,60 @@ public class ClassMappingService extends AbstractPoolData {
      * MethodsParser
      * AttributesParser
      */
-    public void generateTree() {
-        Map<Integer, Object> constPool = getPoolByClass(PoolParser.class);
+    public MultiArrayMap generateTree() {
+
+        constPool = getPoolByClass(PoolParser.class);
 
         if (constPool == null || constPool.isEmpty()) {
-            return;
+            return null;
         }
 
-        List<Object> interfacePool = getPoolByClass(InterfacesParser.class);
-        List<Object> fieldPool = getPoolByClass(FieldsParser.class);
-        List<Object> methodPool = getPoolByClass(MethodsParser.class);
-        List<Object> attributePool = getPoolByClass(AttributesParser.class);
+        MultiArrayMap<PoolTypeEnum, Object> values = new MultiArrayMap<PoolTypeEnum, Object>();
 
+        iterateOnPool((List<Object>) getPoolByClass(InterfacesParser.class), ConstClassInfo.class, PoolTypeEnum.INTERFACE, values);
+        iterateOnPool((List<Object>) getPoolByClass(FieldsParser.class), ConstFieldInfo.class, PoolTypeEnum.FIELD, values);
+        iterateOnPool((List<Object>) getPoolByClass(MethodsParser.class), ConstMethodInfo.class, PoolTypeEnum.METHOD, values);
+        iterateOnPool((List<Object>) getPoolByClass(AttributesParser.class), ConstAttributeInfo.class, PoolTypeEnum.ATTRIBUTE, values);
+
+        return values;
+    }
+
+    private void iterateOnPool(List<Object> interfacePool, Class<?> mustBeOfType, PoolTypeEnum anInterface, MultiArrayMap data) {
         if (interfacePool != null) {
             for (Object interfaceObj : interfacePool) {
-                if (interfaceObj != null && interfaceObj instanceof ConstClassInfo) {
-                    System.out.println(interfaceObj);
+                if (interfaceObj != null && interfaceObj.getClass().equals(mustBeOfType)) {
+                    data.put(anInterface, buildTree(new Tree(new TreeElement(interfaceObj)), interfaceObj));
+                }
+            }
+        }
+    }
+
+    private Tree buildTree(Tree tree, Object current) {
+
+        if (tree == null || current == null) {
+            return null;
+        }
+
+
+        Method[] declaredMethods = current.getClass().getDeclaredMethods();
+
+        if (declaredMethods != null) {
+            for (Method declaredMethod : declaredMethods) {
+                PoolItemIndex annotation = declaredMethod.getAnnotation(PoolItemIndex.class);
+
+                if (annotation != null) { //Next item
+                    try {
+                        Object o = constPool.get(declaredMethod.invoke(current));
+                        System.out.println();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
 
-        if (fieldPool != null) {
-            for (Object fieldObj : fieldPool) {
-                if (fieldObj != null && fieldObj instanceof ConstFieldInfo) {
-                    System.out.println(fieldObj);
-                }
-            }
-        }
-
-        if (methodPool != null) {
-            for (Object methodeObj : methodPool) {
-                if (methodeObj != null && methodeObj instanceof ConstMethodInfo) {
-                    System.out.println(methodeObj);
-                }
-            }
-        }
-
-        if (attributePool != null) {
-            for (Object attributeObj : attributePool) {
-                if (attributeObj != null && attributeObj instanceof ConstAttributeInfo) {
-                    System.out.println(attributeObj);
-                }
-            }
-        }
-
+        return tree;
     }
 }

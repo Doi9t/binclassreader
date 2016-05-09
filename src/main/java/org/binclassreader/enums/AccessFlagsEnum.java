@@ -38,11 +38,6 @@ public enum AccessFlagsEnum {
         this.value = value;
     }
 
-    public byte getValue() {
-        return value;
-    }
-
-
     public static AccessFlagsEnum getFlagById(byte id) {
         AccessFlagsEnum value = AccessFlagsEnum.UNKNOWN;
 
@@ -57,6 +52,10 @@ public enum AccessFlagsEnum {
             }
         }
 
+        return value;
+    }
+
+    public byte getValue() {
         return value;
     }
 }

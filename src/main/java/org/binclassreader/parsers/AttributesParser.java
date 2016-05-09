@@ -18,7 +18,7 @@ package org.binclassreader.parsers;
 
 import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
-import org.binclassreader.enums.CollectionType;
+import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstAttributesInfo;
@@ -29,7 +29,7 @@ import java.io.InputStream;
  * Created by Yannick on 4/18/2016.
  */
 
-@PoolDataOptions(storageType = CollectionType.LIST)
+@PoolDataOptions(storageType = CollectionTypeEnum.LIST)
 public class AttributesParser extends AbstractParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {

@@ -18,7 +18,7 @@ package org.binclassreader.parsers;
 
 import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
-import org.binclassreader.enums.CollectionType;
+import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.enums.ConstValuesEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
@@ -32,7 +32,7 @@ import java.io.InputStream;
  * Created by Yannick on 1/26/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
-@PoolDataOptions(storageType = CollectionType.MAP)
+@PoolDataOptions(storageType = CollectionTypeEnum.MAP)
 public class PoolParser extends AbstractParser implements SelfReader {
 
     public void initReading(ClassReader reader, InputStream currentStream) {
@@ -46,10 +46,6 @@ public class PoolParser extends AbstractParser implements SelfReader {
 
             for (int i = 0; i < idx; i++) {
                 ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) currentStream.read());
-
-                if (ConstValuesEnum.UNKNOWN.equals(valuesEnum)) {
-                    continue;
-                }
 
                 switch (valuesEnum) {
                     case UTF_8:

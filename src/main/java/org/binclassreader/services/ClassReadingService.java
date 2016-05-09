@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClassReadingService {
     private final static List<ClassReader> readerList;
-    private static ExecutorService executorService;
     private static final Class<?>[] DEFAULT_SECTIONS;
+    private static ExecutorService executorService;
     private static Class<?>[] userSections;
 
     static {
