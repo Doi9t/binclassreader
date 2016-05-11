@@ -32,6 +32,7 @@ import org.multiarraymap.MultiArrayMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -80,29 +81,41 @@ public class ClassMappingService extends AbstractPoolData {
         if (interfacePool != null) {
             for (Object interfaceObj : interfacePool) {
                 if (interfaceObj != null && interfaceObj.getClass().equals(mustBeOfType)) {
-                    data.put(anInterface, buildTree(new Tree(new TreeElement(interfaceObj)), interfaceObj));
+                    TreeElement rootTreeElement = new TreeElement(interfaceObj);
+                    data.put(anInterface, buildTree(new Tree(rootTreeElement), rootTreeElement));
                 }
             }
         }
     }
 
-    private Tree buildTree(Tree tree, Object current) {
+    private Tree buildTree(Tree tree, TreeElement currentTreeElement) {
 
-        if (tree == null || current == null) {
+        if (tree == null || currentTreeElement == null) {
             return null;
         }
 
-
-        Method[] declaredMethods = current.getClass().getDeclaredMethods();
+        Object currentObj = currentTreeElement.getCurrent();
+        Method[] declaredMethods = currentObj.getClass().getDeclaredMethods();
 
         if (declaredMethods != null) {
             for (Method declaredMethod : declaredMethods) {
                 PoolItemIndex annotation = declaredMethod.getAnnotation(PoolItemIndex.class);
 
-                if (annotation != null) { //Next item
+                if (annotation != null) {
                     try {
-                        Object o = constPool.get(declaredMethod.invoke(current));
-                        System.out.println();
+
+                        List<Class<?>> mustBeOfTypeArr = Arrays.asList(annotation.mustBeOfType());
+                        Object child = constPool.get(((Integer) declaredMethod.invoke(currentObj) - 1));
+
+                        if (!mustBeOfTypeArr.contains(child.getClass())) {
+                            break;
+                        }
+
+                        TreeElement childTreeElement = new TreeElement(child);
+                        currentTreeElement.addChildren(childTreeElement);
+                        childTreeElement.addParent(currentTreeElement);
+
+                        buildTree(tree, childTreeElement);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     } catch (InvocationTargetException e) {
