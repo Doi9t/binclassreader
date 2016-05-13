@@ -22,7 +22,6 @@ import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -57,13 +56,13 @@ public class ConstUtf8Info implements SelfReader {
         return value;
     }
 
-    public void initReading(ClassReader reader, InputStream currentStream) {
+    public void initReading(ClassReader reader) {
         int lengthArray = Utilities.combineBytesToInt(length);
 
         if (lengthArray > 0) {
             bytes = new byte[lengthArray];
             try {
-                if (lengthArray != currentStream.read(bytes, 0, lengthArray)) {
+                if (lengthArray != reader.getInputStream().read(bytes, 0, lengthArray)) {
                     return;
                 }
 

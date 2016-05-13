@@ -23,8 +23,6 @@ import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstMethodInfo;
 
-import java.io.InputStream;
-
 /**
  * Created by Yannick on 4/18/2016.
  */
@@ -32,7 +30,7 @@ import java.io.InputStream;
 @PoolDataOptions(storageType = CollectionTypeEnum.LIST)
 public class MethodsParser extends AbstractParser implements SelfReader {
 
-    public void initReading(ClassReader reader, InputStream currentStream) {
+    public void initReading(ClassReader reader) {
         count = getCount();
 
         if (count > 65535) {

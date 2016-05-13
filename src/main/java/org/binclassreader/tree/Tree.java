@@ -16,39 +16,18 @@
 
 package org.binclassreader.tree;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Yannick on 2/24/2016.
  */
 public class Tree {
     private TreeElement root;
 
-    private List<TreeElement> leafs;
-
     public Tree(TreeElement root) {
         this.root = root;
-        leafs = new ArrayList<TreeElement>();
     }
 
     public TreeElement getRoot() {
         return root;
     }
 
-    /**
-     * @param root - Add a root to the current tree
-     */
-    public void addLeaf(TreeElement root) {
-        if (root != null) {
-            leafs.add(root);
-        }
-    }
-
-    /**
-     * @return A list containing the leafs (with no children) or an empty list if there's no leafs
-     */
-    public List<TreeElement> getLeafs() {
-        return leafs;
-    }
 }

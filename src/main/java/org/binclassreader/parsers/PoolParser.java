@@ -35,7 +35,7 @@ import java.io.InputStream;
 @PoolDataOptions(storageType = CollectionTypeEnum.MAP)
 public class PoolParser extends AbstractParser implements SelfReader {
 
-    public void initReading(ClassReader reader, InputStream currentStream) {
+    public void initReading(ClassReader reader) {
         try {
             int idx = (getCount() - 1);
             Object obj = null;
@@ -44,8 +44,10 @@ public class PoolParser extends AbstractParser implements SelfReader {
                 return;
             }
 
+            InputStream inputStream = reader.getInputStream();
+
             for (int i = 0; i < idx; i++) {
-                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) currentStream.read());
+                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) inputStream.read());
 
                 switch (valuesEnum) {
                     case UTF_8:

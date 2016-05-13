@@ -70,7 +70,7 @@ public class ClassReader {
         return values;
     }
 
-    public Object read(Object obj) {
+    public <T> T read(T obj) {
         fieldSorter.clear();
 
         if (obj == null) {
@@ -97,31 +97,38 @@ public class ClassReader {
                 Field fieldToWrite = value.getFieldToWrite();
                 fieldToWrite.setAccessible(true);
 
-                byte nbByteToRead = value.getNbByteToRead();
-                int[] buffer = new int[nbByteToRead];
-
                 try {
-                    for (int i = 0; i < nbByteToRead; i++) {
-                        buffer[i] = classData.read();
-                    }
-                    fieldToWrite.set(obj, buffer);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    fieldToWrite.set(obj, readFromCurrentStream(value.getNbByteToRead()));
                 } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
             if (obj instanceof SelfReader) {
-                ((SelfReader) obj).initReading(this, classData);
+                ((SelfReader) obj).initReading(this);
             }
         }
 
         return obj;
     }
 
+    public int[] readFromCurrentStream(byte nbByteToRead) throws IOException {
+        int[] buffer = new int[nbByteToRead];
+
+        for (int i = 0; i < nbByteToRead; i++) {
+            buffer[i] = classData.read();
+        }
+
+        return buffer;
+    }
+
     public Map<Class<?>, Object> getSections() {
         return sections;
+    }
+
+    public InputStream getInputStream() {
+        return classData;
     }
 }

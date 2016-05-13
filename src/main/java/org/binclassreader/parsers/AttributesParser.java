@@ -21,9 +21,7 @@ import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.ConstAttributesInfo;
-
-import java.io.InputStream;
+import org.binclassreader.structs.AttributesInfo;
 
 /**
  * Created by Yannick on 4/18/2016.
@@ -32,7 +30,7 @@ import java.io.InputStream;
 @PoolDataOptions(storageType = CollectionTypeEnum.LIST)
 public class AttributesParser extends AbstractParser implements SelfReader {
 
-    public void initReading(ClassReader reader, InputStream currentStream) {
+    public void initReading(ClassReader reader) {
         count = getCount();
 
         if (count > 65535) {
@@ -40,7 +38,7 @@ public class AttributesParser extends AbstractParser implements SelfReader {
         }
 
         for (int i = 0; i < count; i++) {
-            addItemToList(reader.read(new ConstAttributesInfo()));
+            addItemToList(reader.read(new AttributesInfo()));
         }
     }
 }
