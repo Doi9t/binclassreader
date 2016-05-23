@@ -63,13 +63,15 @@ public class AttributesInfo implements SelfReader {
 
     public void initReading(ClassReader reader) {
         int attributeLength = getAttributeLength();
-
+        //System.out.println("attributeLength ->  " + attributeLength);
+/*
         if (attributeLength > 0) {
-/*            try {
-                info = reader.readFromCurrentStream((byte) (attributeLength + 6));
+            try {
+                info = reader.readFromCurrentStream(attributeLength);
             } catch (IOException e) {
                 e.printStackTrace();
-            }*/
+            }
         }
+*/
     }
 }

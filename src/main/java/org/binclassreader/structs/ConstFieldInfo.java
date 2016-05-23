@@ -75,11 +75,11 @@ public class ConstFieldInfo implements SelfReader {
     }
 
     public void initReading(ClassReader reader) {
-
         attList = new ArrayList<AttributesInfo>();
 
-        for (int i = 0; i < getAttributesCount(); i++) {
-            attList.add(reader.read(new AttributesInfo()));
+        int attributesCount = getAttributesCount();
+        for (int i = 0; i < attributesCount; i++) {
+            //attList.add(reader.read(new AttributesInfo()));
         }
     }
 }

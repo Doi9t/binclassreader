@@ -28,4 +28,12 @@ public class Assert {
     public static boolean isArrayReadable(Object[] arr) {
         return arr != null && arr.length > 0;
     }
+
+    /**
+     * @param arr - The array to be checked
+     * @return - Return true if the array is not null and there's at least one item
+     */
+    public static boolean isArrayReadable(int[] arr) {
+        return arr != null && arr.length > 0;
+    }
 }

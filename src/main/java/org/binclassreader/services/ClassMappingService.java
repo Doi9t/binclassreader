@@ -52,13 +52,6 @@ public class ClassMappingService extends AbstractPoolData {
         return ourInstance;
     }
 
-    /*
-     * Order:
-     * InterfacesParser
-     * FieldsParser
-     * MethodsParser
-     * AttributesParser
-     */
     public MultiArrayMap generateTree() {
 
         constPool = getPoolByClass(PoolParser.class);
@@ -105,7 +98,13 @@ public class ClassMappingService extends AbstractPoolData {
                     try {
 
                         List<Class<?>> mustBeOfTypeArr = Arrays.asList(annotation.mustBeOfType());
-                        Object child = constPool.get(((Integer) declaredMethod.invoke(currentObj) - 1));
+                        Integer invoke = (Integer) declaredMethod.invoke(currentObj);
+
+                        if (invoke == null || invoke < 1 || invoke > (constPool.size() - 1)) {
+                            continue;
+                        }
+
+                        Object child = constPool.get((invoke - 1));
 
                         if (!mustBeOfTypeArr.contains(child.getClass())) {
                             break;

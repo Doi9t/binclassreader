@@ -27,6 +27,7 @@ import org.binclassreader.structs.ConstMethodInfo;
  * Created by Yannick on 4/18/2016.
  */
 
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6
 @PoolDataOptions(storageType = CollectionTypeEnum.LIST)
 public class MethodsParser extends AbstractParser implements SelfReader {
 

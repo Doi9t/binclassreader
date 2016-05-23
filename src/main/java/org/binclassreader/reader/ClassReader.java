@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -98,7 +99,10 @@ public class ClassReader {
                 fieldToWrite.setAccessible(true);
 
                 try {
-                    fieldToWrite.set(obj, readFromCurrentStream(value.getNbByteToRead()));
+                    byte nbByteToRead = value.getNbByteToRead();
+                    int[] bytes = readFromCurrentStream(nbByteToRead);
+                    fieldToWrite.set(obj, bytes);
+                    System.out.println("Read " + nbByteToRead + " byte(s) for " + obj.getClass().getSimpleName() + " (" + fieldToWrite.getName() + ")" + Arrays.toString(bytes));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -114,7 +118,7 @@ public class ClassReader {
         return obj;
     }
 
-    public int[] readFromCurrentStream(byte nbByteToRead) throws IOException {
+    public int[] readFromCurrentStream(int nbByteToRead) throws IOException {
         int[] buffer = new int[nbByteToRead];
 
         for (int i = 0; i < nbByteToRead; i++) {
@@ -124,11 +128,15 @@ public class ClassReader {
         return buffer;
     }
 
+    public int readFromCurrentStream() throws IOException {
+
+        int read = classData.read();
+        System.out.println("Read 1 byte(s) " + "[" + read + "]");
+        return read;
+    }
+
     public Map<Class<?>, Object> getSections() {
         return sections;
     }
 
-    public InputStream getInputStream() {
-        return classData;
-    }
 }

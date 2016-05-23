@@ -21,24 +21,24 @@ package org.binclassreader.enums;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5-200-A.1
 public enum AccessFlagsEnum {
-    UNKNOWN((byte) 0x0000),
-    ACC_PUBLIC((byte) 0x0001),
-    ACC_PRIVATE((byte) 0x0002),
-    ACC_PROTECTED((byte) 0x0004),
-    ACC_STATIC((byte) 0x0008),
-    ACC_FINAL((byte) 0x0010),
-    ACC_VOLATILE((byte) 0x0040),
-    ACC_TRANSIENT((byte) 0x0080),
-    ACC_SYNTHETIC((byte) 0x1000),
-    ACC_ENUM((byte) 0x4000);
+    UNKNOWN((short) 0x0000),
+    ACC_PUBLIC((short) 0x0001),
+    ACC_PRIVATE((short) 0x0002),
+    ACC_PROTECTED((short) 0x0004),
+    ACC_STATIC((short) 0x0008),
+    ACC_FINAL((short) 0x0010),
+    ACC_VOLATILE((short) 0x0040),
+    ACC_TRANSIENT((short) 0x0080),
+    ACC_SYNTHETIC((short) 0x1000),
+    ACC_ENUM((short) 0x4000);
 
-    private byte value;
+    private short value;
 
-    AccessFlagsEnum(byte value) {
+    AccessFlagsEnum(short value) {
         this.value = value;
     }
 
-    public static AccessFlagsEnum getFlagById(byte id) {
+    public static AccessFlagsEnum getFlagById(short id) {
         AccessFlagsEnum value = AccessFlagsEnum.UNKNOWN;
 
         if (id < 0) {
@@ -55,7 +55,7 @@ public enum AccessFlagsEnum {
         return value;
     }
 
-    public byte getValue() {
+    public short getValue() {
         return value;
     }
 }

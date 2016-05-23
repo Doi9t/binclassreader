@@ -149,4 +149,21 @@ public class Utilities {
 
         return values;
     }
+
+    /**
+     * @param buffer - An array to be converted
+     * @return An array of byte
+     */
+    public static byte[] convertIntArrayToByteArray(int[] buffer) {
+        if (!Assert.isArrayReadable(buffer)) {
+            return new byte[0];
+        }
+
+        byte[] values = new byte[buffer.length];
+        for (int i = 0; i < buffer.length; i++) {
+            values[i] = (byte) buffer[i];
+        }
+
+        return values;
+    }
 }

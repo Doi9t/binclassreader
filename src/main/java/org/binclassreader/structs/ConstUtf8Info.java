@@ -60,22 +60,28 @@ public class ConstUtf8Info implements SelfReader {
         int lengthArray = Utilities.combineBytesToInt(length);
 
         if (lengthArray > 0) {
-            bytes = new byte[lengthArray];
+
             try {
-                if (lengthArray != reader.getInputStream().read(bytes, 0, lengthArray)) {
+                int[] read = reader.readFromCurrentStream(lengthArray);
+
+                if (read == null || lengthArray != read.length) {
                     return;
                 }
 
-                //No byte may have the value (byte)0 or lie in the range (byte)0xf0 - (byte)0xff
-                if (bytes != null) {
-                    for (int i = 0; i < bytes.length; ++i) {
-                        byte aByte = bytes[i];
+                bytes = new byte[lengthArray];
 
-                        if (aByte == 0x00) {
-                            bytes[i] = 0x20; //Put a space char for the invalid byte
-                        }
+                //No byte may have the value (byte)0 or lie in the range (byte)0xf0 - (byte)0xff
+                for (int i = 0; i < read.length; ++i) {
+                    int aByte = read[i];
+                    if (aByte == (byte) 0x00) {
+                        bytes[i] = 0x20; //Put a space char for the invalid byte
+                    } else {
+                        bytes[i] = (byte) aByte;
                     }
                 }
+
+                System.out.println("Read " + lengthArray + " for ConstUtf8Info" + " (" + new String(bytes) + ")");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

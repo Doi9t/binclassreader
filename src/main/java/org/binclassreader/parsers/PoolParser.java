@@ -26,7 +26,6 @@ import org.binclassreader.structs.*;
 import org.binclassreader.utils.Utilities;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by Yannick on 1/26/2016.
@@ -44,10 +43,8 @@ public class PoolParser extends AbstractParser implements SelfReader {
                 return;
             }
 
-            InputStream inputStream = reader.getInputStream();
-
             for (int i = 0; i < idx; i++) {
-                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) inputStream.read());
+                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) reader.readFromCurrentStream());
 
                 switch (valuesEnum) {
                     case UTF_8:
