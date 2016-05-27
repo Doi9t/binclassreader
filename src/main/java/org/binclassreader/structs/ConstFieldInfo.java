@@ -19,18 +19,15 @@ package org.binclassreader.structs;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.enums.AccessFlagsEnum;
-import org.binclassreader.interfaces.SelfReader;
-import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Yannick on 1/30/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5
-public class ConstFieldInfo implements SelfReader {
+public class ConstFieldInfo {
 
     @BinClassParser(byteToRead = 2)
     private int[] access_flags;
@@ -72,14 +69,5 @@ public class ConstFieldInfo implements SelfReader {
                 ", descriptorIndex=" + getDescriptorIndex() +
                 ", attributesCount=" + getAttributesCount() +
                 '}';
-    }
-
-    public void initReading(ClassReader reader) {
-        attList = new ArrayList<AttributesInfo>();
-
-        int attributesCount = getAttributesCount();
-        for (int i = 0; i < attributesCount; i++) {
-            //attList.add(reader.read(new AttributesInfo()));
-        }
     }
 }

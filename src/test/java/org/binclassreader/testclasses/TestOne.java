@@ -36,12 +36,12 @@ import java.io.Serializable;
 @XmlEnum
 @XmlAccessorOrder
 public class TestOne extends ZoomRadialBlurState implements Serializable, Appendable, AccessibleAction, AccessibleHypertext {
-    private static final long serialVersionUID = 3289989922045323079L;
+
     public transient volatile int integerPrimitive = 10;
     private static String TEST_STR = "SALUT_VARIABLE";
     private Object obj = new Object();
     public Integer integer = 10;
-
+    public String test = null;
 
     public TestOne(ZoomRadialBlur effect) {
         super(effect);
