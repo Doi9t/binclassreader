@@ -19,33 +19,36 @@ package org.binclassreader.enums;
 /**
  * Created by Yannick on 1/29/2016.
  */
-//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5-200-A.1
-public enum AccessFlagsEnum {
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6-200-A.1
+public enum MethodAccessFlagsEnum {
     UNKNOWN((short) 0x0000),
     ACC_PUBLIC((short) 0x0001),
     ACC_PRIVATE((short) 0x0002),
     ACC_PROTECTED((short) 0x0004),
     ACC_STATIC((short) 0x0008),
     ACC_FINAL((short) 0x0010),
-    ACC_VOLATILE((short) 0x0040),
-    ACC_TRANSIENT((short) 0x0080),
-    ACC_SYNTHETIC((short) 0x1000),
-    ACC_ENUM((short) 0x4000);
+    ACC_SYNCHRONIZED((short) 0x0020),
+    ACC_BRIDGE((short) 0x0040),
+    ACC_VARARGS((short) 0x0080),
+    ACC_NATIVE((short) 0x0100),
+    ACC_ABSTRACT((short) 0x0400),
+    ACC_STRICT((short) 0x0800),
+    ACC_SYNTHETIC((short) 0x1000);
 
     private short value;
 
-    AccessFlagsEnum(short value) {
+    MethodAccessFlagsEnum(short value) {
         this.value = value;
     }
 
-    public static AccessFlagsEnum getFlagById(short id) {
-        AccessFlagsEnum value = AccessFlagsEnum.UNKNOWN;
+    public static MethodAccessFlagsEnum getFlagById(short id) {
+        MethodAccessFlagsEnum value = MethodAccessFlagsEnum.UNKNOWN;
 
         if (id < 0) {
             return value;
         }
 
-        for (AccessFlagsEnum flag : AccessFlagsEnum.values()) {
+        for (MethodAccessFlagsEnum flag : MethodAccessFlagsEnum.values()) {
             if (flag.getValue() == id) {
                 value = flag;
                 break;

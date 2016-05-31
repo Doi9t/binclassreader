@@ -18,7 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
-import org.binclassreader.enums.AccessFlagsEnum;
+import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
@@ -46,8 +46,8 @@ public class ConstFieldInfo implements SelfReader {
 
     private List<AttributesInfo> attList;
 
-    public AccessFlagsEnum getAccessFlags() {
-        return AccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
+    public FieldAccessFlagsEnum getAccessFlags() {
+        return FieldAccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)

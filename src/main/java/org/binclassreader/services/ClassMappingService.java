@@ -52,7 +52,7 @@ public class ClassMappingService extends AbstractPoolData {
         return ourInstance;
     }
 
-    public MultiArrayMap generateTree() {
+    public MultiArrayMap<PoolTypeEnum, Object> generateTree() {
 
         constPool = getPoolByClass(PoolParser.class);
 

@@ -18,7 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
-import org.binclassreader.enums.AccessFlagsEnum;
+import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
@@ -46,8 +46,8 @@ public class ConstMethodInfo implements SelfReader {
 
     private List<AttributesInfo> attList;
 
-    public AccessFlagsEnum getAccessFlags() {
-        return AccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
+    public MethodAccessFlagsEnum getAccessFlags() {
+        return MethodAccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
@@ -79,7 +79,9 @@ public class ConstMethodInfo implements SelfReader {
 
         int attributesCount = getAttributesCount();
         for (int i = 0; i < attributesCount; i++) {
-            attList.add(reader.read(new AttributesInfo()));
+            //FIXME: Load the attributes
+            //attList.add(reader.read(new AttributesInfo()));
+            System.out.println();
         }
     }
 }

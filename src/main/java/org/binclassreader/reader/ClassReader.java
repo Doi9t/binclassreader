@@ -17,11 +17,13 @@
 package org.binclassreader.reader;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.pojos.FieldPojo;
 import org.binclassreader.services.ClassMappingService;
 import org.binclassreader.utils.Assert;
 import org.binclassreader.utils.Utilities;
+import org.multiarraymap.MultiArrayMap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +56,9 @@ public class ClassReader {
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
         sections = this.read(Utilities.createNewArrayOfObject(classSections));
-        classMappingServiceInstance.generateTree();
+
+        MultiArrayMap<PoolTypeEnum, Object> pool = classMappingServiceInstance.generateTree();
+        System.out.println(pool);
     }
 
     public Map<Class<?>, Object> read(Object... type) {

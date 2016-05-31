@@ -17,7 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.enums.AccessFlagsEnum;
+import org.binclassreader.enums.ClassAccessFlagsEnum;
 import org.binclassreader.utils.Utilities;
 
 /**
@@ -32,8 +32,8 @@ public class ConstAccessFlagsInfo {
         return Utilities.combineBytesToInt(flags);
     }
 
-    public AccessFlagsEnum getAccessFlag() {
-        return AccessFlagsEnum.getFlagById((byte) getFlagIndex());
+    public ClassAccessFlagsEnum getAccessFlag() {
+        return ClassAccessFlagsEnum.getFlagById((byte) getFlagIndex());
     }
 
     @Override
