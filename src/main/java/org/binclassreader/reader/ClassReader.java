@@ -40,13 +40,14 @@ import java.util.TreeMap;
 public class ClassReader {
 
     private static final ClassMappingService classMappingServiceInstance;
-    private Map<Short, FieldPojo> fieldSorter;
-    private InputStream classData;
-    private Map<Class<?>, Object> sections;
 
     static {
         classMappingServiceInstance = ClassMappingService.getInstance();
     }
+
+    private Map<Short, FieldPojo> fieldSorter;
+    private InputStream classData;
+    private Map<Class<?>, Object> sections;
 
     public ClassReader(InputStream classData, Class<?>... classSections) {
         if (!Assert.isArrayReadable(classSections) || classData == null) {

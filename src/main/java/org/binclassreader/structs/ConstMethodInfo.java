@@ -44,6 +44,22 @@ public class ConstMethodInfo implements SelfReader {
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] attributes_count;
 
+
+    /*
+        ----------------------------------Attributes----------------------------------
+        Code......................................................................45.3
+        Exceptions................................................................45.3
+        RuntimeVisibleParameterAnnotations, RuntimeInvisibleParameterAnnotations..49.0
+        AnnotationDefault.........................................................49.0
+        MethodParameters..........................................................52.0
+        Synthetic.................................................................45.3
+        Deprecated................................................................45.3
+        Signature.................................................................49.0
+        RuntimeVisibleAnnotations, RuntimeInvisibleAnnotations....................49.0
+        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations............52.0
+        ------------------------------------------------------------------------------
+     */
+
     private List<AttributesInfo> attList;
 
     public MethodAccessFlagsEnum getAccessFlags() {
@@ -76,6 +92,14 @@ public class ConstMethodInfo implements SelfReader {
 
     public void initReading(ClassReader reader) {
         attList = new ArrayList<AttributesInfo>();
+
+        MethodAccessFlagsEnum methodAccessFlagsEnum = getAccessFlags();
+
+        if (!MethodAccessFlagsEnum.UNKNOWN.equals(methodAccessFlagsEnum) && //Code Attribute
+                !MethodAccessFlagsEnum.ACC_NATIVE.equals(methodAccessFlagsEnum) &&
+                !MethodAccessFlagsEnum.ACC_ABSTRACT.equals(methodAccessFlagsEnum)) {
+            //FIXME: LOAD THE CODE ATTRIBUTE
+        }
 
         int attributesCount = getAttributesCount();
         for (int i = 0; i < attributesCount; i++) {

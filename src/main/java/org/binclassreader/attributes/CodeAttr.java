@@ -22,6 +22,7 @@ import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,25 +31,6 @@ import java.util.List;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.3
 public class CodeAttr extends AbstractAttribute implements SelfReader {
-
-    /*
-        Code_attribute {
-            u2 attribute_name_index;
-            u4 attribute_length;
-            u2 max_stack;
-            u2 max_locals;
-            u4 code_length;
-            u1 code[code_length];
-            u2 exception_table_length;
-            {   u2 start_pc;
-                u2 end_pc;
-                u2 handler_pc;
-                u2 catch_type;
-            } exception_table[exception_table_length];
-            u2 attributes_count;
-            attribute_info attributes[attributes_count];
-        }
-     */
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private int[] max_stack;
@@ -59,7 +41,7 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
     @BinClassParser(readOrder = 5, byteToRead = 4)
     private int[] code_length;
 
-    private byte[] code; //Code instructions [https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5]
+    private List<Short> code; //Code instructions [https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5]
 
     @BinClassParser(readOrder = 6, byteToRead = 2)
     private int[] exception_table_length;
@@ -70,11 +52,13 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
     private int[] attributes_count;
 
     /*
-        LineNumberTable.................................................45.3
-        LocalVariableTable..............................................45.3
-        LocalVariableTypeTable..........................................49.0
-        StackMapTable...................................................50.0
-        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations..52.0
+        -----------------------------Attributes-----------------------------
+        LineNumberTable.................................................45.3 //DONE
+        LocalVariableTable..............................................45.3 //DONE
+        LocalVariableTypeTable..........................................49.0 //DONE
+        StackMapTable...................................................50.0 //TODO
+        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations..52.0 //TODO
+        --------------------------------------------------------------------
      */
     private List<AbstractAttribute> attributesTable;
 
@@ -84,7 +68,17 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
         int attrLength = Utilities.combineBytesToInt(attributes_count);
 
         if (codeLength > 0 && codeLength < 65536) {
-            code = new byte[codeLength];
+            code = new ArrayList<Short>();
+
+
+            for (int i = 0; i < codeLength; i++) {
+                try {
+                    //Read the code
+                    code.add((short) Utilities.combineBytesToInt(reader.readFromCurrentStream(1)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if (exceptionLength > 0) {
                 exceptionTableHandlers = new ArrayList<ExceptionHandler>();

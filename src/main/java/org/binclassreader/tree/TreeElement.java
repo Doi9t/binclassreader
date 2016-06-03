@@ -54,13 +54,6 @@ public class TreeElement {
     }
 
     /**
-     * @param current - Set the current element
-     */
-    public void setCurrent(Object current) {
-        this.current = current;
-    }
-
-    /**
      * @return - The parent of the TreeElement
      */
     public TreeElement getParent() {
@@ -72,5 +65,12 @@ public class TreeElement {
      */
     public Object getCurrent() {
         return current;
+    }
+
+    /**
+     * @param current - Set the current element
+     */
+    public void setCurrent(Object current) {
+        this.current = current;
     }
 }
