@@ -45,7 +45,7 @@ public class AppTest {
     @Test
     public void classTestOne() throws Exception {
 
-        URL classResource = TestOne.class.getResource("TestOne.class");
+        URL classResource = TestOne.class.getResource("TestZero.class");
 
         if (classResource != null) {
             byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(classResource.toURI())));

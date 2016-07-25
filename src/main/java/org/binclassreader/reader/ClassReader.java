@@ -124,6 +124,10 @@ public class ClassReader {
     }
 
     public int[] readFromCurrentStream(int nbByteToRead) throws IOException {
+        if (nbByteToRead <= 0) {
+            return null;
+        }
+
         int[] buffer = new int[nbByteToRead];
 
         for (int i = 0; i < nbByteToRead; i++) {

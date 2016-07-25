@@ -18,6 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
+import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
@@ -43,6 +44,8 @@ public class ConstMethodInfo implements SelfReader {
 
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] attributes_count;
+
+    private CodeAttr codeAttr;
 
 
     /*
@@ -98,7 +101,7 @@ public class ConstMethodInfo implements SelfReader {
         if (!MethodAccessFlagsEnum.UNKNOWN.equals(methodAccessFlagsEnum) && //Code Attribute
                 !MethodAccessFlagsEnum.ACC_NATIVE.equals(methodAccessFlagsEnum) &&
                 !MethodAccessFlagsEnum.ACC_ABSTRACT.equals(methodAccessFlagsEnum)) {
-            //FIXME: LOAD THE CODE ATTRIBUTE
+            codeAttr = reader.read(new CodeAttr());
         }
 
         int attributesCount = getAttributesCount();

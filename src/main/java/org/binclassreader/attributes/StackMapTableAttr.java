@@ -14,30 +14,21 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.abstracts;
+package org.binclassreader.attributes;
 
+import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.annotations.PoolItemIndex;
-import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.utils.Utilities;
 
 /**
- * Created by Yannick on 5/23/2016.
+ * Created by Yannick on 6/6/2016.
  */
-public class AbstractAttribute {
+public class StackMapTableAttr extends AbstractAttribute {
 
-    @BinClassParser(byteToRead = 2)
-    private int[] attribute_name_index;
+    @BinClassParser(readOrder = 3, byteToRead = 2)
+    private int[] number_of_entries;
 
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    private int[] attribute_length;
-
-    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
-    public int getAttributeNameIndex() {
-        return Utilities.combineBytesToInt(attribute_name_index);
-    }
-
-    public int getAttributeLength() {
-        return Utilities.combineBytesToInt(attribute_length);
+    public int getNumberOfEntries() {
+        return Utilities.combineBytesToInt(number_of_entries);
     }
 }

@@ -32,25 +32,14 @@ import java.util.List;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.3
 public class CodeAttr extends AbstractAttribute implements SelfReader {
 
+    private final List<Short> CODE;
+    private final List<ExceptionHandler> EXCEPTION_TABLE;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private int[] max_stack;
-
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] max_locals;
-
     @BinClassParser(readOrder = 5, byteToRead = 4)
     private int[] code_length;
-
-    private List<Short> code; //Code instructions [https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5]
-
-    @BinClassParser(readOrder = 6, byteToRead = 2)
-    private int[] exception_table_length;
-
-    private List<ExceptionHandler> exceptionTableHandlers;
-
-    @BinClassParser(readOrder = 7, byteToRead = 2)
-    private int[] attributes_count;
-
     /*
         -----------------------------Attributes-----------------------------
         LineNumberTable.................................................45.3 //DONE
@@ -62,42 +51,32 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
      */
     private List<AbstractAttribute> attributesTable;
 
+    public CodeAttr() {
+        CODE = new ArrayList<Short>();
+        EXCEPTION_TABLE = new ArrayList<ExceptionHandler>();
+    }
+
     public void initReading(ClassReader reader) {
         int codeLength = Utilities.combineBytesToInt(code_length);
-        int exceptionLength = Utilities.combineBytesToInt(exception_table_length);
-        int attrLength = Utilities.combineBytesToInt(attributes_count);
 
-        if (codeLength > 0 && codeLength < 65536) {
-            code = new ArrayList<Short>();
-
-
-            for (int i = 0; i < codeLength; i++) {
-                try {
-                    //Read the code
-                    code.add((short) Utilities.combineBytesToInt(reader.readFromCurrentStream(1)));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        try {
+            //Read the code
+            for (short i = 0; i < codeLength; i++) {
+                CODE.add((short) reader.readFromCurrentStream());
             }
 
-            if (exceptionLength > 0) {
-                exceptionTableHandlers = new ArrayList<ExceptionHandler>();
+            //Read the exceptions
+            int exceptionCount = Utilities.combineBytesToInt(reader.readFromCurrentStream(2));
+            int attrCount = Utilities.combineBytesToInt(reader.readFromCurrentStream(2));
 
-                //Read the exceptions
-                for (int i = 0; i < exceptionLength; i++) {
-                    exceptionTableHandlers.add(reader.read(new ExceptionHandler()));
-                }
+            for (short i = 0; i < exceptionCount; i++) {
+                EXCEPTION_TABLE.add(new ExceptionHandler());
             }
 
-            if (attrLength > 0) {
-                attributesTable = new ArrayList<AbstractAttribute>();
+            System.out.println();
 
-                //Read the attributes
-                for (int i = 0; i < attrLength; i++) {
-                    //FIXME: Find and create the 6 attributes
-                    // exceptionTableHandlers.add(reader.read(new ExceptionHandler()));
-                }
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
