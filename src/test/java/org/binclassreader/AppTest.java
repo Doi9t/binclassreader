@@ -45,13 +45,12 @@ public class AppTest {
     @Test
     public void classTestOne() throws Exception {
 
-        URL classResource = TestOne.class.getResource("TestZero.class");
+        URL classResource = TestOne.class.getResource("TestOne.class");
 
         if (classResource != null) {
             byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(classResource.toURI())));
 
             if (bytes != null && bytes.length > 0) {
-                //ClassReadingService.readNewClass(new ByteArrayInputStream(rawData));
                 ClassReadingService.readNewClass(new ByteArrayInputStream(bytes));
 
                 List<ClassReader> readerList = ClassReadingService.getReaderList();

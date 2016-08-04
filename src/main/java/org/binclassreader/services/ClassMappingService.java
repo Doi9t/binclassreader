@@ -97,7 +97,7 @@ public class ClassMappingService extends AbstractPoolData {
                 if (annotation != null) {
                     try {
 
-                        List<Class<?>> mustBeOfTypeArr = Arrays.asList(annotation.mustBeOfType());
+                        List<? extends Class<?>> mustBeOfTypeArr = Arrays.asList(annotation.mustBeOfType());
                         Integer invoke = (Integer) declaredMethod.invoke(currentObj);
 
                         if (invoke == null || invoke < 1 || invoke > (constPool.size() - 1)) {

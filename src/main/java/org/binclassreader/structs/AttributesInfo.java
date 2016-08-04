@@ -16,36 +16,17 @@
 
 package org.binclassreader.structs;
 
-import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.annotations.PoolItemIndex;
+import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.Utilities;
+
+import java.io.IOException;
 
 /**
  * Created by Yannick on 4/18/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7
-public class AttributesInfo implements SelfReader {
-
-    @BinClassParser(byteToRead = 2)
-    private int[] attribute_name_index;
-
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    private int[] attribute_length;
-
-    private int[] info;
-
-    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
-    public int getAttributeNameIndex() {
-        return Utilities.combineBytesToInt(attribute_name_index);
-    }
-
-    public int getAttributeLength() {
-        return Utilities.combineBytesToInt(attribute_length);
-    }
-
-
+public class AttributesInfo extends AbstractAttribute implements SelfReader {
     @Override
     public String toString() {
         return "ConstAttributeInfo{" +
@@ -54,24 +35,11 @@ public class AttributesInfo implements SelfReader {
                 '}';
     }
 
-    /*
-        For all attributes, the attribute_name_index must be a valid unsigned 16-bit index into the constant pool of the
-        class. The constant_pool entry at attribute_name_index must be a CONSTANT_Utf8_info structure (§4.4.7) representing
-        the name of the attribute. The value of the attribute_length item indicates the length of the subsequent information
-        in bytes. The length does not include the initial six bytes that contain the attribute_name_index and attribute_length items.
-    */
-
     public void initReading(ClassReader reader) {
-        int attributeLength = getAttributeLength();
-        //System.out.println("attributeLength ->  " + attributeLength);
-/*
-        if (attributeLength > 0) {
-            try {
-                info = reader.readFromCurrentStream(attributeLength);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            reader.skipFromCurrentStream(getAttributeLength());//FIXME: Parse the bytes instead of wasting them ...
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-*/
     }
 }

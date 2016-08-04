@@ -18,6 +18,10 @@ package org.binclassreader.utils;
 
 import org.binclassreader.enums.ConstValuesEnum;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by Yannick on 1/26/2016.
  */
@@ -148,6 +152,14 @@ public class Utilities {
         }
 
         return values;
+    }
+
+    /**
+     * @param varArgs - The item to be returned as a list
+     * @return Aa list containing the items
+     */
+    public static <T> List toList(T... varArgs) {
+        return (varArgs == null || varArgs.length == 0) ? Collections.EMPTY_LIST : Arrays.asList(varArgs);
     }
 
     /**

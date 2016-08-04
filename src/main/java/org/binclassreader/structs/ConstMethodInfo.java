@@ -65,8 +65,8 @@ public class ConstMethodInfo implements SelfReader {
 
     private List<AttributesInfo> attList;
 
-    public MethodAccessFlagsEnum getAccessFlags() {
-        return MethodAccessFlagsEnum.getFlagById((byte) Utilities.combineBytesToInt(access_flags));
+    public List<MethodAccessFlagsEnum> getAccessFlags() {
+        return MethodAccessFlagsEnum.getFlagsByMask((byte) Utilities.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
@@ -96,19 +96,22 @@ public class ConstMethodInfo implements SelfReader {
     public void initReading(ClassReader reader) {
         attList = new ArrayList<AttributesInfo>();
 
-        MethodAccessFlagsEnum methodAccessFlagsEnum = getAccessFlags();
+        List<MethodAccessFlagsEnum> flags = getAccessFlags();
+        boolean isCodeAttrPresent = flags != null && !flags.contains(MethodAccessFlagsEnum.UNKNOWN) && //Code Attribute
+                !flags.contains(MethodAccessFlagsEnum.ACC_NATIVE) &&
+                !flags.contains(MethodAccessFlagsEnum.ACC_ABSTRACT);
 
-        if (!MethodAccessFlagsEnum.UNKNOWN.equals(methodAccessFlagsEnum) && //Code Attribute
-                !MethodAccessFlagsEnum.ACC_NATIVE.equals(methodAccessFlagsEnum) &&
-                !MethodAccessFlagsEnum.ACC_ABSTRACT.equals(methodAccessFlagsEnum)) {
+        if (isCodeAttrPresent) {
             codeAttr = reader.read(new CodeAttr());
         }
 
         int attributesCount = getAttributesCount();
-        for (int i = 0; i < attributesCount; i++) {
-            //FIXME: Load the attributes
-            //attList.add(reader.read(new AttributesInfo()));
-            System.out.println();
+        attributesCount = ((isCodeAttrPresent) ? attributesCount - 1 : attributesCount);
+
+        if (attributesCount >= 0) {
+            for (int i = 0; i < attributesCount; i++) {
+                attList.add(reader.read(new AttributesInfo()));
+            }
         }
     }
 }

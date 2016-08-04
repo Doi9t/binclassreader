@@ -16,6 +16,9 @@
 
 package org.binclassreader.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Yannick on 1/29/2016.
  */
@@ -38,21 +41,25 @@ public enum FieldAccessFlagsEnum {
         this.value = value;
     }
 
-    public static FieldAccessFlagsEnum getFlagById(short id) {
-        FieldAccessFlagsEnum value = FieldAccessFlagsEnum.UNKNOWN;
+    public static List<FieldAccessFlagsEnum> getFlagsByMask(short mask) {
+        List<FieldAccessFlagsEnum> values = new ArrayList<FieldAccessFlagsEnum>();
 
-        if (id < 0) {
-            return value;
+        if (mask < 0) {
+            values.add(FieldAccessFlagsEnum.UNKNOWN);
+            return values;
         }
 
         for (FieldAccessFlagsEnum flag : FieldAccessFlagsEnum.values()) {
-            if (flag.getValue() == id) {
-                value = flag;
-                break;
+            if (!FieldAccessFlagsEnum.UNKNOWN.equals(flag) && ((mask & flag.getValue()) > 0)) {
+                values.add(flag);
             }
         }
 
-        return value;
+        if (values.isEmpty()) {
+            values.add(FieldAccessFlagsEnum.UNKNOWN);
+        }
+
+        return values;
     }
 
     public short getValue() {

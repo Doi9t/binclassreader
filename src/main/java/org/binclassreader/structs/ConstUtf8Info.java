@@ -79,9 +79,6 @@ public class ConstUtf8Info implements SelfReader {
                         bytes[i] = (byte) aByte;
                     }
                 }
-
-                System.out.println("Read " + lengthArray + " for ConstUtf8Info" + " (" + new String(bytes) + ")");
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

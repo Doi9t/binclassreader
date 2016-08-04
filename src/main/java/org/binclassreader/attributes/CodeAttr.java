@@ -33,14 +33,13 @@ import java.util.List;
 public class CodeAttr extends AbstractAttribute implements SelfReader {
 
     private final List<Short> CODE;
-    private final List<ExceptionHandler> EXCEPTION_TABLE;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private int[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private int[] max_locals;
     @BinClassParser(readOrder = 5, byteToRead = 4)
     private int[] code_length;
-    /*
+/*
         -----------------------------Attributes-----------------------------
         LineNumberTable.................................................45.3 //DONE
         LocalVariableTable..............................................45.3 //DONE
@@ -48,12 +47,10 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
         StackMapTable...................................................50.0 //TODO
         RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations..52.0 //TODO
         --------------------------------------------------------------------
-     */
-    private List<AbstractAttribute> attributesTable;
+*/
 
     public CodeAttr() {
         CODE = new ArrayList<Short>();
-        EXCEPTION_TABLE = new ArrayList<ExceptionHandler>();
     }
 
     public void initReading(ClassReader reader) {
@@ -64,20 +61,17 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
             for (short i = 0; i < codeLength; i++) {
                 CODE.add((short) reader.readFromCurrentStream());
             }
-
-            //Read the exceptions
-            int exceptionCount = Utilities.combineBytesToInt(reader.readFromCurrentStream(2));
-            int attrCount = Utilities.combineBytesToInt(reader.readFromCurrentStream(2));
-
-            for (short i = 0; i < exceptionCount; i++) {
-                EXCEPTION_TABLE.add(new ExceptionHandler());
-            }
-
-            System.out.println();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            // The x - 8 is to remove the bytes that are already read.
+            reader.skipFromCurrentStream(getAttributeLength() - 8 - codeLength);//FIXME: Parse the bytes instead of wasting them ...
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private class ExceptionHandler {
