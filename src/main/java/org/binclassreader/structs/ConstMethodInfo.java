@@ -114,4 +114,8 @@ public class ConstMethodInfo implements SelfReader {
             }
         }
     }
+
+    public CodeAttr getCodeAttr() {
+        return codeAttr;
+    }
 }

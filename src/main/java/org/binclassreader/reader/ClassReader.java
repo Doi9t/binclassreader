@@ -47,6 +47,7 @@ public class ClassReader {
     private Map<Short, FieldPojo> fieldSorter;
     private InputStream classData;
     private Map<Class<?>, Object> sections;
+    private MultiArrayMap<PoolTypeEnum, Object> pool;
 
     public ClassReader(InputStream classData, Class<?>... classSections) {
         if (!Assert.isArrayReadable(classSections) || classData == null) {
@@ -56,9 +57,7 @@ public class ClassReader {
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
         sections = this.read(Utilities.createNewArrayOfObject(classSections));
-
-        MultiArrayMap<PoolTypeEnum, Object> pool = classMappingServiceInstance.generateTree();
-        System.out.println(pool);
+        pool = classMappingServiceInstance.generateTree();
     }
 
     public Map<Class<?>, Object> read(Object... type) {
@@ -149,4 +148,7 @@ public class ClassReader {
         return sections;
     }
 
+    public MultiArrayMap<PoolTypeEnum, Object> getMappedPool() {
+        return pool;
+    }
 }

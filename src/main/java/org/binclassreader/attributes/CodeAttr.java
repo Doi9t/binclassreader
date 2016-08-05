@@ -104,4 +104,8 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
             return Utilities.combineBytesToInt(catch_type);
         }
     }
+
+    public List<Short> getCODE() {
+        return CODE;
+    }
 }

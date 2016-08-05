@@ -17,10 +17,19 @@
 package org.binclassreader;
 
 import org.apache.commons.io.IOUtils;
+import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.enums.FieldAccessFlagsEnum;
+import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.services.ClassReadingService;
+import org.binclassreader.structs.ConstFieldInfo;
+import org.binclassreader.structs.ConstMethodInfo;
+import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.testclasses.TestOne;
+import org.binclassreader.tree.Tree;
+import org.binclassreader.tree.TreeElement;
 import org.junit.Test;
+import org.multiarraymap.MultiArrayMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -56,9 +65,49 @@ public class AppTest {
                 List<ClassReader> readerList = ClassReadingService.getReaderList();
 
                 for (ClassReader classReader : readerList) {
-                    System.out.println("\n\n--------------------------- NEW CLASS INFO ---------------------------");
-                    for (Object item : classReader.getSections().values()) {
-                        System.out.println(item); //Print one per line
+                    System.out.println("\n\n************************************* NEW CLASS INFO *************************************");
+
+                    MultiArrayMap<PoolTypeEnum, Object> mappedPool = classReader.getMappedPool();
+
+
+                    System.out.println("\n--------------------------- FIELD ---------------------------");
+                    for (Object o : mappedPool.get(PoolTypeEnum.FIELD)) {
+                        if (o instanceof Tree) {
+                            TreeElement element = ((Tree) o).getRoot();
+                            List<FieldAccessFlagsEnum> accessFlags = ((ConstFieldInfo) element.getCurrent()).getAccessFlags();
+                            List<TreeElement> child = element.getChild();
+
+                            ConstUtf8Info constUtf8InfoName = (ConstUtf8Info) child.get(0).getCurrent();
+                            ConstUtf8Info constUtf8InfoDescriptor = (ConstUtf8Info) child.get(1).getCurrent();
+
+                            System.out.println(accessFlags + " " + constUtf8InfoName.getAsNewString() + " " + constUtf8InfoDescriptor.getAsNewString());
+                        }
+                    }
+
+
+                    System.out.println("\n--------------------------- INTERFACES ---------------------------");
+                    for (Object o : mappedPool.get(PoolTypeEnum.INTERFACE)) {
+                        if (o instanceof Tree) {
+                            TreeElement element = ((Tree) o).getRoot();
+                            TreeElement child = element.getChild().get(0);
+
+                            System.out.println(((ConstUtf8Info) child.getCurrent()).getAsNewString());
+                        }
+                    }
+
+                    System.out.println("\n--------------------------- METHODS ---------------------------");
+                    for (Object o : mappedPool.get(PoolTypeEnum.METHOD)) {
+                        if (o instanceof Tree) {
+                            TreeElement element = ((Tree) o).getRoot();
+                            CodeAttr codeAttr = ((ConstMethodInfo) element.getCurrent()).getCodeAttr();
+                            List<TreeElement> child = element.getChild();
+
+                            ConstUtf8Info constUtf8InfoName = (ConstUtf8Info) child.get(0).getCurrent();
+                            ConstUtf8Info constUtf8InfoDescriptor = (ConstUtf8Info) child.get(1).getCurrent();
+
+
+                            System.out.println(constUtf8InfoName.getAsNewString() + "(" + constUtf8InfoDescriptor.getAsNewString() + ") Bytecode => " + codeAttr.getCODE());
+                        }
                     }
                 }
             }

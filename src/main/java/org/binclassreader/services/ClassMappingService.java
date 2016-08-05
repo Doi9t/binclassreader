@@ -70,18 +70,18 @@ public class ClassMappingService extends AbstractPoolData {
         return values;
     }
 
-    private void iterateOnPool(List<Object> interfacePool, Class<?> mustBeOfType, PoolTypeEnum anInterface, MultiArrayMap data) {
+    private void iterateOnPool(List<Object> interfacePool, Class<?> mustBeOfType, PoolTypeEnum poolTypeEnum, MultiArrayMap data) {
         if (interfacePool != null) {
             for (Object interfaceObj : interfacePool) {
                 if (interfaceObj != null && interfaceObj.getClass().equals(mustBeOfType)) {
                     TreeElement rootTreeElement = new TreeElement(interfaceObj);
-                    data.put(anInterface, buildTree(new Tree(rootTreeElement), rootTreeElement));
+                    data.put(poolTypeEnum, buildTree(poolTypeEnum, new Tree(rootTreeElement), rootTreeElement));
                 }
             }
         }
     }
 
-    private Tree buildTree(Tree tree, TreeElement currentTreeElement) {
+    private Tree buildTree(PoolTypeEnum poolTypeEnum, Tree tree, TreeElement currentTreeElement) {
 
         if (tree == null || currentTreeElement == null) {
             return null;
@@ -106,6 +106,10 @@ public class ClassMappingService extends AbstractPoolData {
 
                         Object child = constPool.get((invoke - 1));
 
+                        if (child instanceof ConstClassInfo && PoolTypeEnum.INTERFACE.equals(poolTypeEnum)) {
+                            child = constPool.get(((ConstClassInfo) child).getNameIndex()); //Get the ConstUtf8Info from The ConstClassInfo
+                        }
+
                         if (!mustBeOfTypeArr.contains(child.getClass())) {
                             break;
                         }
@@ -114,7 +118,7 @@ public class ClassMappingService extends AbstractPoolData {
                         currentTreeElement.addChildren(childTreeElement);
                         childTreeElement.addParent(currentTreeElement);
 
-                        buildTree(tree, childTreeElement);
+                        buildTree(poolTypeEnum, tree, childTreeElement);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     } catch (InvocationTargetException e) {

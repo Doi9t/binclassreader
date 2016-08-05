@@ -73,4 +73,8 @@ public class TreeElement {
     public void setCurrent(Object current) {
         this.current = current;
     }
+
+    public List<TreeElement> getChild() {
+        return child;
+    }
 }
