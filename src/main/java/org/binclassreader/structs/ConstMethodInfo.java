@@ -66,7 +66,7 @@ public class ConstMethodInfo implements SelfReader {
     private List<AttributesInfo> attList;
 
     public List<MethodAccessFlagsEnum> getAccessFlags() {
-        return MethodAccessFlagsEnum.getFlagsByMask((byte) Utilities.combineBytesToInt(access_flags));
+        return MethodAccessFlagsEnum.getFlagsByMask((short) Utilities.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)

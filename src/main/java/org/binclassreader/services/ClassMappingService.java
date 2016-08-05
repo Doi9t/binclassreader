@@ -130,4 +130,8 @@ public class ClassMappingService extends AbstractPoolData {
 
         return tree;
     }
+
+    public Map<Integer, Object> getConstPool() {
+        return constPool;
+    }
 }

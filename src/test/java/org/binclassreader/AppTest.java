@@ -22,9 +22,7 @@ import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.services.ClassReadingService;
-import org.binclassreader.structs.ConstFieldInfo;
-import org.binclassreader.structs.ConstMethodInfo;
-import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.structs.*;
 import org.binclassreader.testclasses.TestOne;
 import org.binclassreader.tree.Tree;
 import org.binclassreader.tree.TreeElement;
@@ -36,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Yannick on 2/3/2016.
@@ -68,7 +67,18 @@ public class AppTest {
                     System.out.println("\n\n************************************* NEW CLASS INFO *************************************");
 
                     MultiArrayMap<PoolTypeEnum, Object> mappedPool = classReader.getMappedPool();
+                    Map<Class<?>, Object> sections = classReader.getSections();
+                    Map<Integer, Object> constPool = classReader.getConstPool();
 
+
+                    System.out.println("\n--------------------------- SUPER_CLASS ---------------------------");
+
+                    ConstThisClassInfo thisClassInfo = (ConstThisClassInfo) sections.get(ConstThisClassInfo.class);
+
+                    ConstClassInfo ConstClassInfoSuperClass = (ConstClassInfo) constPool.get(thisClassInfo.getIndex());
+                    ConstUtf8Info constUtf8InfoSuperClassName = (ConstUtf8Info) constPool.get(ConstClassInfoSuperClass.getNameIndex() - 1);
+
+                    System.out.println(constUtf8InfoSuperClassName.getAsNewString());
 
                     System.out.println("\n--------------------------- FIELD ---------------------------");
                     for (Object o : mappedPool.get(PoolTypeEnum.FIELD)) {

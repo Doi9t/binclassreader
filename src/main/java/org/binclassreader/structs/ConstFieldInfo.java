@@ -47,7 +47,7 @@ public class ConstFieldInfo implements SelfReader {
     private List<AttributesInfo> attList;
 
     public List<FieldAccessFlagsEnum> getAccessFlags() {
-        return FieldAccessFlagsEnum.getFlagsByMask((byte) Utilities.combineBytesToInt(access_flags));
+        return FieldAccessFlagsEnum.getFlagsByMask((short) Utilities.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)

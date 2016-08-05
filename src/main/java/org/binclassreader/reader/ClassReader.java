@@ -151,4 +151,8 @@ public class ClassReader {
     public MultiArrayMap<PoolTypeEnum, Object> getMappedPool() {
         return pool;
     }
+
+    public Map<Integer, Object> getConstPool() {
+        return classMappingServiceInstance.getConstPool();
+    }
 }
