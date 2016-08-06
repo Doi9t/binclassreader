@@ -60,10 +60,11 @@ public class MultiArrayMap<K, V> {
 
     /**
      * @param key - The key to beb used
-     * @return An unmodifiable List containing the values associated to the key
+     * @return An unmodifiable List containing the values associated to the key, or null if the value is not present
      */
     public List<V> get(K key) {
-        return Collections.unmodifiableList(containerMap.get(key));
+        List<V> list = containerMap.get(key);
+        return (list != null) ? Collections.unmodifiableList(list) : null;
     }
 
     public void put(K key, V value) {

@@ -105,7 +105,7 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
         }
     }
 
-    public List<Short> getCODE() {
+    public List<Short> getRawBytecode() {
         return CODE;
     }
 }

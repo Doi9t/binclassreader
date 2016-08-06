@@ -16,16 +16,18 @@
 
 package org.binclassreader.utils;
 
+import org.binclassreader.enums.BytecodeExtraByteEnum;
+import org.binclassreader.enums.BytecodeInstructionEnum;
 import org.binclassreader.enums.ConstValuesEnum;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Yannick on 1/26/2016.
  */
 public class Utilities {
+
+    private static BytecodeExtraByteEnum INDEXBYTE_1 = BytecodeExtraByteEnum.INDEXBYTE_1, INDEXBYTE_2 = BytecodeExtraByteEnum.INDEXBYTE_2;
 
     /**
      * @param bytes - The byte to be merged
@@ -177,5 +179,41 @@ public class Utilities {
         }
 
         return values;
+    }
+
+
+    public static String getBytecodeAsFormattedString(List<Short> bytecode, Map<Integer, Object> constPool) {
+
+        if (bytecode == null || bytecode.isEmpty()) {
+            return "";
+        }
+
+        int size = bytecode.size();
+        StringBuffer stringBuffer = new StringBuffer();
+        Map<BytecodeExtraByteEnum, Short> extraByteMapping = new HashMap<BytecodeExtraByteEnum, Short>();
+
+        for (int i = 0; i < size; i++) {
+            short code = bytecode.get(i);
+
+            BytecodeInstructionEnum bytecodeByValue = BytecodeInstructionEnum.getBytecodeByValue(code);
+            stringBuffer.append(bytecodeByValue);
+
+            if (bytecodeByValue.haveExtraBytes()) {
+                extraByteMapping.clear();
+
+                for (BytecodeExtraByteEnum bytecodeExtraByteEnum : bytecodeByValue.getNbByteToRead()) {
+                    i++;
+                    extraByteMapping.put(bytecodeExtraByteEnum, bytecode.get(i));
+                }
+
+                if (extraByteMapping.containsKey(INDEXBYTE_1) && extraByteMapping.containsKey(INDEXBYTE_2)) {
+                    stringBuffer.append(" #").append((extraByteMapping.get(BytecodeExtraByteEnum.INDEXBYTE_1) << 8) | extraByteMapping.get(INDEXBYTE_2));
+                }
+
+            }
+            stringBuffer.append("\n");
+        }
+
+        return stringBuffer.toString();
     }
 }
