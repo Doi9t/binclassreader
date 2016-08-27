@@ -25,7 +25,7 @@ import org.binclassreader.utils.Utilities;
 public class ConstMajorVersionInfo {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] bytes_data;
+    private short[] bytes_data;
 
     public int getMajorVersion() {
         return Utilities.combineBytesToInt(bytes_data);

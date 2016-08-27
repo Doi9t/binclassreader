@@ -25,9 +25,9 @@ import org.binclassreader.utils.Utilities;
 public class ConstMinorVersionInfo {
 
     @BinClassParser(byteToRead = 2)
-    private int[] bytes_data;
+    private short[] bytes_data;
 
-    public int[] getBytes_data() {
+    public short[] getBytes_data() {
         return Utilities.safeArrayClone(bytes_data);
     }
 

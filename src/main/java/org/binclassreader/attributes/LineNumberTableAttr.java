@@ -31,7 +31,7 @@ import java.util.List;
 public class LineNumberTableAttr extends AbstractAttribute implements SelfReader {
 
     @BinClassParser(readOrder = 3, byteToRead = 4)
-    private int[] line_number_table_length;
+    private short[] line_number_table_length;
     private List<LineNumber> lineTable;
 
     public int getLineTableLength() {
@@ -53,10 +53,10 @@ public class LineNumberTableAttr extends AbstractAttribute implements SelfReader
 
     private class LineNumber {
         @BinClassParser(byteToRead = 2)
-        private int[] start_pc;
+        private short[] start_pc;
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
-        private int[] line_number;
+        private short[] line_number;
 
         public int getStartPc() {
             return Utilities.combineBytesToInt(start_pc);

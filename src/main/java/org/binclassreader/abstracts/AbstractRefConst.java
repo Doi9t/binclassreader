@@ -28,10 +28,10 @@ import org.binclassreader.utils.Utilities;
 public abstract class AbstractRefConst {
 
     @BinClassParser(byteToRead = 2)
-    protected int[] class_index;
+    protected short[] class_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
-    protected int[] name_and_type_index;
+    protected short[] name_and_type_index;
 
     @PoolItemIndex(mustBeOfType = ConstClassInfo.class)
     protected int getClassIndex() {

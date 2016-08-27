@@ -31,7 +31,7 @@ import java.util.List;
 public class LocalVariableTableAttr extends AbstractAttribute implements SelfReader {
 
     @BinClassParser(readOrder = 3, byteToRead = 4)
-    private int[] line_number_table_length;
+    private short[] line_number_table_length;
     private List<LocalVariable> localVarTable;
 
     public int getLineTableLength() {
@@ -53,19 +53,19 @@ public class LocalVariableTableAttr extends AbstractAttribute implements SelfRea
 
     private class LocalVariable {
         @BinClassParser(byteToRead = 2)
-        private int[] start_pc;
+        private short[] start_pc;
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
-        private int[] length;
+        private short[] length;
 
         @BinClassParser(readOrder = 3, byteToRead = 2)
-        private int[] name_index;
+        private short[] name_index;
 
         @BinClassParser(readOrder = 4, byteToRead = 2)
-        private int[] descriptor_index;
+        private short[] descriptor_index;
 
         @BinClassParser(readOrder = 5, byteToRead = 2)
-        private int[] index;
+        private short[] index;
 
 
         public int getStartPc() {

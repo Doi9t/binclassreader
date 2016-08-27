@@ -27,10 +27,10 @@ import org.binclassreader.utils.Utilities;
 public class AbstractAttribute {
 
     @BinClassParser(byteToRead = 2)
-    private int[] attribute_name_index;
+    private short[] attribute_name_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 4)
-    private int[] attribute_length;
+    private short[] attribute_length;
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
     public int getAttributeNameIndex() {

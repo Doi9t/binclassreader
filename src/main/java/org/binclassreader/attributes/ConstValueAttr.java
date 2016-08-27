@@ -28,7 +28,7 @@ import org.binclassreader.utils.Utilities;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.2
 public class ConstValueAttr extends AbstractAttribute {
     @BinClassParser(readOrder = 3, byteToRead = 2)
-    private int[] constant_value_index;
+    private short[] constant_value_index;
 
     @PoolItemIndex(mustBeOfType = {ConstLongInfo.class, ConstFloatInfo.class, ConstDoubleInfo.class, ConstIntegerInfo.class, ConstStringInfo.class})
     public int getConstantValueIndex() {

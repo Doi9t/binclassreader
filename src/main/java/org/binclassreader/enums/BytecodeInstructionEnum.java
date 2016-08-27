@@ -16,6 +16,8 @@
 
 package org.binclassreader.enums;
 
+import org.binclassreader.utils.Utilities;
+
 /**
  * Created by Yannick on 5/23/2016.
  */
@@ -244,7 +246,7 @@ public enum BytecodeInstructionEnum {
     }
 
     public BytecodeExtraByteEnum[] getNbByteToRead() {
-        return nbByteToRead;
+        return Utilities.safeArrayClone(nbByteToRead);
     }
 
     public boolean isDynamicBytes() {

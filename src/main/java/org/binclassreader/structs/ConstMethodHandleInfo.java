@@ -29,10 +29,10 @@ import java.util.Arrays;
 public class ConstMethodHandleInfo {
 
     @BinClassParser(byteToRead = 1)
-    private int[] reference_kind;
+    private short[] reference_kind;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
-    private int[] reference_index;
+    private short[] reference_index;
 
     @PoolItemIndex
     public int getReferenceKind() {

@@ -25,7 +25,7 @@ import org.binclassreader.utils.Utilities;
  */
 public class ConstSuperClassInfo {
     @BinClassParser(byteToRead = 2)
-    private int[] index;
+    private short[] index;
 
     @PoolItemIndex
     public int getIndex() {

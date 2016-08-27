@@ -26,7 +26,7 @@ import org.binclassreader.utils.Utilities;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.1-200-E.1
 public class ConstAccessFlagsInfo {
     @BinClassParser(byteToRead = 2)
-    private int[] flags;
+    private short[] flags;
 
     private int getFlagIndex() {
         return Utilities.combineBytesToInt(flags);

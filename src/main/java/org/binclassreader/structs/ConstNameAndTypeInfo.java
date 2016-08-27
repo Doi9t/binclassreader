@@ -27,10 +27,10 @@ import org.binclassreader.utils.Utilities;
 public class ConstNameAndTypeInfo {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] name_index;
+    private short[] name_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
-    private int[] descriptor_index;
+    private short[] descriptor_index;
 
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)

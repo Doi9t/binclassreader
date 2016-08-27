@@ -25,7 +25,7 @@ import org.binclassreader.utils.Utilities;
 public abstract class AbstractParser extends AbstractPoolData {
 
     @BinClassParser(byteToRead = 2)
-    protected int[] countData;
+    protected short[] countData;
 
     protected int count;
 

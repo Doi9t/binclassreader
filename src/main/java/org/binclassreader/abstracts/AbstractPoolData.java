@@ -74,7 +74,7 @@ public abstract class AbstractPoolData {
     }
 
     protected Object getPool() {
-        return (POOL.get()).get(getClass());
+        return POOL.get().get(getClass());
     }
 
     public Map<Class<?>, Object> getAllPools() {

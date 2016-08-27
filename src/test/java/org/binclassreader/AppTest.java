@@ -16,6 +16,7 @@
 
 package org.binclassreader;
 
+import com.google.common.base.Stopwatch;
 import org.apache.commons.io.IOUtils;
 import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.FieldAccessFlagsEnum;
@@ -23,7 +24,6 @@ import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.services.ClassReadingService;
 import org.binclassreader.structs.*;
-import org.binclassreader.testclasses.TestOne;
 import org.binclassreader.tree.Tree;
 import org.binclassreader.tree.TreeElement;
 import org.binclassreader.utils.Utilities;
@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Yannick on 2/3/2016.
@@ -44,8 +45,9 @@ public class AppTest {
 
     @Test
     public void classTestOne() throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
 
-        URL classResource = TestOne.class.getResource("TestZero.class");
+        URL classResource = AppTest.class.getResource("testclasses/TestZero.class");
 
         if (classResource != null) {
             byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(classResource.toURI())));
@@ -65,7 +67,7 @@ public class AppTest {
 
                     System.out.println("\n--------------------------- CONST_POOL ---------------------------");
                     for (Map.Entry<Integer, Object> integerObjectEntry : constPool.entrySet()) {
-                        System.out.println(integerObjectEntry.getKey() + " -> " + integerObjectEntry.getValue());
+                        System.out.println((integerObjectEntry.getKey() + 1) + " -> " + integerObjectEntry.getValue());
                     }
 
 
@@ -121,12 +123,13 @@ public class AppTest {
                                 ConstUtf8Info constUtf8InfoName = (ConstUtf8Info) child.get(0).getCurrent();
                                 ConstUtf8Info constUtf8InfoDescriptor = (ConstUtf8Info) child.get(1).getCurrent();
 
-                                System.out.println(constUtf8InfoName.getAsNewString() + "(" + constUtf8InfoDescriptor.getAsNewString() + ") Bytecode => " + Utilities.getBytecodeAsFormattedString(codeAttr.getRawBytecode(), classReader.getConstPool()));
+                                System.out.println(constUtf8InfoName.getAsNewString() + "(" + constUtf8InfoDescriptor.getAsNewString() + ") \n*** Bytecode *** \n" + Utilities.getBytecodeAsFormattedString(codeAttr.getRawBytecode(), classReader.getConstPool()) + "****************\n");
                             }
                         }
                     }
                 }
             }
         }
+        System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
     }
 }

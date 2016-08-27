@@ -24,17 +24,17 @@ import org.binclassreader.utils.Utilities;
  */
 public abstract class AbstractLongDoubleConst {
     @BinClassParser(byteToRead = 4)
-    protected int[] high_bytes;
+    protected short[] high_bytes;
 
     @BinClassParser(readOrder = 2, byteToRead = 4)
-    protected int[] low_bytes;
+    protected short[] low_bytes;
 
 
-    protected int[] getHigh_bytes_data() {
+    protected short[] getHigh_bytes_data() {
         return Utilities.safeArrayClone(high_bytes);
     }
 
-    protected int[] getLow_bytes_data() {
+    protected short[] getLow_bytes_data() {
         return Utilities.safeArrayClone(low_bytes);
     }
 }

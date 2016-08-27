@@ -27,13 +27,13 @@ import org.binclassreader.utils.Utilities;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.2
 public class ConstAttributeInfo {
     @BinClassParser(byteToRead = 2)
-    private int[] attribute_name_index;
+    private short[] attribute_name_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 4)
-    private int[] attribute_length;
+    private short[] attribute_length;
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
-    private int[] constant_value_index;
+    private short[] constant_value_index;
 
     @PoolItemIndex(mustBeOfType = ConstClassInfo.class)
     public int getAttributeNameIndex() {

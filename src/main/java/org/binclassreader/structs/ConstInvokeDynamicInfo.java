@@ -26,10 +26,10 @@ import org.binclassreader.utils.Utilities;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.10
 public class ConstInvokeDynamicInfo {
     @BinClassParser(byteToRead = 2)
-    private int[] bootstrap_method_attr_index;
+    private short[] bootstrap_method_attr_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
-    private int[] name_and_type_index;
+    private short[] name_and_type_index;
 
     @PoolItemIndex
     public int getBootstrapMethodAttrIndex() {

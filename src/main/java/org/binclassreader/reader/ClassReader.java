@@ -103,7 +103,7 @@ public class ClassReader {
 
                 try {
                     byte nbByteToRead = value.getNbByteToRead();
-                    int[] bytes = readFromCurrentStream(nbByteToRead);
+                    short[] bytes = readFromCurrentStream(nbByteToRead);
                     fieldToWrite.set(obj, bytes);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -120,24 +120,32 @@ public class ClassReader {
         return obj;
     }
 
-    public int[] readFromCurrentStream(int nbByteToRead) throws IOException {
+    /**
+     * @param nbByteToRead
+     * @return An array of positives bytes (short). The values will be -1 for the overflowing values.
+     * @throws IOException
+     */
+    public short[] readFromCurrentStream(int nbByteToRead) throws IOException {
+
         if (nbByteToRead <= 0) {
             return null;
         }
 
-        int[] buffer = new int[nbByteToRead];
+        short[] bufferShort = new short[nbByteToRead];
 
         for (int i = 0; i < nbByteToRead; i++) {
-            buffer[i] = classData.read();
+            int read = classData.read();
+            bufferShort[i] = (short) ((read != -1) ? (read & 0xFF) : read);
         }
-        return buffer;
+
+        return bufferShort;
     }
 
-    public void skipFromCurrentStream(int nbByteToSkip) throws IOException {
+    public long skipFromCurrentStream(int nbByteToSkip) throws IOException {
         if (nbByteToSkip <= 0) {
-            return;
+            return 0;
         }
-        classData.skip(nbByteToSkip);
+        return classData.skip(nbByteToSkip);
     }
 
     public int readFromCurrentStream() throws IOException {

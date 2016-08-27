@@ -27,16 +27,16 @@ import java.util.Arrays;
 public class ConstMagicNumberInfo {
 
     @BinClassParser(byteToRead = 4)
-    private int[] bytes_data;
+    private short[] bytes_data;
 
-    public int[] getBytes_data() {
+    public short[] getBytes_data() {
         return Utilities.safeArrayClone(bytes_data);
     }
 
     @Override
     public String toString() {
         return "ConstMagicNumberInfo{" +
-                "bytes_data=" + Arrays.toString(bytes_data) +
+                "bytes_data=" + Arrays.toString(getBytes_data()) +
                 '}';
     }
 }

@@ -34,16 +34,16 @@ import java.util.List;
 public class ConstMethodInfo implements SelfReader {
 
     @BinClassParser(byteToRead = 2)
-    private int[] access_flags;
+    private short[] access_flags;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
-    private int[] name_index;
+    private short[] name_index;
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
-    private int[] descriptor_index;
+    private short[] descriptor_index;
 
     @BinClassParser(readOrder = 4, byteToRead = 2)
-    private int[] attributes_count;
+    private short[] attributes_count;
 
     private CodeAttr codeAttr;
 

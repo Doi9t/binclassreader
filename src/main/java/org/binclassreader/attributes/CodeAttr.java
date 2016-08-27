@@ -34,11 +34,11 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
 
     private final List<Short> CODE;
     @BinClassParser(readOrder = 3, byteToRead = 2)
-    private int[] max_stack;
+    private short[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
-    private int[] max_locals;
+    private short[] max_locals;
     @BinClassParser(readOrder = 5, byteToRead = 4)
-    private int[] code_length;
+    private short[] code_length;
 /*
         -----------------------------Attributes-----------------------------
         LineNumberTable.................................................45.3 //DONE
@@ -77,16 +77,16 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
     private class ExceptionHandler {
 
         @BinClassParser(byteToRead = 2)
-        private int[] start_pc;
+        private short[] start_pc;
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
-        private int[] end_pc;
+        private short[] end_pc;
 
         @BinClassParser(readOrder = 3, byteToRead = 2)
-        private int[] handler_pc;
+        private short[] handler_pc;
 
         @BinClassParser(readOrder = 4, byteToRead = 2)
-        private int[] catch_type;
+        private short[] catch_type;
 
         public int getStartPc() {
             return Utilities.combineBytesToInt(start_pc);

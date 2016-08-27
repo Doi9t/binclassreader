@@ -33,7 +33,7 @@ public class Utilities {
      * @param bytes - The byte to be merged
      * @return The combined byte, -1 if the byte array is empty or null
      */
-    public static int combineBytesToInt(int[] bytes) {
+    public static int combineBytesToInt(short[] bytes) {
 
         if (bytes == null || bytes.length == 0) {
             return -1;
@@ -43,8 +43,8 @@ public class Utilities {
 
         int shiftBytes = (8 * bytes.length) - 8;
         for (int b : bytes) {
-            value |= (b & 0xFF) << shiftBytes;
-            shiftBytes = (shiftBytes - 8);
+            value |= (b << shiftBytes);
+            shiftBytes -= 8;
         }
 
         return value;
@@ -54,7 +54,7 @@ public class Utilities {
      * @param bytes - The byte to be merged
      * @return The combined byte, -1 if the byte array is empty or null
      */
-    public static long combineBytesToLong(int[] bytes) {
+    public static long combineBytesToLong(short[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return -1;
         }
@@ -119,6 +119,18 @@ public class Utilities {
      * @return An array of object
      */
     public static int[] safeArrayClone(int[] arr) {
+        if (arr == null) {
+            return null;
+        }
+
+        return arr.clone();
+    }
+
+    /**
+     * @param arr - An array of short to be cloned
+     * @return An array of object
+     */
+    public static short[] safeArrayClone(short[] arr) {
         if (arr == null) {
             return null;
         }

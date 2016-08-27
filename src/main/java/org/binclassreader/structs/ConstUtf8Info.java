@@ -31,7 +31,7 @@ import java.io.UnsupportedEncodingException;
 public class ConstUtf8Info implements SelfReader {
 
     @BinClassParser(byteToRead = 2)
-    private int[] length;
+    private short[] length;
 
     private byte[] bytes;
 
@@ -48,7 +48,7 @@ public class ConstUtf8Info implements SelfReader {
         String value = null;
 
         try {
-            value = (bytes != null) ? new String(bytes, "UTF-8") : null;
+            value = (bytes != null) ? new String(bytes, "UTF-8") : value;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class ConstUtf8Info implements SelfReader {
         if (lengthArray > 0) {
 
             try {
-                int[] read = reader.readFromCurrentStream(lengthArray);
+                short[] read = reader.readFromCurrentStream(lengthArray);
 
                 if (read == null || lengthArray != read.length) {
                     return;

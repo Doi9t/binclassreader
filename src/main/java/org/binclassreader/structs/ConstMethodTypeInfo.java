@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class ConstMethodTypeInfo {
 
     @BinClassParser(readOrder = 1, byteToRead = 2)
-    private int[] descriptor_index;
+    private short[] descriptor_index;
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
     public int getDescriptorIndex() {

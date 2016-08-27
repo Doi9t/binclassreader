@@ -25,9 +25,9 @@ import org.binclassreader.utils.Utilities;
 public abstract class AbstractIntFloatConst {
 
     @BinClassParser(readOrder = 1, byteToRead = 4)
-    protected int[] bytes;
+    protected short[] bytes;
 
-    protected int[] getBytes() {
+    protected short[] getBytes() {
         return Utilities.safeArrayClone(bytes);
     }
 }

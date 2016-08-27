@@ -26,7 +26,7 @@ import org.binclassreader.utils.Utilities;
 public class StackMapTableAttr extends AbstractAttribute {
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
-    private int[] number_of_entries;
+    private short[] number_of_entries;
 
     public int getNumberOfEntries() {
         return Utilities.combineBytesToInt(number_of_entries);
