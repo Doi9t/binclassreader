@@ -39,15 +39,6 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
     private short[] max_locals;
     @BinClassParser(readOrder = 5, byteToRead = 4)
     private short[] code_length;
-/*
-        -----------------------------Attributes-----------------------------
-        LineNumberTable.................................................45.3 //DONE
-        LocalVariableTable..............................................45.3 //DONE
-        LocalVariableTypeTable..........................................49.0 //DONE
-        StackMapTable...................................................50.0 //TODO
-        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations..52.0 //TODO
-        --------------------------------------------------------------------
-*/
 
     public CodeAttr() {
         CODE = new ArrayList<Short>();

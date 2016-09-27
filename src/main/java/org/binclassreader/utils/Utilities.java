@@ -42,7 +42,7 @@ public class Utilities {
         int value = 0;
 
         int shiftBytes = (8 * bytes.length) - 8;
-        for (int b : bytes) {
+        for (short b : bytes) {
             value |= (b << shiftBytes);
             shiftBytes -= 8;
         }
@@ -62,7 +62,7 @@ public class Utilities {
         long value = 0;
 
         long shiftBytes = (8 * bytes.length) - 8;
-        for (long b : bytes) {
+        for (short b : bytes) {
             value |= (b & 0xFF) << shiftBytes;
             shiftBytes = (shiftBytes - 8);
         }

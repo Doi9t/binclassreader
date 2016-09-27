@@ -122,7 +122,7 @@ public class ClassReader {
 
     /**
      * @param nbByteToRead
-     * @return An array of positives bytes (short). The values will be -1 for the overflowing values.
+     * @return An array of positives bytes (as short). The values will be -1 for the overflowing values.
      * @throws IOException
      */
     public short[] readFromCurrentStream(int nbByteToRead) throws IOException {
@@ -131,14 +131,16 @@ public class ClassReader {
             return null;
         }
 
-        short[] bufferShort = new short[nbByteToRead];
+        byte[] buffer = new byte[nbByteToRead];
+        short[] shortBuffer = new short[nbByteToRead];
+
+        int read = classData.read(buffer);
 
         for (int i = 0; i < nbByteToRead; i++) {
-            int read = classData.read();
-            bufferShort[i] = (short) ((read != -1) ? (read & 0xFF) : read);
+            shortBuffer[i] = (i < read) ? (short) ((short) buffer[i] & 0xFF) : -1;
         }
 
-        return bufferShort;
+        return shortBuffer;
     }
 
     public long skipFromCurrentStream(int nbByteToSkip) throws IOException {
