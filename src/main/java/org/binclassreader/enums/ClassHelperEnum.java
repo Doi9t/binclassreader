@@ -17,22 +17,8 @@
 package org.binclassreader.enums;
 
 /**
- * Created by Yannick on 6/16/2016.
+ * Created by Yannick on 9/26/2016.
  */
-public enum VerificationInfoEnum {
-    ITEM_TOP((byte) 0),
-    ITEM_INTEGER((byte) 1),
-    ITEM_FLOAT((byte) 2),
-    ITEM_DOUBLE((byte) 3),
-    ITEM_LONG((byte) 4),
-    ITEM_NULL((byte) 5),
-    ITEM_UNINITIALIZEDTHIS((byte) 6),
-    ITEM_OBJECT((byte) 7),
-    ITEM_UNINITIALIZED((byte) 8);
-
-    private byte value;
-
-    VerificationInfoEnum(byte value) {
-        this.value = value;
-    }
+public enum ClassHelperEnum {
+    DESCRIPTOR, NAME, ACCESS_FLAGS
 }

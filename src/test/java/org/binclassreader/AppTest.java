@@ -17,25 +17,16 @@
 package org.binclassreader;
 
 import com.google.common.base.Stopwatch;
-import org.apache.commons.io.IOUtils;
-import org.binclassreader.attributes.CodeAttr;
-import org.binclassreader.enums.FieldAccessFlagsEnum;
-import org.binclassreader.enums.PoolTypeEnum;
-import org.binclassreader.reader.ClassReader;
-import org.binclassreader.services.ClassReadingService;
-import org.binclassreader.structs.*;
-import org.binclassreader.tree.Tree;
-import org.binclassreader.tree.TreeElement;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.enums.ClassHelperEnum;
+import org.binclassreader.services.ClassHelperService;
+import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.utils.KeyValueHolder;
 import org.junit.Test;
-import org.multiarraymap.MultiArrayMap;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,88 +38,23 @@ public class AppTest {
     public void classTestOne() throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
-        URL classResource = AppTest.class.getResource("testclasses/TestZero.class");
+        URL classResource = AppTest.class.getResource("testclasses/TestOne.class");
 
         if (classResource != null) {
-            byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(classResource.toURI())));
+            ClassHelperService.loadClass(new FileInputStream(new File(classResource.toURI())));
 
-            if (bytes != null && bytes.length > 0) {
-                ClassReadingService.readNewClass(new ByteArrayInputStream(bytes));
+            List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
+            List<KeyValueHolder<ClassHelperEnum, ConstUtf8Info>> methods = ClassHelperService.getMethods();
+            List<String> interfaces = ClassHelperService.getInterfaces();
 
-                List<ClassReader> readerList = ClassReadingService.getReaderList();
-
-                for (ClassReader classReader : readerList) {
-                    System.out.println("\n\n************************************* NEW CLASS INFO *************************************");
-
-                    MultiArrayMap<PoolTypeEnum, Object> mappedPool = classReader.getMappedPool();
-                    Map<Class<?>, Object> sections = classReader.getSections();
-                    Map<Integer, Object> constPool = classReader.getConstPool();
-
-
-                    System.out.println("\n--------------------------- CONST_POOL ---------------------------");
-                    for (Map.Entry<Integer, Object> integerObjectEntry : constPool.entrySet()) {
-                        System.out.println((integerObjectEntry.getKey() + 1) + " -> " + integerObjectEntry.getValue());
-                    }
-
-
-                    System.out.println("\n--------------------------- SUPER_CLASS ---------------------------");
-
-                    ConstThisClassInfo thisClassInfo = (ConstThisClassInfo) sections.get(ConstThisClassInfo.class);
-
-                    ConstClassInfo ConstClassInfoSuperClass = (ConstClassInfo) constPool.get(thisClassInfo.getIndex());
-                    ConstUtf8Info constUtf8InfoSuperClassName = (ConstUtf8Info) constPool.get(ConstClassInfoSuperClass.getNameIndex() - 1);
-
-                    System.out.println(constUtf8InfoSuperClassName.getAsNewString());
-
-                    System.out.println("\n--------------------------- FIELD ---------------------------");
-                    List<Object> fieldList = mappedPool.get(PoolTypeEnum.FIELD);
-                    if (fieldList != null) {
-                        for (Object o : fieldList) {
-                            if (o instanceof Tree) {
-                                TreeElement element = ((Tree) o).getRoot();
-                                List<FieldAccessFlagsEnum> accessFlags = ((ConstFieldInfo) element.getCurrent()).getAccessFlags();
-                                List<TreeElement> child = element.getChild();
-
-                                ConstUtf8Info constUtf8InfoName = (ConstUtf8Info) child.get(0).getCurrent();
-                                ConstUtf8Info constUtf8InfoDescriptor = (ConstUtf8Info) child.get(1).getCurrent();
-
-                                System.out.println(accessFlags + " " + constUtf8InfoName.getAsNewString() + " " + constUtf8InfoDescriptor.getAsNewString());
-                            }
-                        }
-                    }
-
-                    System.out.println("\n--------------------------- INTERFACES ---------------------------");
-                    List<Object> interfacesList = mappedPool.get(PoolTypeEnum.INTERFACE);
-                    if (interfacesList != null) {
-                        for (Object o : interfacesList) {
-                            if (o instanceof Tree) {
-                                TreeElement element = ((Tree) o).getRoot();
-                                TreeElement child = element.getChild().get(0);
-
-                                System.out.println(((ConstUtf8Info) child.getCurrent()).getAsNewString());
-                            }
-                        }
-                    }
-
-                    System.out.println("\n--------------------------- METHODS ---------------------------");
-                    List<Object> methodList = mappedPool.get(PoolTypeEnum.METHOD);
-
-                    if (methodList != null) {
-                        for (Object o : methodList) {
-                            if (o instanceof Tree) {
-                                TreeElement element = ((Tree) o).getRoot();
-                                CodeAttr codeAttr = ((ConstMethodInfo) element.getCurrent()).getCodeAttr();
-                                List<TreeElement> child = element.getChild();
-
-                                ConstUtf8Info constUtf8InfoName = (ConstUtf8Info) child.get(0).getCurrent();
-                                ConstUtf8Info constUtf8InfoDescriptor = (ConstUtf8Info) child.get(1).getCurrent();
-
-                                System.out.println(constUtf8InfoName.getAsNewString() + "(" + constUtf8InfoDescriptor.getAsNewString() + ") \n*** Bytecode *** \n" + Utilities.getBytecodeAsFormattedString(codeAttr.getRawBytecode(), classReader.getConstPool()) + "****************\n");
-                            }
-                        }
-                    }
-                }
-            }
+            System.out.println("SuperClassName -> " + ClassHelperService.getSuperClassName());
+            System.out.println("********************************************************");
+            System.out.println("Fields (" + fields.size() + ") -> " + fields);
+            System.out.println("********************************************************");
+            System.out.println("Methods (" + methods.size() + ") -> " + methods);
+            System.out.println("********************************************************");
+            System.out.println("Interfaces (" + interfaces.size() + ") -> " + interfaces);
+            System.out.println("********************************************************");
         }
         System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
     }

@@ -91,8 +91,9 @@ public class ClassGenerator {
 
     public static void addMethods(String... code) throws NoSuchMethodException {
 
-        if (code == null || code.length == 0)
+        if (code == null || code.length == 0) {
             return;
+        }
 
         for (String functionCode : code) {
 
