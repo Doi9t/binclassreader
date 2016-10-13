@@ -16,11 +16,12 @@
 
 package org.binclassreader.structs;
 
+import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * Created by Yannick on 4/18/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6
-public class ConstMethodInfo implements SelfReader {
+public class ConstMethodInfo extends Readable {
 
     @BinClassParser(byteToRead = 2)
     private short[] access_flags;
@@ -69,12 +70,12 @@ public class ConstMethodInfo implements SelfReader {
         return MethodAccessFlagsEnum.getFlagsByMask((short) Utilities.combineBytesToInt(access_flags));
     }
 
-    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
+    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.NAME)
     public int getNameIndex() {
         return Utilities.combineBytesToInt(name_index);
     }
 
-    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
+    @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.DESCRIPTOR)
     public int getDescriptorIndex() {
         return Utilities.combineBytesToInt(descriptor_index);
     }
@@ -93,7 +94,7 @@ public class ConstMethodInfo implements SelfReader {
                 '}';
     }
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         attList = new ArrayList<AttributesInfo>();
 
         List<MethodAccessFlagsEnum> flags = getAccessFlags();

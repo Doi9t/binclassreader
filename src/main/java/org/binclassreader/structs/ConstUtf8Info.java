@@ -16,8 +16,8 @@
 
 package org.binclassreader.structs;
 
+import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
@@ -28,7 +28,7 @@ import java.io.UnsupportedEncodingException;
  * Created by Yannick on 1/25/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.7
-public class ConstUtf8Info implements SelfReader {
+public class ConstUtf8Info extends Readable {
 
     @BinClassParser(byteToRead = 2)
     private short[] length;
@@ -56,7 +56,7 @@ public class ConstUtf8Info implements SelfReader {
         return value;
     }
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         int lengthArray = Utilities.combineBytesToInt(length);
 
         if (lengthArray > 0) {

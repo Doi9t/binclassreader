@@ -46,6 +46,20 @@ public class KeyValueHolder<K, V> {
         return values;
     }
 
+    public V getFirstMatchingValue(K key) {
+
+        V value = null;
+
+        for (Holder<K, V> kvHolder : valueHolder) {
+            if (kvHolder.getKey() == key) {
+                value = kvHolder.getValue();
+                break;
+            }
+        }
+
+        return value;
+    }
+
     public List<V> getAllValues() {
         List<V> values = new ArrayList<V>();
 
@@ -54,6 +68,21 @@ public class KeyValueHolder<K, V> {
         }
 
         return values;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+
+
+        for (Holder<K, V> kvHolder : valueHolder) {
+            builder.append(kvHolder).append('\n');
+        }
+
+        return "KeyValueHolder{" +
+                "valueHolder=" + builder +
+                '}';
     }
 
     private class Holder<X, Y> {
@@ -80,20 +109,5 @@ public class KeyValueHolder<K, V> {
                     ", value=" + value +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder builder = new StringBuilder();
-
-
-        for (Holder<K, V> kvHolder : valueHolder) {
-            builder.append(kvHolder).append('\n');
-        }
-
-        return "KeyValueHolder{" +
-                "valueHolder=" + builder +
-                '}';
     }
 }

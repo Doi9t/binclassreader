@@ -19,7 +19,6 @@ package org.binclassreader.parsers;
 import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionTypeEnum;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstClassInfo;
 
@@ -28,9 +27,9 @@ import org.binclassreader.structs.ConstClassInfo;
  */
 
 @PoolDataOptions(storageType = CollectionTypeEnum.LIST)
-public class InterfacesParser extends AbstractParser implements SelfReader {
+public class InterfacesParser extends AbstractParser {
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         count = getCount();
 
         if (count > 65535) {

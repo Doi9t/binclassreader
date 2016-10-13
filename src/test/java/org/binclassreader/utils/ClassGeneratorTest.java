@@ -16,35 +16,42 @@
 
 package org.binclassreader.utils;
 
+import javassist.CtField;
+import javassist.CtMember;
+import javassist.CtMethod;
+import org.apache.commons.lang.WordUtils;
 import org.junit.Test;
+
+import static org.binclassreader.utils.ClassGenerator.getRandomName;
+import static org.binclassreader.utils.ClassGenerator.getRandomParameters;
 
 /**
  * Created by Yannick on 8/21/2016.
  */
 public class ClassGeneratorTest {
 
-    private String testClassName = "TestClassName";
+    private String testClassName = WordUtils.capitalize(getRandomName((byte) 25));
 
-    private String method = "public static void test(String test) {\n" +
-            "        System.out.println(test);\n" +
-            "    }";
-    private String field = "public static String test = \"sjdhasjkhdjkashdjhj\";";
-
-    private String constructor = "private " + testClassName + "() {\n" +
-            "        System.out.println(getClass().getSimpleName());\n" +
-            "    }\n";
+    private String method = "public static void %s(%s) {}";
+    private String field = "public static String %s = \"%s\";";
 
     @Test
-    public void addComponents() {
+    public void addComponents() throws NoSuchMethodException {
 
-        ClassGenerator.setClassName(testClassName);
+        ClassGenerator classGenerator = new ClassGenerator();
 
-        try {
-            ClassGenerator.addMethods(constructor, method);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        classGenerator.setClassName(testClassName);
+
+        for (byte i = 0; i < 25; i++) {
+            classGenerator.addComponents(CtMethod.class, String.format(method, getRandomName((byte) 25), getRandomParameters()));
         }
 
-        System.out.println(ClassGenerator.getCtClass());
+        for (byte i = 0; i < 10; i++) {
+            classGenerator.addComponents(CtField.class, String.format(field, getRandomName((byte) 10), getRandomName((byte) 25)));
+        }
+
+        for (CtMember member : classGenerator.getClassComponents().get(CtMethod.class)) {
+            System.out.println(member.getSignature());
+        }
     }
 }

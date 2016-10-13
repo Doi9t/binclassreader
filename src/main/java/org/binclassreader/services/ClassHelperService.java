@@ -19,10 +19,7 @@ package org.binclassreader.services;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.PoolTypeEnum;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.ConstClassInfo;
-import org.binclassreader.structs.ConstFieldInfo;
-import org.binclassreader.structs.ConstThisClassInfo;
-import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.structs.*;
 import org.binclassreader.tree.Tree;
 import org.binclassreader.tree.TreeElement;
 import org.binclassreader.utils.KeyValueHolder;
@@ -42,6 +39,8 @@ public class ClassHelperService {
     private static MultiArrayMap<PoolTypeEnum, Object> mappedPool;
     private static Map<Class<?>, Object> sections;
     private static Map<Integer, Object> constPool;
+    private static ClassHelperEnum name = ClassHelperEnum.NAME;
+    private static ClassHelperEnum descriptor = ClassHelperEnum.DESCRIPTOR;
 
     private ClassHelperService() {
     }
@@ -70,10 +69,17 @@ public class ClassHelperService {
     public static String getSuperClassName() {
         ConstThisClassInfo thisClassInfo = (ConstThisClassInfo) sections.get(ConstThisClassInfo.class);
 
-        ConstClassInfo ConstClassInfoSuperClass = (ConstClassInfo) constPool.get(thisClassInfo.getIndex());
-        ConstUtf8Info constUtf8InfoSuperClassName = (ConstUtf8Info) constPool.get(ConstClassInfoSuperClass.getNameIndex() - 1);
+        Object obj = constPool.get(thisClassInfo.getIndex());
+        ConstUtf8Info value = null;
 
-        return constUtf8InfoSuperClassName.getAsNewString();
+        if (obj instanceof ConstClassInfo) {
+            ConstClassInfo ConstClassInfoSuperClass = (ConstClassInfo) obj;
+            value = (ConstUtf8Info) constPool.get(ConstClassInfoSuperClass.getNameIndex() - 1);
+        } else if (obj instanceof ConstUtf8Info) {
+            value = (ConstUtf8Info) obj;
+        }
+
+        return (value != null) ? value.getAsNewString() : null;
     }
 
     public static List<KeyValueHolder<ClassHelperEnum, Object>> getFields() {
@@ -83,13 +89,27 @@ public class ClassHelperService {
         if (fieldList != null) {
             for (Object o : fieldList) {
                 if (o instanceof Tree) {
+
                     TreeElement element = ((Tree) o).getRoot();
                     List<TreeElement> child = element.getChild();
 
+                    TreeElement treeElementZero = child.get(0);
+                    TreeElement treeElementOne = child.get(1);
+
+                    Object nameValue = null, descriptorValue = null;
+
+                    if (name.equals(treeElementZero.getMappingType())) {
+                        nameValue = treeElementZero;
+                        descriptorValue = treeElementOne;
+                    } else {
+                        nameValue = treeElementOne;
+                        descriptorValue = treeElementZero;
+                    }
+
                     KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
                     value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstFieldInfo) element.getCurrent()).getAccessFlags());
-                    value.addPair(ClassHelperEnum.NAME, child.get(0).getCurrent());
-                    value.addPair(ClassHelperEnum.DESCRIPTOR, child.get(1).getCurrent());
+                    value.addPair(name, nameValue);
+                    value.addPair(descriptor, descriptorValue);
 
                     values.add(value);
                 }
@@ -100,8 +120,8 @@ public class ClassHelperService {
     }
 
 
-    public static List<KeyValueHolder<ClassHelperEnum, ConstUtf8Info>> getMethods() {
-        List<KeyValueHolder<ClassHelperEnum, ConstUtf8Info>> values = new ArrayList<KeyValueHolder<ClassHelperEnum, ConstUtf8Info>>();
+    public static List<KeyValueHolder<ClassHelperEnum, Object>> getMethods() {
+        List<KeyValueHolder<ClassHelperEnum, Object>> values = new ArrayList<KeyValueHolder<ClassHelperEnum, Object>>();
 
         List<Object> methodList = mappedPool.get(PoolTypeEnum.METHOD);
 
@@ -111,10 +131,28 @@ public class ClassHelperService {
                     TreeElement element = ((Tree) o).getRoot();
                     List<TreeElement> child = element.getChild();
 
-                    KeyValueHolder<ClassHelperEnum, ConstUtf8Info> value = new KeyValueHolder<ClassHelperEnum, ConstUtf8Info>();
-                    value.addPair(ClassHelperEnum.NAME, (ConstUtf8Info) child.get(0).getCurrent());
-                    value.addPair(ClassHelperEnum.DESCRIPTOR, (ConstUtf8Info) child.get(1).getCurrent());
-                    values.add(value);
+                    KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
+
+                    if (child.size() > 1) {
+                        TreeElement treeElementZero = child.get(0);
+                        TreeElement treeElementOne = child.get(1);
+
+                        TreeElement nameValue = null, descriptorValue = null;
+
+                        if (name.equals(treeElementZero.getMappingType())) {
+                            nameValue = treeElementZero;
+                            descriptorValue = treeElementOne;
+                        } else {
+                            nameValue = treeElementOne;
+                            descriptorValue = treeElementZero;
+                        }
+
+                        value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstMethodInfo) element.getCurrent()).getAccessFlags());
+                        value.addPair(name, nameValue.getCurrent());
+                        value.addPair(descriptor, descriptorValue.getCurrent());
+
+                        values.add(value);
+                    }
                 }
             }
         }
@@ -139,5 +177,9 @@ public class ClassHelperService {
         }
 
         return values;
+    }
+
+    public static String getClassName() {
+        return ((ConstUtf8Info) constPool.get(0)).getAsNewString();
     }
 }

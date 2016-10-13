@@ -17,22 +17,37 @@
 package org.binclassreader;
 
 import com.google.common.base.Stopwatch;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMember;
+import javassist.CtMethod;
+import org.apache.commons.lang.WordUtils;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.services.ClassHelperService;
 import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.tree.TreeElement;
+import org.binclassreader.utils.ClassGenerator;
 import org.binclassreader.utils.KeyValueHolder;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.binclassreader.utils.ClassGenerator.getRandomName;
+import static org.binclassreader.utils.ClassGenerator.getRandomParameters;
+
 /**
  * Created by Yannick on 2/3/2016.
  */
 public class AppTest {
+
+    private String method = "public static void %s(%s) {}";
+    private String field = "public static String %s = \"%s\";";
 
     @Test
     public void classTestOne() throws Exception {
@@ -44,7 +59,7 @@ public class AppTest {
             ClassHelperService.loadClass(new FileInputStream(new File(classResource.toURI())));
 
             List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
-            List<KeyValueHolder<ClassHelperEnum, ConstUtf8Info>> methods = ClassHelperService.getMethods();
+            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods();
             List<String> interfaces = ClassHelperService.getInterfaces();
 
             System.out.println("SuperClassName -> " + ClassHelperService.getSuperClassName());
@@ -57,5 +72,85 @@ public class AppTest {
             System.out.println("********************************************************");
         }
         System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
+    }
+
+    @Test
+    public void classBasicEmptyFunctionMultiplesRandomTest() throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        for (byte i = 0; i < 50; i++) {
+            ClassGenerator classGenerator = new ClassGenerator();
+
+            classGenerator.setClassName(WordUtils.capitalize(getRandomName((byte) 25)));
+
+            for (byte j = 0; j < 25; j++) {
+                classGenerator.addComponents(CtMethod.class, String.format(method, getRandomName((byte) 25), getRandomParameters()));
+            }
+
+            for (byte j = 0; j < 10; j++) {
+                classGenerator.addComponents(CtField.class, String.format(field, getRandomName((byte) 10), getRandomName((byte) 25)));
+            }
+
+            ClassHelperService.loadClass(new ByteArrayInputStream(classGenerator.getRawCtClass()));
+            CtClass ctClass = classGenerator.getCtClass();
+
+            List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
+            CtField[] ctFields = ctClass.getDeclaredFields();
+
+            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods();
+
+            //FIXME: Remove the <init>
+
+            CtMethod[] ctMethods = ctClass.getDeclaredMethods();
+
+            List<String> interfaces = ClassHelperService.getInterfaces();
+
+
+            Assert.assertEquals(ClassHelperService.getClassName(), ctClass.getName()); //Compare the class name
+            Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+            Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+        }
+
+        System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
+    }
+
+    private boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
+        boolean isAll = true, isCurrent;
+
+        for (KeyValueHolder<ClassHelperEnum, Object> holder : holders) {
+
+            ConstUtf8Info utfName = null;
+            ConstUtf8Info utfDescriptor = null;
+
+            Object firstMatchingValueName = holder.getFirstMatchingValue(ClassHelperEnum.NAME);
+            Object firstMatchingValueDescriptor = holder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR);
+
+            if (firstMatchingValueName instanceof TreeElement) {
+                utfName = (ConstUtf8Info) ((TreeElement) firstMatchingValueName).getCurrent();
+            } else if (firstMatchingValueName instanceof ConstUtf8Info) {
+                utfName = (ConstUtf8Info) firstMatchingValueName;
+            }
+
+            if (firstMatchingValueDescriptor instanceof TreeElement) {
+                utfDescriptor = (ConstUtf8Info) ((TreeElement) firstMatchingValueDescriptor).getCurrent();
+            } else if (firstMatchingValueDescriptor instanceof ConstUtf8Info) {
+                utfDescriptor = (ConstUtf8Info) firstMatchingValueDescriptor;
+            }
+
+            if (utfDescriptor == null || utfName == null) {
+                continue;
+            }
+
+            isCurrent = false;
+            for (CtMember ctField : members) {
+                if (ctField.getSignature().equals(utfDescriptor.getAsNewString()) && ctField.getName().equals(utfName.getAsNewString())) {
+                    isCurrent = true;
+                    break;
+                }
+            }
+            isAll &= isCurrent;
+        }
+
+        return isAll && members.length == holders.size();
     }
 }

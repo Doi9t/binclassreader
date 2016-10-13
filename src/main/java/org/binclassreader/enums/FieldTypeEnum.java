@@ -16,35 +16,44 @@
 
 package org.binclassreader.enums;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 /**
- * Created by Yannick on 4/13/2016.
+ * Created by Yannick on 10/6/2016.
  */
-public enum CollectionTypeEnum {
-    LIST, MAP, SET, NONE;
+public enum FieldTypeEnum {
+    BYTE('B'),
+    CHAR('C'),
+    DOUBLE('D'),
+    FLOAT('F'),
+    INT('I'),
+    LONG('J'),
+    REFERENCE_CLASS('L'),
+    SHORT('S'),
+    BOOLEAN('Z'),
+    REFERENCE_ARRAY('[');
 
-    public static Object getCollectionByEnum(CollectionTypeEnum type) {
-        Object t = null;
+    private char value;
 
-        if (type == null) {
+    FieldTypeEnum(char value) {
+        this.value = value;
+    }
+
+    public static FieldTypeEnum getFieldTypeEnumByString(String str) {
+        if (str == null) {
             return null;
         }
 
-        switch (type) {
-            case MAP:
-                t = new HashMap<Object, Object>();
+        FieldTypeEnum value = null;
+        for (FieldTypeEnum fieldTypeEnum : values()) {
+            if (str.contains(Character.toString(fieldTypeEnum.getValue()))) {
+                value = fieldTypeEnum;
                 break;
-            case SET:
-                t = new HashSet<Object>();
-                break;
-            default:
-                t = new ArrayList<Object>();
-                break;
+            }
         }
 
-        return t;
+        return value;
+    }
+
+    public char getValue() {
+        return value;
     }
 }

@@ -17,7 +17,6 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.abstracts.AbstractAttribute;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ import java.io.IOException;
  * Created by Yannick on 4/18/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7
-public class AttributesInfo extends AbstractAttribute implements SelfReader {
+public class AttributesInfo extends AbstractAttribute {
     @Override
     public String toString() {
         return "ConstAttributeInfo{" +
@@ -35,7 +34,7 @@ public class AttributesInfo extends AbstractAttribute implements SelfReader {
                 '}';
     }
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         try {
             reader.skipFromCurrentStream(getAttributeLength());//FIXME: Parse the bytes instead of wasting them ...
         } catch (IOException e) {

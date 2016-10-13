@@ -19,7 +19,6 @@ package org.binclassreader.parsers;
 import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionTypeEnum;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstMethodInfo;
 
@@ -29,9 +28,9 @@ import org.binclassreader.structs.ConstMethodInfo;
 
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6
 @PoolDataOptions(storageType = CollectionTypeEnum.LIST)
-public class MethodsParser extends AbstractParser implements SelfReader {
+public class MethodsParser extends AbstractParser {
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         count = getCount();
 
         if (count > 65535) {

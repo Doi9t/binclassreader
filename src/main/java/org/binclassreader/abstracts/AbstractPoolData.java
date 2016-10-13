@@ -25,7 +25,7 @@ import java.util.*;
  * Created by Yannick on 4/12/2016.
  */
 
-public abstract class AbstractPoolData {
+public abstract class AbstractPoolData extends Readable {
 
     private static final ThreadLocal<Map<Class<?>, Object>> POOL;
 

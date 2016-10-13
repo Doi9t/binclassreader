@@ -139,6 +139,14 @@ public class Utilities {
     }
 
     /**
+     * @param list - The list
+     * @return the current list if not null, or an empty ArrayList otherwise
+     */
+    public static <V> List<V> safeList(List<V> list) {
+        return (list != null) ? list : new ArrayList<V>();
+    }
+
+    /**
      * @param clazzArr - An array of class to be transformed into a array of object
      * @return An array of object
      */

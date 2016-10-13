@@ -241,6 +241,18 @@ public enum BytecodeInstructionEnum {
         haveExtraBytes = (nbByteToRead != null && nbByteToRead.length > 1);
     }
 
+    public static BytecodeInstructionEnum getBytecodeByValue(short byteValue) {
+        BytecodeInstructionEnum value = BytecodeInstructionEnum.UNKNOWN;
+
+        for (BytecodeInstructionEnum bytecodeInstructionEnum : values()) {
+            if (bytecodeInstructionEnum.getValue() == byteValue) {
+                value = bytecodeInstructionEnum;
+                break;
+            }
+        }
+        return value;
+    }
+
     public short getValue() {
         return value;
     }
@@ -255,17 +267,5 @@ public enum BytecodeInstructionEnum {
 
     public boolean haveExtraBytes() {
         return haveExtraBytes;
-    }
-
-    public static BytecodeInstructionEnum getBytecodeByValue(short byteValue) {
-        BytecodeInstructionEnum value = BytecodeInstructionEnum.UNKNOWN;
-
-        for (BytecodeInstructionEnum bytecodeInstructionEnum : values()) {
-            if (bytecodeInstructionEnum.getValue() == byteValue) {
-                value = bytecodeInstructionEnum;
-                break;
-            }
-        }
-        return value;
     }
 }

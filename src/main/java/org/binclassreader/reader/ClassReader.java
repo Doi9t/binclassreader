@@ -17,12 +17,12 @@
 package org.binclassreader.reader;
 
 import org.binclassreader.abstracts.AbstractPoolData;
+import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.enums.PoolTypeEnum;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.parsers.*;
 import org.binclassreader.pojos.FieldPojo;
 import org.binclassreader.structs.ConstAttributeInfo;
@@ -120,8 +120,8 @@ public class ClassReader extends AbstractPoolData {
                 }
             }
 
-            if (obj instanceof SelfReader) {
-                ((SelfReader) obj).initReading(this);
+            if (obj instanceof Readable) {
+                ((Readable) obj).afterFieldsInitialized(this);
             }
         }
 
@@ -213,7 +213,7 @@ public class ClassReader extends AbstractPoolData {
                             break;
                         }
 
-                        TreeElement childTreeElement = new TreeElement(child);
+                        TreeElement childTreeElement = new TreeElement(child, annotation.type());
                         currentTreeElement.addChildren(childTreeElement);
                         childTreeElement.addParent(currentTreeElement);
 

@@ -20,7 +20,6 @@ import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.enums.ConstValuesEnum;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.*;
 import org.binclassreader.utils.Utilities;
@@ -32,9 +31,9 @@ import java.io.IOException;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
 @PoolDataOptions(storageType = CollectionTypeEnum.MAP)
-public class PoolParser extends AbstractParser implements SelfReader {
+public class PoolParser extends AbstractParser {
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         try {
             int idx = (getCount() - 1);
             Object obj = null;

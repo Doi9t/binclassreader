@@ -16,6 +16,8 @@
 
 package org.binclassreader.tree;
 
+import org.binclassreader.enums.ClassHelperEnum;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,14 +29,18 @@ public class TreeElement {
     private final List<TreeElement> child;
     private TreeElement parent;
     private Object current;
+    private ClassHelperEnum mappingType;
 
-    public TreeElement() {
+    public TreeElement(Object current, ClassHelperEnum mappingType) {
+        this.current = current;
         child = new ArrayList<TreeElement>();
+        this.mappingType = mappingType;
     }
 
     public TreeElement(Object current) {
         this.current = current;
         child = new ArrayList<TreeElement>();
+        mappingType = ClassHelperEnum.NONE;
     }
 
     /**
@@ -76,5 +82,9 @@ public class TreeElement {
 
     public List<TreeElement> getChild() {
         return child;
+    }
+
+    public ClassHelperEnum getMappingType() {
+        return mappingType;
     }
 }

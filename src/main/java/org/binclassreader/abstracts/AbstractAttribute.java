@@ -24,7 +24,7 @@ import org.binclassreader.utils.Utilities;
 /**
  * Created by Yannick on 5/23/2016.
  */
-public class AbstractAttribute {
+public class AbstractAttribute extends Readable {
 
     @BinClassParser(byteToRead = 2)
     private short[] attribute_name_index;

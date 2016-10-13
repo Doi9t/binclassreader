@@ -14,13 +14,28 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.interfaces;
+package org.binclassreader.abstracts;
 
 import org.binclassreader.reader.ClassReader;
 
 /**
- * Created by Yannick on 1/27/2016.
+ * Created by Yannick on 10/12/2016.
  */
-public interface SelfReader {
-    void initReading(final ClassReader reader);
+public abstract class Readable {
+
+    /**
+     * This method is called after the Fields have been initialized.
+     *
+     * @param reader
+     */
+    public void afterFieldsInitialized(final ClassReader reader) {
+    }
+
+    /**
+     * This method is called after the tree have been initialized.
+     *
+     * @param reader
+     */
+    public void afterTreeIsBuilt(final ClassReader reader) {
+    }
 }

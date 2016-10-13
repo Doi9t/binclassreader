@@ -18,7 +18,6 @@ package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.interfaces.SelfReader;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.Utilities;
 
@@ -30,7 +29,7 @@ import java.util.List;
  * Created by Yannick on 5/23/2016.
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.3
-public class CodeAttr extends AbstractAttribute implements SelfReader {
+public class CodeAttr extends AbstractAttribute {
 
     private final List<Short> CODE;
     @BinClassParser(readOrder = 3, byteToRead = 2)
@@ -44,7 +43,7 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
         CODE = new ArrayList<Short>();
     }
 
-    public void initReading(ClassReader reader) {
+    public void afterFieldsInitialized(ClassReader reader) {
         int codeLength = Utilities.combineBytesToInt(code_length);
 
         try {
@@ -63,6 +62,10 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
             e.printStackTrace();
         }
 
+    }
+
+    public List<Short> getRawBytecode() {
+        return CODE;
     }
 
     private class ExceptionHandler {
@@ -94,9 +97,5 @@ public class CodeAttr extends AbstractAttribute implements SelfReader {
         public int getCatchType() {
             return Utilities.combineBytesToInt(catch_type);
         }
-    }
-
-    public List<Short> getRawBytecode() {
-        return CODE;
     }
 }
