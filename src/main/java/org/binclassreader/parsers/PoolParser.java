@@ -22,7 +22,7 @@ import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.enums.ConstValuesEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.*;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public class PoolParser extends AbstractParser {
             }
 
             for (int i = 0; i < idx; i++) {
-                ConstValuesEnum valuesEnum = Utilities.getConstTypeByValue((byte) reader.readFromCurrentStream());
+                ConstValuesEnum valuesEnum = BaseUtils.getConstTypeByValue((byte) reader.readFromCurrentStream());
 
                 switch (valuesEnum) {
                     case UTF_8:

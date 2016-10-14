@@ -20,7 +20,7 @@ import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.structs.ConstClassInfo;
 import org.binclassreader.structs.ConstNameAndTypeInfo;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -35,11 +35,11 @@ public abstract class AbstractRefConst {
 
     @PoolItemIndex(mustBeOfType = ConstClassInfo.class)
     protected int getClassIndex() {
-        return Utilities.combineBytesToInt(class_index);
+        return BaseUtils.combineBytesToInt(class_index);
     }
 
     @PoolItemIndex(mustBeOfType = ConstNameAndTypeInfo.class)
     protected int getNameAndTypeIndex() {
-        return Utilities.combineBytesToInt(name_and_type_index);
+        return BaseUtils.combineBytesToInt(name_and_type_index);
     }
 }

@@ -17,7 +17,7 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -28,6 +28,6 @@ public abstract class AbstractIntFloatConst {
     protected short[] bytes;
 
     protected short[] getBytes() {
-        return Utilities.safeArrayClone(bytes);
+        return BaseUtils.safeArrayClone(bytes);
     }
 }

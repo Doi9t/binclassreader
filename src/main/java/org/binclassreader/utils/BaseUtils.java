@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Created by Yannick on 1/26/2016.
  */
-public class Utilities {
+public class BaseUtils {
 
     private static BytecodeExtraByteEnum INDEXBYTE_1 = BytecodeExtraByteEnum.INDEXBYTE_1, INDEXBYTE_2 = BytecodeExtraByteEnum.INDEXBYTE_2;
 

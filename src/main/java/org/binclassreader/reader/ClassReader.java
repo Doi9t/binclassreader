@@ -32,7 +32,7 @@ import org.binclassreader.structs.ConstMethodInfo;
 import org.binclassreader.tree.Tree;
 import org.binclassreader.tree.TreeElement;
 import org.binclassreader.utils.Assert;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 import org.multiarraymap.MultiArrayMap;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class ClassReader extends AbstractPoolData {
 
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
-        sections = this.read(Utilities.createNewArrayOfObject(classSections));
+        sections = this.read(BaseUtils.createNewArrayOfObject(classSections));
         pool = generateTree();
     }
 
@@ -169,12 +169,17 @@ public class ClassReader extends AbstractPoolData {
         return values;
     }
 
-    private void iterateOnPool(List<Object> interfacePool, Class<?> mustBeOfType, PoolTypeEnum poolTypeEnum, MultiArrayMap data) {
+    private void iterateOnPool(List<Object> interfacePool, Class<?> mustBeOfType, PoolTypeEnum poolTypeEnum, MultiArrayMap<PoolTypeEnum, Object> data) {
         if (interfacePool != null) {
             for (Object interfaceObj : interfacePool) {
                 if (interfaceObj != null && interfaceObj.getClass().equals(mustBeOfType)) {
                     TreeElement rootTreeElement = new TreeElement(interfaceObj);
-                    data.put(poolTypeEnum, buildTree(poolTypeEnum, new Tree(rootTreeElement), rootTreeElement));
+                    Tree tree = buildTree(poolTypeEnum, new Tree(rootTreeElement), rootTreeElement);
+                    data.put(poolTypeEnum, tree);
+
+                    if (interfaceObj instanceof Readable) {
+                        ((Readable) interfaceObj).afterTreeIsBuilt(tree);
+                    }
                 }
             }
         }

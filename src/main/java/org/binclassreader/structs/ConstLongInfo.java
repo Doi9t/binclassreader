@@ -17,7 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.abstracts.AbstractLongDoubleConst;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -25,7 +25,7 @@ import org.binclassreader.utils.Utilities;
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.5
 public class ConstLongInfo extends AbstractLongDoubleConst {
     public long getLongValue() {
-        return (Utilities.combineBytesToLong(getHigh_bytes_data()) << 32) + Utilities.combineBytesToLong(getLow_bytes_data());
+        return (BaseUtils.combineBytesToLong(getHigh_bytes_data()) << 32) + BaseUtils.combineBytesToLong(getLow_bytes_data());
     }
 
     @Override

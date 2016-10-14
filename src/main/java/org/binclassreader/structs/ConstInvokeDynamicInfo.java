@@ -18,7 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -33,12 +33,12 @@ public class ConstInvokeDynamicInfo {
 
     @PoolItemIndex
     public int getBootstrapMethodAttrIndex() {
-        return Utilities.combineBytesToInt(bootstrap_method_attr_index);
+        return BaseUtils.combineBytesToInt(bootstrap_method_attr_index);
     }
 
     @PoolItemIndex(mustBeOfType = ConstNameAndTypeInfo.class)
     public int getNameAndTypeIndex() {
-        return Utilities.combineBytesToInt(name_and_type_index);
+        return BaseUtils.combineBytesToInt(name_and_type_index);
     }
 
     @Override

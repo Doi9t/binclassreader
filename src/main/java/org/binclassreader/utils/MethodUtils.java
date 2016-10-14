@@ -14,30 +14,19 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.abstracts;
+package org.binclassreader.utils;
 
-import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.BaseUtils;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Created by Yannick on 4/18/2016.
+ * Created by Yannick on 10/13/2016.
  */
-public abstract class AbstractParser extends AbstractPoolData {
+public class MethodUtils extends BaseUtils {
 
-    @BinClassParser(byteToRead = 2)
-    protected short[] countData;
+    private static final List<String> SPECIAL_METHOD_NAME = Arrays.asList("<init>", "<clinit>");
 
-    protected int count;
-
-    protected short getCount() {
-        return (short) (BaseUtils.combineBytesToInt(countData));
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName() + "{" +
-                "poolObjects=" + getPool() +
-                ", count=" + count +
-                '}';
+    public static boolean isSpecialMethod(String name) {
+        return SPECIAL_METHOD_NAME.contains(name);
     }
 }

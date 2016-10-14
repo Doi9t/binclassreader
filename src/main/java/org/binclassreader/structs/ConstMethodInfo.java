@@ -23,7 +23,10 @@ import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.tree.Tree;
+import org.binclassreader.tree.TreeElement;
+import org.binclassreader.utils.BaseUtils;
+import org.binclassreader.utils.MethodUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,11 @@ public class ConstMethodInfo extends Readable {
 
     private CodeAttr codeAttr;
 
+    private boolean isSpecialMethod;
+
+    public ConstMethodInfo() {
+        isSpecialMethod = false;
+    }
 
     /*
         ----------------------------------Attributes----------------------------------
@@ -67,21 +75,21 @@ public class ConstMethodInfo extends Readable {
     private List<AttributesInfo> attList;
 
     public List<MethodAccessFlagsEnum> getAccessFlags() {
-        return MethodAccessFlagsEnum.getFlagsByMask((short) Utilities.combineBytesToInt(access_flags));
+        return MethodAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.NAME)
     public int getNameIndex() {
-        return Utilities.combineBytesToInt(name_index);
+        return BaseUtils.combineBytesToInt(name_index);
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.DESCRIPTOR)
     public int getDescriptorIndex() {
-        return Utilities.combineBytesToInt(descriptor_index);
+        return BaseUtils.combineBytesToInt(descriptor_index);
     }
 
     public int getAttributesCount() {
-        return Utilities.combineBytesToInt(attributes_count);
+        return BaseUtils.combineBytesToInt(attributes_count);
     }
 
     @Override
@@ -114,6 +122,38 @@ public class ConstMethodInfo extends Readable {
                 attList.add(reader.read(new AttributesInfo()));
             }
         }
+    }
+
+    @Override
+    public void afterTreeIsBuilt(Tree tree) {
+        if (tree == null) {
+            return;
+        }
+
+        TreeElement root = tree.getRoot();
+
+        if (root == null) {
+            return;
+        }
+
+        for (TreeElement treeElement : BaseUtils.safeList(root.getChild())) {
+
+            if (ClassHelperEnum.NAME.equals(treeElement.getMappingType())) {
+
+                Object current = treeElement.getCurrent();
+
+                if (current != null && MethodUtils.isSpecialMethod(((ConstUtf8Info) current).getAsNewString())) {
+                    isSpecialMethod = true;
+                }
+
+                break;
+            }
+        }
+
+    }
+
+    public boolean isSpecialMethod() {
+        return isSpecialMethod;
     }
 
     public CodeAttr getCodeAttr() {

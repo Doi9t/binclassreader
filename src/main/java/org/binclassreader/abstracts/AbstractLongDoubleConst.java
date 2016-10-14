@@ -17,7 +17,7 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
@@ -31,10 +31,10 @@ public abstract class AbstractLongDoubleConst {
 
 
     protected short[] getHigh_bytes_data() {
-        return Utilities.safeArrayClone(high_bytes);
+        return BaseUtils.safeArrayClone(high_bytes);
     }
 
     protected short[] getLow_bytes_data() {
-        return Utilities.safeArrayClone(low_bytes);
+        return BaseUtils.safeArrayClone(low_bytes);
     }
 }

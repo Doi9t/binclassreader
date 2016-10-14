@@ -17,7 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 import java.util.Arrays;
 
@@ -30,7 +30,7 @@ public class ConstMagicNumberInfo {
     private short[] bytes_data;
 
     public short[] getBytes_data() {
-        return Utilities.safeArrayClone(bytes_data);
+        return BaseUtils.safeArrayClone(bytes_data);
     }
 
     @Override

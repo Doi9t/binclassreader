@@ -22,7 +22,7 @@ import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,21 +48,21 @@ public class ConstFieldInfo extends Readable {
     private List<AttributesInfo> attList;
 
     public List<FieldAccessFlagsEnum> getAccessFlags() {
-        return FieldAccessFlagsEnum.getFlagsByMask((short) Utilities.combineBytesToInt(access_flags));
+        return FieldAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.NAME)
     public int getNameIndex() {
-        return Utilities.combineBytesToInt(name_index);
+        return BaseUtils.combineBytesToInt(name_index);
     }
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class, type = ClassHelperEnum.DESCRIPTOR)
     public int getDescriptorIndex() {
-        return Utilities.combineBytesToInt(descriptor_index);
+        return BaseUtils.combineBytesToInt(descriptor_index);
     }
 
     public int getAttributesCount() {
-        return Utilities.combineBytesToInt(attributes_count);
+        return BaseUtils.combineBytesToInt(attributes_count);
     }
 
     @Override

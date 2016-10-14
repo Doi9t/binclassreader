@@ -120,7 +120,7 @@ public class ClassHelperService {
     }
 
 
-    public static List<KeyValueHolder<ClassHelperEnum, Object>> getMethods() {
+    public static List<KeyValueHolder<ClassHelperEnum, Object>> getMethods(boolean keepSpecial) {
         List<KeyValueHolder<ClassHelperEnum, Object>> values = new ArrayList<KeyValueHolder<ClassHelperEnum, Object>>();
 
         List<Object> methodList = mappedPool.get(PoolTypeEnum.METHOD);
@@ -134,6 +134,13 @@ public class ClassHelperService {
                     KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
 
                     if (child.size() > 1) {
+
+                        ConstMethodInfo currentElement = (ConstMethodInfo) element.getCurrent();
+
+                        if (currentElement.isSpecialMethod() && !keepSpecial) {
+                            continue;
+                        }
+
                         TreeElement treeElementZero = child.get(0);
                         TreeElement treeElementOne = child.get(1);
 
@@ -147,7 +154,7 @@ public class ClassHelperService {
                             descriptorValue = treeElementZero;
                         }
 
-                        value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstMethodInfo) element.getCurrent()).getAccessFlags());
+                        value.addPair(ClassHelperEnum.ACCESS_FLAGS, currentElement.getAccessFlags());
                         value.addPair(name, nameValue.getCurrent());
                         value.addPair(descriptor, descriptorValue.getCurrent());
 

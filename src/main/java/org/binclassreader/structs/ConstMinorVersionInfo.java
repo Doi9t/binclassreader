@@ -17,7 +17,7 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/26/2016.
@@ -28,11 +28,11 @@ public class ConstMinorVersionInfo {
     private short[] bytes_data;
 
     public short[] getBytes_data() {
-        return Utilities.safeArrayClone(bytes_data);
+        return BaseUtils.safeArrayClone(bytes_data);
     }
 
     public int getMinorVersion() {
-        return Utilities.combineBytesToInt(bytes_data);
+        return BaseUtils.combineBytesToInt(bytes_data);
     }
 
     @Override

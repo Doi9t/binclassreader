@@ -17,6 +17,7 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.reader.ClassReader;
+import org.binclassreader.tree.Tree;
 
 /**
  * Created by Yannick on 10/12/2016.
@@ -33,9 +34,9 @@ public abstract class Readable {
 
     /**
      * This method is called after the tree have been initialized.
+     *  @param tree
      *
-     * @param reader
      */
-    public void afterTreeIsBuilt(final ClassReader reader) {
+    public void afterTreeIsBuilt(final Tree tree) {
     }
 }

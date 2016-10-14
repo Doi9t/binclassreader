@@ -19,7 +19,7 @@ package org.binclassreader.structs;
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,11 +36,11 @@ public class ConstUtf8Info extends Readable {
     private byte[] bytes;
 
     public int getLength() {
-        return Utilities.combineBytesToInt(length);
+        return BaseUtils.combineBytesToInt(length);
     }
 
     public byte[] getAsBytes() {
-        return Utilities.safeArrayClone(bytes);
+        return BaseUtils.safeArrayClone(bytes);
     }
 
     public String getAsNewString() {
@@ -48,7 +48,7 @@ public class ConstUtf8Info extends Readable {
         String value = null;
 
         try {
-            value = (bytes != null) ? new String(bytes, "UTF-8") : value;
+            value = (bytes != null) ? new String(bytes, "UTF-8") : null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -57,7 +57,7 @@ public class ConstUtf8Info extends Readable {
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
-        int lengthArray = Utilities.combineBytesToInt(length);
+        int lengthArray = BaseUtils.combineBytesToInt(length);
 
         if (lengthArray > 0) {
 

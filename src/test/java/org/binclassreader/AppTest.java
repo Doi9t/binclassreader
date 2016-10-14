@@ -59,7 +59,7 @@ public class AppTest {
             ClassHelperService.loadClass(new FileInputStream(new File(classResource.toURI())));
 
             List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
-            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods();
+            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
             List<String> interfaces = ClassHelperService.getInterfaces();
 
             System.out.println("SuperClassName -> " + ClassHelperService.getSuperClassName());
@@ -97,9 +97,7 @@ public class AppTest {
             List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
             CtField[] ctFields = ctClass.getDeclaredFields();
 
-            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods();
-
-            //FIXME: Remove the <init>
+            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
 
             CtMethod[] ctMethods = ctClass.getDeclaredMethods();
 

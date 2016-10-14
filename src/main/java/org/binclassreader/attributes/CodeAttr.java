@@ -19,7 +19,7 @@ package org.binclassreader.attributes;
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class CodeAttr extends AbstractAttribute {
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
-        int codeLength = Utilities.combineBytesToInt(code_length);
+        int codeLength = BaseUtils.combineBytesToInt(code_length);
 
         try {
             //Read the code
@@ -83,19 +83,19 @@ public class CodeAttr extends AbstractAttribute {
         private short[] catch_type;
 
         public int getStartPc() {
-            return Utilities.combineBytesToInt(start_pc);
+            return BaseUtils.combineBytesToInt(start_pc);
         }
 
         public int getEndPc() {
-            return Utilities.combineBytesToInt(end_pc);
+            return BaseUtils.combineBytesToInt(end_pc);
         }
 
         public int getHandlerPc() {
-            return Utilities.combineBytesToInt(handler_pc);
+            return BaseUtils.combineBytesToInt(handler_pc);
         }
 
         public int getCatchType() {
-            return Utilities.combineBytesToInt(catch_type);
+            return BaseUtils.combineBytesToInt(catch_type);
         }
     }
 }

@@ -18,7 +18,7 @@ package org.binclassreader.structs;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
-import org.binclassreader.utils.Utilities;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/29/2016.
@@ -29,7 +29,7 @@ public class ConstSuperClassInfo {
 
     @PoolItemIndex
     public int getIndex() {
-        return Utilities.combineBytesToInt(index);
+        return BaseUtils.combineBytesToInt(index);
     }
 
     @Override
