@@ -27,6 +27,7 @@ import org.binclassreader.services.ClassHelperService;
 import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.tree.TreeElement;
 import org.binclassreader.utils.ClassGenerator;
+import org.binclassreader.utils.ClassUtil;
 import org.binclassreader.utils.KeyValueHolder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +50,8 @@ public class AppTest {
 
     private String method = "public static void %s(%s) {}";
     private String field = "public static String %s = \"%s\";";
+    //FIXME: GENERATE A RANDOM LIST [...]
+    private String[] interfacesList = {"java.io.Serializable", "java.lang.Runnable", "java.lang.CharSequence", "java.lang.Comparable"};
 
     @Test
     public void classTestOne() throws Exception {
@@ -78,6 +82,7 @@ public class AppTest {
     public void classBasicEmptyFunctionMultiplesRandomTest() throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
+
         for (byte i = 0; i < 50; i++) {
             ClassGenerator classGenerator = new ClassGenerator();
 
@@ -90,6 +95,7 @@ public class AppTest {
             for (byte j = 0; j < 10; j++) {
                 classGenerator.addComponents(CtField.class, String.format(field, getRandomName((byte) 10), getRandomName((byte) 25)));
             }
+            classGenerator.addInterfaces(interfacesList);
 
             ClassHelperService.loadClass(new ByteArrayInputStream(classGenerator.getRawCtClass()));
             CtClass ctClass = classGenerator.getCtClass();
@@ -98,15 +104,15 @@ public class AppTest {
             CtField[] ctFields = ctClass.getDeclaredFields();
 
             List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
-
             CtMethod[] ctMethods = ctClass.getDeclaredMethods();
 
-            List<String> interfaces = ClassHelperService.getInterfaces();
-
+            List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
+            List<String> ctInterfaces = extractInterfaceFromCtClass(ctClass.getInterfaces());
 
             Assert.assertEquals(ClassHelperService.getClassName(), ctClass.getName()); //Compare the class name
             Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
             Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+            Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
         }
 
         System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
@@ -150,5 +156,19 @@ public class AppTest {
         }
 
         return isAll && members.length == holders.size();
+    }
+
+    private List<String> extractInterfaceFromCtClass(CtClass... classes) {
+        if (classes == null || classes.length == 0) {
+            return null;
+        }
+
+        List<String> values = new ArrayList<String>();
+
+        for (CtClass aClass : classes) {
+            values.add(aClass.getName());
+        }
+
+        return values;
     }
 }

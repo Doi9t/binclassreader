@@ -124,6 +124,25 @@ public class ClassGenerator {
         }
     }
 
+    public void addInterfaces(String... interfaces) {
+        if (interfaces == null || interfaces.length == 0) {
+            return;
+        }
+
+        for (String anInterface : interfaces) {
+            CtClass ctClass = null;
+            try {
+                ctClass = POOL.get(anInterface);
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            }
+
+            if (ctClass != null) {
+                currentCtClass.addInterface(ctClass);
+            }
+        }
+    }
+
     public CtClass getCtClass() {
         return currentCtClass;
     }
