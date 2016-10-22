@@ -48,6 +48,7 @@ import static org.binclassreader.utils.ClassGenerator.getRandomParameters;
  */
 public class AppTest {
 
+
     private String method = "public static void %s(%s) {}";
     private String field = "public static String %s = \"%s\";";
     //FIXME: GENERATE A RANDOM LIST [...]
