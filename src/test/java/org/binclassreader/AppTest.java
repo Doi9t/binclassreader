@@ -62,7 +62,6 @@ public class AppTest {
 
         if (classResource != null) {
             ClassHelperService.loadClass(new FileInputStream(new File(classResource.toURI())));
-
             List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
             List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
             List<String> interfaces = ClassHelperService.getInterfaces();
