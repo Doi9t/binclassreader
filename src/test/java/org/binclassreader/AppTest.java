@@ -85,7 +85,6 @@ public class AppTest {
 
         for (short i = 0; i < 1000; i++) {
             ClassGenerator classGenerator = new ClassGenerator();
-
             classGenerator.setClassName(WordUtils.capitalize(getRandomName((byte) 25)));
 
             for (byte j = 0; j < 25; j++) {
