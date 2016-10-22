@@ -57,7 +57,7 @@ public class CodeAttr extends AbstractAttribute {
 
         try {
             // The x - 8 is to remove the bytes that are already read.
-            reader.skipFromCurrentStream(getAttributeLength() - 8 - codeLength);//FIXME: Parse the bytes instead of wasting them ...
+            reader.skipFromCurrentStream(getAttributeLength()  - 8 - codeLength);//FIXME: Parse the bytes instead of wasting them ...
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -80,10 +80,10 @@ public class AppTest {
 
     @Test
     public void classBasicEmptyFunctionMultiplesRandomTest() throws Exception {
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        TimeUnit timeUnit = TimeUnit.NANOSECONDS;
+        long totalTime = 0, start = 0;
 
-
-        for (byte i = 0; i < 50; i++) {
+        for (short i = 0; i < 1000; i++) {
             ClassGenerator classGenerator = new ClassGenerator();
 
             classGenerator.setClassName(WordUtils.capitalize(getRandomName((byte) 25)));
@@ -95,8 +95,10 @@ public class AppTest {
             for (byte j = 0; j < 10; j++) {
                 classGenerator.addComponents(CtField.class, String.format(field, getRandomName((byte) 10), getRandomName((byte) 25)));
             }
+
             classGenerator.addInterfaces(interfacesList);
 
+            start = System.nanoTime();
             ClassHelperService.loadClass(new ByteArrayInputStream(classGenerator.getRawCtClass()));
             CtClass ctClass = classGenerator.getCtClass();
 
@@ -109,13 +111,19 @@ public class AppTest {
             List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
             List<String> ctInterfaces = extractInterfaceFromCtClass(ctClass.getInterfaces());
 
+            String superClassName = ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName());
+            String simpleName = ctClass.getSuperclass().getName();
+
+            totalTime += System.nanoTime() - start;
+
             Assert.assertEquals(ClassHelperService.getClassName(), ctClass.getName()); //Compare the class name
+            Assert.assertEquals(superClassName, simpleName); //Compare the super class name
             Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
             Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
             Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
         }
 
-        System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
+        System.out.println("Elapsed time => " + (totalTime / 1000000000) + " second(s)");
     }
 
     private boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {

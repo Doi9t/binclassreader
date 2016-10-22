@@ -33,9 +33,13 @@ public class ClassUtil extends BaseUtils {
         List<String> values = new ArrayList<String>();
 
         for (String current : rawPath) {
-            values.add(current.replace("/", "."));
+            values.add(getBinaryPath(current));
         }
 
         return values;
+    }
+
+    public static String getBinaryPath(String path) {
+        return (path != null) ? path.replace("/", ".") : "";
     }
 }
