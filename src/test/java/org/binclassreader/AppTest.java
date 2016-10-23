@@ -17,10 +17,7 @@
 package org.binclassreader;
 
 import com.google.common.base.Stopwatch;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMember;
-import javassist.CtMethod;
+import javassist.*;
 import org.apache.commons.lang.WordUtils;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.services.ClassHelperService;
@@ -48,6 +45,7 @@ import static org.binclassreader.utils.ClassGenerator.getRandomParameters;
  */
 public class AppTest {
 
+    private static ClassPool POOL = ClassPool.getDefault();
     private String method = "public static void %s(%s) {}";
     private String field = "public static String %s = \"%s\";";
     //FIXME: GENERATE A RANDOM LIST [...]
@@ -80,7 +78,6 @@ public class AppTest {
 
     @Test
     public void classBasicEmptyFunctionMultiplesRandomTest() throws Exception {
-        TimeUnit timeUnit = TimeUnit.NANOSECONDS;
         long totalTime = 0, start = 0;
 
         for (short i = 0; i < 1000; i++) {
@@ -126,6 +123,33 @@ public class AppTest {
         System.out.println("Elapsed time => " + (totalTime / 1000000000) + " second(s)");
     }
 
+
+    //TODO: Compare the function bytecode (CtMethod.getMethodInfo().getCodeAttribute().getCode();)
+    @Test
+    public void existingClassComparisonTest() throws Exception {
+
+        CtClass accessBridgeCtClass = POOL.get("com.sun.java.accessibility.AccessBridge");
+
+        ClassHelperService.loadClass(new ByteArrayInputStream(accessBridgeCtClass.toBytecode()));
+
+        List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
+        CtField[] ctFields = accessBridgeCtClass.getDeclaredFields();
+
+        List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
+        CtMethod[] ctMethods = accessBridgeCtClass.getDeclaredMethods();
+
+        List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
+        List<String> ctInterfaces = extractInterfaceFromCtClass(accessBridgeCtClass.getInterfaces());
+
+        Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getClassName()),
+                ClassUtil.getBinaryPath(accessBridgeCtClass.getName())); //Compare the class name
+        Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
+                ClassUtil.getBinaryPath(accessBridgeCtClass.getSuperclass().getName())); //Compare the super class name
+        Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+        Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+        Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
+    }
+
     private boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
         boolean isAll = true, isCurrent;
 
@@ -167,11 +191,11 @@ public class AppTest {
     }
 
     private List<String> extractInterfaceFromCtClass(CtClass... classes) {
-        if (classes == null || classes.length == 0) {
-            return null;
-        }
-
         List<String> values = new ArrayList<String>();
+
+        if (classes == null || classes.length == 0) {
+            return values;
+        }
 
         for (CtClass aClass : classes) {
             values.add(aClass.getName());

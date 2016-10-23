@@ -34,12 +34,12 @@ public abstract class AbstractRefConst {
     protected short[] name_and_type_index;
 
     @PoolItemIndex(mustBeOfType = ConstClassInfo.class)
-    protected int getClassIndex() {
+    public int getClassIndex() {
         return BaseUtils.combineBytesToInt(class_index);
     }
 
     @PoolItemIndex(mustBeOfType = ConstNameAndTypeInfo.class)
-    protected int getNameAndTypeIndex() {
+    public int getNameAndTypeIndex() {
         return BaseUtils.combineBytesToInt(name_and_type_index);
     }
 }

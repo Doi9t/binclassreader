@@ -67,19 +67,19 @@ public class ClassHelperService {
     }
 
     public static String getSuperClassName() {
-        ConstThisClassInfo thisClassInfo = (ConstThisClassInfo) sections.get(ConstThisClassInfo.class);
+        ConstSuperClassInfo superClassInfo = (ConstSuperClassInfo) sections.get(ConstSuperClassInfo.class);
 
-        Object obj = constPool.get(thisClassInfo.getIndex());
+        Object obj = constPool.get(superClassInfo.getIndex() - 1);
         ConstUtf8Info value = null;
 
-        if (obj instanceof ConstClassInfo) {
-            ConstClassInfo ConstClassInfoSuperClass = (ConstClassInfo) obj;
-            value = (ConstUtf8Info) constPool.get(ConstClassInfoSuperClass.getNameIndex() - 1);
-        } else if (obj instanceof ConstUtf8Info) {
+        if (obj instanceof ConstUtf8Info) {
             value = (ConstUtf8Info) obj;
+        } else if (obj instanceof ConstClassInfo) {
+            ConstClassInfo constClassInfo = (ConstClassInfo) obj;
+            value = (ConstUtf8Info) constPool.get(constClassInfo.getNameIndex() - 1);
         }
 
-        return (value != null) ? value.getAsNewString() : null;
+        return (value != null) ? value.getAsNewString() : "";
     }
 
     public static List<KeyValueHolder<ClassHelperEnum, Object>> getFields() {
@@ -187,6 +187,14 @@ public class ClassHelperService {
     }
 
     public static String getClassName() {
-        return ((ConstUtf8Info) constPool.get(0)).getAsNewString();
+        ConstUtf8Info info = null;
+        Object o = constPool.get(0);
+
+        if (o instanceof ConstUtf8Info) {
+            info = (ConstUtf8Info) o;
+        } else if (o instanceof ConstClassInfo) {
+            info = (ConstUtf8Info) constPool.get(((ConstClassInfo) o).getNameIndex() - 1);//Get the ConstUtf8Info from The ConstClassInfo
+        }
+        return (info != null) ? info.getAsNewString() : "";
     }
 }

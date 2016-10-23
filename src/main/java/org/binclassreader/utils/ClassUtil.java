@@ -25,12 +25,11 @@ import java.util.List;
 public class ClassUtil extends BaseUtils {
 
     public static List<String> getBinaryPath(List<String> rawPath) {
+        List<String> values = new ArrayList<String>();
 
         if (rawPath == null || rawPath.size() == 0) {
-            return null;
+            return values;
         }
-
-        List<String> values = new ArrayList<String>();
 
         for (String current : rawPath) {
             values.add(getBinaryPath(current));
