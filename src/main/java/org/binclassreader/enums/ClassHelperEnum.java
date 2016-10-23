@@ -20,5 +20,5 @@ package org.binclassreader.enums;
  * Created by Yannick on 9/26/2016.
  */
 public enum ClassHelperEnum {
-    DESCRIPTOR, NAME, ACCESS_FLAGS, NONE
+    DESCRIPTOR, NAME, ACCESS_FLAGS, CODE_ATTR, NONE
 }

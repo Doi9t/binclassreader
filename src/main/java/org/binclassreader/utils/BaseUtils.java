@@ -89,6 +89,26 @@ public class BaseUtils {
         return value;
     }
 
+    /**
+     * Convert an array of short to a list
+     *
+     * @param arr
+     * @return
+     */
+    public static List<Short> shortArrayToList(short[] arr) {
+        List<Short> values = new ArrayList<Short>();
+
+        if (arr == null || arr.length == 0) {
+            return values;
+        }
+
+        for (short b : arr) {
+            values.add(b);
+        }
+
+        return values;
+    }
+
 
     /**
      * @param arr - An array of Object to be cloned
@@ -235,5 +255,27 @@ public class BaseUtils {
         }
 
         return stringBuffer.toString();
+    }
+
+    /**
+     * Convert an array of byte to an array of short
+     *
+     * @param buffer
+     * @return
+     */
+    public static short[] convertByteToUnsigned(byte[] buffer) {
+
+        if (buffer == null || buffer.length == 0) {
+            return new short[0];
+        }
+        int length = buffer.length;
+
+        short[] shortBuffer = new short[length];
+
+        for (int i = 0; i < length; i++) {
+            shortBuffer[i] = (short) ((short) buffer[i] & 0xFF);
+        }
+
+        return shortBuffer;
     }
 }

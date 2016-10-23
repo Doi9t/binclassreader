@@ -18,11 +18,15 @@ package org.binclassreader;
 
 import com.google.common.base.Stopwatch;
 import javassist.*;
+import javassist.bytecode.CodeAttribute;
 import org.apache.commons.lang.WordUtils;
+import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
+import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.services.ClassHelperService;
 import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.tree.TreeElement;
+import org.binclassreader.utils.BaseUtils;
 import org.binclassreader.utils.ClassGenerator;
 import org.binclassreader.utils.ClassUtil;
 import org.binclassreader.utils.KeyValueHolder;
@@ -123,8 +127,6 @@ public class AppTest {
         System.out.println("Elapsed time => " + (totalTime / 1000000000) + " second(s)");
     }
 
-
-    //TODO: Compare the function bytecode (CtMethod.getMethodInfo().getCodeAttribute().getCode();)
     @Test
     public void existingClassComparisonTest() throws Exception {
 
@@ -146,10 +148,52 @@ public class AppTest {
         Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
                 ClassUtil.getBinaryPath(accessBridgeCtClass.getSuperclass().getName())); //Compare the super class name
         Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
-        Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+        Assert.assertTrue("The methods are not similar !", deepMethodComparator(methods, ctMethods)); //Compare the methods
         Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
     }
 
+    private boolean deepMethodComparator(List<KeyValueHolder<ClassHelperEnum, Object>> methods, CtMethod[] ctMethods) {
+        boolean value = true;
+
+        if (methods == null || ctMethods == null || ctMethods.length != methods.size()) {
+            return !value;
+        }
+
+        for (KeyValueHolder<ClassHelperEnum, Object> keyValueHolder : methods) {
+
+            CodeAttr codeAttr = (CodeAttr) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.CODE_ATTR);
+            String name = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.NAME)).getAsNewString();
+            String descriptor = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR)).getAsNewString();
+            List<MethodAccessFlagsEnum> accessFlags = (List<MethodAccessFlagsEnum>) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.ACCESS_FLAGS);
+            List<Short> rawBytecode = (codeAttr != null) ? codeAttr.getRawBytecode() : new ArrayList<Short>();
+
+
+            for (CtMethod ctMember : ctMethods) {
+                String ctMemberDescriptor = ctMember.getSignature();
+                String ctName = ctMember.getName();
+
+                if (ctName.equals(name) && ctMemberDescriptor.equals(descriptor)) {
+                    CodeAttribute codeAttribute = ctMember.getMethodInfo2().getCodeAttribute();
+                    byte[] code = (codeAttribute != null) ? codeAttribute.getCode() : null;
+                    List<Short> list = BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code));
+                    int ctRawAccessFlags = ctMember.getModifiers();
+                    short mask = MethodAccessFlagsEnum.getMask(accessFlags);
+
+                    value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
+                            && mask == ctRawAccessFlags; //Compare the access flag mask
+                }
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Compare the prototype of the methods / fields
+     *
+     * @param holders
+     * @param members
+     * @return
+     */
     private boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
         boolean isAll = true, isCurrent;
 
@@ -178,8 +222,8 @@ public class AppTest {
             }
 
             isCurrent = false;
-            for (CtMember ctField : members) {
-                if (ctField.getSignature().equals(utfDescriptor.getAsNewString()) && ctField.getName().equals(utfName.getAsNewString())) {
+            for (CtMember ctMember : members) {
+                if (ctMember.getSignature().equals(utfDescriptor.getAsNewString()) && ctMember.getName().equals(utfName.getAsNewString())) {
                     isCurrent = true;
                     break;
                 }

@@ -157,6 +157,7 @@ public class ClassHelperService {
                         value.addPair(ClassHelperEnum.ACCESS_FLAGS, currentElement.getAccessFlags());
                         value.addPair(name, nameValue.getCurrent());
                         value.addPair(descriptor, descriptorValue.getCurrent());
+                        value.addPair(ClassHelperEnum.CODE_ATTR, currentElement.getCodeAttr());
 
                         values.add(value);
                     }

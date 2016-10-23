@@ -16,6 +16,8 @@
 
 package org.binclassreader.enums;
 
+import org.binclassreader.utils.BaseUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +68,33 @@ public enum MethodAccessFlagsEnum {
     }
 
     public short getValue() {
+        return value;
+    }
+
+
+    public static short getMask(List<MethodAccessFlagsEnum> list) {
+
+        short value = 0;
+
+        for (MethodAccessFlagsEnum fieldAccessFlagsEnum : BaseUtils.safeList(list)) {
+            value += fieldAccessFlagsEnum.getValue();
+        }
+
+        return value;
+    }
+
+    public static short getMask(MethodAccessFlagsEnum... varArgs) {
+
+        short value = 0;
+
+        if (varArgs == null || varArgs.length == 0) {
+            return value;
+        }
+
+        for (MethodAccessFlagsEnum fieldAccessFlagsEnum : varArgs) {
+            value += fieldAccessFlagsEnum.getValue();
+        }
+
         return value;
     }
 }
