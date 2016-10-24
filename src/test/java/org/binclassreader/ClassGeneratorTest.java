@@ -14,12 +14,13 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.utils;
+package org.binclassreader;
 
 import javassist.CtField;
 import javassist.CtMember;
 import javassist.CtMethod;
 import org.apache.commons.lang.WordUtils;
+import org.binclassreader.utils.ClassGenerator;
 import org.junit.Test;
 
 import static org.binclassreader.utils.ClassGenerator.getRandomName;

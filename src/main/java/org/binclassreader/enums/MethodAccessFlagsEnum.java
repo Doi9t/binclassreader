@@ -26,7 +26,6 @@ import java.util.List;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.6-200-A.1
 public enum MethodAccessFlagsEnum {
-    UNKNOWN((short) 0x0000),
     ACC_PUBLIC((short) 0x0001),
     ACC_PRIVATE((short) 0x0002),
     ACC_PROTECTED((short) 0x0004),
@@ -49,19 +48,10 @@ public enum MethodAccessFlagsEnum {
     public static List<MethodAccessFlagsEnum> getFlagsByMask(short mask) {
         List<MethodAccessFlagsEnum> values = new ArrayList<MethodAccessFlagsEnum>();
 
-        if (mask < 0) {
-            values.add(MethodAccessFlagsEnum.UNKNOWN);
-            return values;
-        }
-
         for (MethodAccessFlagsEnum flag : MethodAccessFlagsEnum.values()) {
-            if (!MethodAccessFlagsEnum.UNKNOWN.equals(flag) && ((mask & flag.getValue()) > 0)) {
+            if ((mask & flag.getValue()) > 0) {
                 values.add(flag);
             }
-        }
-
-        if (values.isEmpty()) {
-            values.add(MethodAccessFlagsEnum.UNKNOWN);
         }
 
         return values;

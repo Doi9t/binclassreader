@@ -17,19 +17,17 @@
 package org.binclassreader;
 
 import com.google.common.base.Stopwatch;
-import javassist.*;
-import javassist.bytecode.CodeAttribute;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
 import org.apache.commons.lang.WordUtils;
-import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
-import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.services.ClassHelperService;
-import org.binclassreader.structs.ConstUtf8Info;
-import org.binclassreader.tree.TreeElement;
-import org.binclassreader.utils.BaseUtils;
 import org.binclassreader.utils.ClassGenerator;
 import org.binclassreader.utils.ClassUtil;
 import org.binclassreader.utils.KeyValueHolder;
+import org.binclassreader.utils.TestBaseUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +35,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -110,7 +107,7 @@ public class AppTest {
             CtMethod[] ctMethods = ctClass.getDeclaredMethods();
 
             List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
-            List<String> ctInterfaces = extractInterfaceFromCtClass(ctClass.getInterfaces());
+            List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(ctClass.getInterfaces());
 
             String superClassName = ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName());
             String simpleName = ctClass.getSuperclass().getName();
@@ -119,18 +116,25 @@ public class AppTest {
 
             Assert.assertEquals(ClassHelperService.getClassName(), ctClass.getName()); //Compare the class name
             Assert.assertEquals(superClassName, simpleName); //Compare the super class name
-            Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
-            Assert.assertTrue("The methods are not similar !", signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+            Assert.assertTrue("The fields are not similar !", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+            Assert.assertTrue("The methods are not similar !", TestBaseUtils.signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
             Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
         }
 
         System.out.println("Elapsed time => " + (totalTime / 1000000000) + " second(s)");
     }
 
+
+    /*
+        com.sun.java.accessibility.AccessBridge
+        com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl
+        com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler
+     */
     @Test
     public void existingClassComparisonTest() throws Exception {
 
-        CtClass accessBridgeCtClass = POOL.get("com.sun.java.accessibility.AccessBridge");
+        //CtClass accessBridgeCtClass = POOL.get("com.sun.java.accessibility.AccessBridge");
+        CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
 
         ClassHelperService.loadClass(new ByteArrayInputStream(accessBridgeCtClass.toBytecode()));
 
@@ -141,110 +145,14 @@ public class AppTest {
         CtMethod[] ctMethods = accessBridgeCtClass.getDeclaredMethods();
 
         List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
-        List<String> ctInterfaces = extractInterfaceFromCtClass(accessBridgeCtClass.getInterfaces());
+        List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(accessBridgeCtClass.getInterfaces());
 
         Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getClassName()),
                 ClassUtil.getBinaryPath(accessBridgeCtClass.getName())); //Compare the class name
         Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
                 ClassUtil.getBinaryPath(accessBridgeCtClass.getSuperclass().getName())); //Compare the super class name
-        Assert.assertTrue("The fields are not similar !", signatureCtMemberComparator(fields, ctFields)); //Compare the fields
-        Assert.assertTrue("The methods are not similar !", deepMethodComparator(methods, ctMethods)); //Compare the methods
+        Assert.assertTrue("The fields are not similar !", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+        Assert.assertTrue("The methods are not similar !", TestBaseUtils.deepMethodComparator(methods, ctMethods)); //Compare the methods
         Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
-    }
-
-    private boolean deepMethodComparator(List<KeyValueHolder<ClassHelperEnum, Object>> methods, CtMethod[] ctMethods) {
-        boolean value = true;
-
-        if (methods == null || ctMethods == null || ctMethods.length != methods.size()) {
-            return !value;
-        }
-
-        for (KeyValueHolder<ClassHelperEnum, Object> keyValueHolder : methods) {
-
-            CodeAttr codeAttr = (CodeAttr) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.CODE_ATTR);
-            String name = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.NAME)).getAsNewString();
-            String descriptor = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR)).getAsNewString();
-            List<MethodAccessFlagsEnum> accessFlags = (List<MethodAccessFlagsEnum>) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.ACCESS_FLAGS);
-            List<Short> rawBytecode = (codeAttr != null) ? codeAttr.getRawBytecode() : new ArrayList<Short>();
-
-
-            for (CtMethod ctMember : ctMethods) {
-                String ctMemberDescriptor = ctMember.getSignature();
-                String ctName = ctMember.getName();
-
-                if (ctName.equals(name) && ctMemberDescriptor.equals(descriptor)) {
-                    CodeAttribute codeAttribute = ctMember.getMethodInfo2().getCodeAttribute();
-                    byte[] code = (codeAttribute != null) ? codeAttribute.getCode() : null;
-                    List<Short> list = BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code));
-                    int ctRawAccessFlags = ctMember.getModifiers();
-                    short mask = MethodAccessFlagsEnum.getMask(accessFlags);
-
-                    value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
-                            && mask == ctRawAccessFlags; //Compare the access flag mask
-                }
-            }
-        }
-        return value;
-    }
-
-    /**
-     * Compare the prototype of the methods / fields
-     *
-     * @param holders
-     * @param members
-     * @return
-     */
-    private boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
-        boolean isAll = true, isCurrent;
-
-        for (KeyValueHolder<ClassHelperEnum, Object> holder : holders) {
-
-            ConstUtf8Info utfName = null;
-            ConstUtf8Info utfDescriptor = null;
-
-            Object firstMatchingValueName = holder.getFirstMatchingValue(ClassHelperEnum.NAME);
-            Object firstMatchingValueDescriptor = holder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR);
-
-            if (firstMatchingValueName instanceof TreeElement) {
-                utfName = (ConstUtf8Info) ((TreeElement) firstMatchingValueName).getCurrent();
-            } else if (firstMatchingValueName instanceof ConstUtf8Info) {
-                utfName = (ConstUtf8Info) firstMatchingValueName;
-            }
-
-            if (firstMatchingValueDescriptor instanceof TreeElement) {
-                utfDescriptor = (ConstUtf8Info) ((TreeElement) firstMatchingValueDescriptor).getCurrent();
-            } else if (firstMatchingValueDescriptor instanceof ConstUtf8Info) {
-                utfDescriptor = (ConstUtf8Info) firstMatchingValueDescriptor;
-            }
-
-            if (utfDescriptor == null || utfName == null) {
-                continue;
-            }
-
-            isCurrent = false;
-            for (CtMember ctMember : members) {
-                if (ctMember.getSignature().equals(utfDescriptor.getAsNewString()) && ctMember.getName().equals(utfName.getAsNewString())) {
-                    isCurrent = true;
-                    break;
-                }
-            }
-            isAll &= isCurrent;
-        }
-
-        return isAll && members.length == holders.size();
-    }
-
-    private List<String> extractInterfaceFromCtClass(CtClass... classes) {
-        List<String> values = new ArrayList<String>();
-
-        if (classes == null || classes.length == 0) {
-            return values;
-        }
-
-        for (CtClass aClass : classes) {
-            values.add(aClass.getName());
-        }
-
-        return values;
     }
 }

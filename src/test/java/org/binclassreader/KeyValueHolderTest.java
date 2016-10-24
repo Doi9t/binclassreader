@@ -14,10 +14,11 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.utils;
+package org.binclassreader;
 
 import org.binclassreader.enums.BytecodeInstructionEnum;
 import org.binclassreader.enums.ClassHelperEnum;
+import org.binclassreader.utils.KeyValueHolder;
 import org.junit.Assert;
 import org.junit.Test;
 

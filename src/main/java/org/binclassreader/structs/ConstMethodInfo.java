@@ -106,7 +106,7 @@ public class ConstMethodInfo extends Readable {
         attList = new ArrayList<AttributesInfo>();
 
         List<MethodAccessFlagsEnum> flags = getAccessFlags();
-        boolean isCodeAttrPresent = flags != null && !flags.contains(MethodAccessFlagsEnum.UNKNOWN) && //Code Attribute
+        boolean isCodeAttrPresent = flags != null && //Code Attribute
                 !flags.contains(MethodAccessFlagsEnum.ACC_NATIVE) &&
                 !flags.contains(MethodAccessFlagsEnum.ACC_ABSTRACT);
 

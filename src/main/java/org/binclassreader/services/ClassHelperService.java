@@ -189,7 +189,9 @@ public class ClassHelperService {
 
     public static String getClassName() {
         ConstUtf8Info info = null;
-        Object o = constPool.get(0);
+
+        ConstThisClassInfo superClassInfo = (ConstThisClassInfo) sections.get(ConstThisClassInfo.class);
+        Object o = constPool.get(superClassInfo.getIndex() - 1);
 
         if (o instanceof ConstUtf8Info) {
             info = (ConstUtf8Info) o;
