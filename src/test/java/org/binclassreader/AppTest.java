@@ -134,7 +134,8 @@ public class AppTest {
     public void existingClassComparisonTest() throws Exception {
 
         //CtClass accessBridgeCtClass = POOL.get("com.sun.java.accessibility.AccessBridge");
-        CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
+        CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl");
+        //CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
 
         ClassHelperService.loadClass(new ByteArrayInputStream(accessBridgeCtClass.toBytecode()));
 

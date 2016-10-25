@@ -124,7 +124,6 @@ public class TestBaseUtils {
 
                     value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
                             && mask == ctRawAccessFlags; //Compare the access flag mask
-                    System.out.println();
                 }
             }
         }

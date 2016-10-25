@@ -32,6 +32,7 @@ import java.util.List;
 public class CodeAttr extends AbstractAttribute {
 
     private final List<Short> CODE;
+    private final List<ExceptionHandler> EXCEPTIONS;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
@@ -41,6 +42,7 @@ public class CodeAttr extends AbstractAttribute {
 
     public CodeAttr() {
         CODE = new ArrayList<Short>();
+        EXCEPTIONS = new ArrayList<ExceptionHandler>();
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
@@ -48,16 +50,22 @@ public class CodeAttr extends AbstractAttribute {
 
         try {
             //Read the code
-            for (short i = 0; i < codeLength; i++) {
-                CODE.add((short) reader.readFromCurrentStream());
+            if (codeLength < 65536) {
+                for (short i = 0; i < codeLength; i++) {
+                    CODE.add((short) reader.readFromCurrentStream());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
-            // The x - 8 is to remove the bytes that are already read.
-            reader.skipFromCurrentStream(getAttributeLength()  - 8 - codeLength);//FIXME: Parse the bytes instead of wasting them ...
+            int exceptionLength = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
+            for (int i = 0; i < exceptionLength; i++) {
+                EXCEPTIONS.add(reader.read(new ExceptionHandler()));
+            }
+            // 10 = max_stack + max_locals + code_length + exceptionLength
+            reader.skipFromCurrentStream(getAttributeLength() - 10 - codeLength - (EXCEPTIONS.size() * 8));//FIXME: Parse the bytes instead of wasting them ...
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +76,7 @@ public class CodeAttr extends AbstractAttribute {
         return CODE;
     }
 
-    private class ExceptionHandler {
+    public class ExceptionHandler {
 
         @BinClassParser(byteToRead = 2)
         private short[] start_pc;
