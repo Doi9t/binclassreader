@@ -20,6 +20,7 @@ import javassist.CtClass;
 import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.bytecode.CodeAttribute;
+import javassist.bytecode.ExceptionTable;
 import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
@@ -108,8 +109,16 @@ public class TestBaseUtils {
             String name = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.NAME)).getAsNewString();
             String descriptor = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR)).getAsNewString();
             List<MethodAccessFlagsEnum> accessFlags = (List<MethodAccessFlagsEnum>) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.ACCESS_FLAGS);
-            List<Short> rawBytecode = (codeAttr != null) ? codeAttr.getRawBytecode() : new ArrayList<Short>();
+            List<Short> rawBytecode;
+            List<CodeAttr.ExceptionHandler> exceptions;
 
+            if (codeAttr != null) {
+                rawBytecode = codeAttr.getRawBytecode();
+                exceptions = codeAttr.getExceptions();
+            } else {
+                rawBytecode = new ArrayList<Short>();
+                exceptions = new ArrayList<CodeAttr.ExceptionHandler>();
+            }
 
             for (CtMethod ctMember : ctMethods) {
                 String ctMemberDescriptor = ctMember.getSignature();
@@ -117,13 +126,34 @@ public class TestBaseUtils {
 
                 if (ctName.equals(name) && ctMemberDescriptor.equals(descriptor)) {
                     CodeAttribute codeAttribute = ctMember.getMethodInfo2().getCodeAttribute();
-                    byte[] code = (codeAttribute != null) ? codeAttribute.getCode() : null;
+
+                    ExceptionTable exceptionTable = null;
+                    byte[] code = null;
+
+                    if (codeAttribute != null) {
+                        code = codeAttribute.getCode();
+                        exceptionTable = codeAttribute.getExceptionTable();
+                    }
+
                     List<Short> list = BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code));
                     int ctRawAccessFlags = ctMember.getModifiers();
                     short mask = MethodAccessFlagsEnum.getMask(accessFlags);
 
+
+                    boolean isExceptionsEquals = true;
+                    for (int i = 0; i < exceptions.size(); i++) {
+                        CodeAttr.ExceptionHandler exceptionHandler = exceptions.get(i);
+
+                        isExceptionsEquals &= exceptionHandler.getStartPc() == exceptionTable.startPc(i) &&
+                                exceptionHandler.getEndPc() == exceptionTable.endPc(i) &&
+                                exceptionHandler.getHandlerPc() == exceptionTable.handlerPc(i) &&
+                                exceptionHandler.getCatchType() == exceptionTable.catchType(i);
+                    }
+
+
                     value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
-                            && mask == ctRawAccessFlags; //Compare the access flag mask
+                            && mask == ctRawAccessFlags //Compare the access flag mask
+                            && isExceptionsEquals; //Compare the exceptions
                 }
             }
         }

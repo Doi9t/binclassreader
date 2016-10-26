@@ -76,6 +76,10 @@ public class CodeAttr extends AbstractAttribute {
         return CODE;
     }
 
+    public List<ExceptionHandler> getExceptions() {
+        return EXCEPTIONS;
+    }
+
     public class ExceptionHandler {
 
         @BinClassParser(byteToRead = 2)
