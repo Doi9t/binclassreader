@@ -28,11 +28,21 @@ import java.util.List;
 /**
  * Created by Yannick on 5/23/2016.
  */
+/*
+    ********************************** Complete
+    StackMapTable....................| 	❌
+    LineNumberTable..................| 	✔
+    LocalVariableTable...............| 	✔
+    LocalVariableTypeTable...........|  ✔
+    RuntimeVisibleTypeAnnotations....| 	❌
+    RuntimeInvisibleTypeAnnotations..| 	❌
+*/
+
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.3
 public class CodeAttr extends AbstractAttribute {
 
     private final List<Short> CODE;
-    private final List<ExceptionHandler> EXCEPTIONS;
+    private final List<ExceptionTableItem> EXCEPTIONS_TABLE_ITEMS;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
@@ -42,7 +52,7 @@ public class CodeAttr extends AbstractAttribute {
 
     public CodeAttr() {
         CODE = new ArrayList<Short>();
-        EXCEPTIONS = new ArrayList<ExceptionHandler>();
+        EXCEPTIONS_TABLE_ITEMS = new ArrayList<ExceptionTableItem>();
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
@@ -62,10 +72,16 @@ public class CodeAttr extends AbstractAttribute {
         try {
             int exceptionLength = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
             for (int i = 0; i < exceptionLength; i++) {
-                EXCEPTIONS.add(reader.read(new ExceptionHandler()));
+                EXCEPTIONS_TABLE_ITEMS.add(reader.read(new ExceptionTableItem()));
             }
-            // 10 = max_stack + max_locals + code_length + exceptionLength
-            reader.skipFromCurrentStream(getAttributeLength() - 10 - codeLength - (EXCEPTIONS.size() * 8));//FIXME: Parse the bytes instead of wasting them ...
+
+            int attributesLength = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
+
+
+            // 12 = max_stack + max_locals + code_length + exceptionLength + attributesLength
+            short[] shorts = reader.readFromCurrentStream(getAttributeLength() - 12 - codeLength - (EXCEPTIONS_TABLE_ITEMS.size() * 8));
+            System.out.println();
+            //reader.skipFromCurrentStream(getAttributeLength() - 12 - codeLength - (EXCEPTIONS_TABLE_ITEMS.size() * 8));//FIXME: Parse the bytes instead of wasting them ...
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,11 +92,11 @@ public class CodeAttr extends AbstractAttribute {
         return CODE;
     }
 
-    public List<ExceptionHandler> getExceptions() {
-        return EXCEPTIONS;
+    public List<ExceptionTableItem> getExceptionTable() {
+        return EXCEPTIONS_TABLE_ITEMS;
     }
 
-    public class ExceptionHandler {
+    public class ExceptionTableItem {
 
         @BinClassParser(byteToRead = 2)
         private short[] start_pc;
@@ -109,5 +125,38 @@ public class CodeAttr extends AbstractAttribute {
         public int getCatchType() {
             return BaseUtils.combineBytesToInt(catch_type);
         }
+
+        public boolean compareValues(int startPc, int endPc, int handlePc, int catchPc) {
+            return getStartPc() == startPc &&
+                    getEndPc() == endPc &&
+                    getHandlerPc() == handlePc &&
+                    getCatchType() == catchPc;
+        }
+    }
+
+
+    public class AttributeItem {
+
+        @BinClassParser(byteToRead = 2)
+        private short[] name_index;
+
+        @BinClassParser(readOrder = 2, byteToRead = 4)
+        private short[] length;
+
+        @BinClassParser(readOrder = 3, byteToRead = 1)
+        private short[] info;
+
+        public int getNameIndex() {
+            return BaseUtils.combineBytesToInt(name_index);
+        }
+
+        public int getLength() {
+            return BaseUtils.combineBytesToInt(length);
+        }
+
+        public int getInfo() {
+            return BaseUtils.combineBytesToInt(info);
+        }
+
     }
 }

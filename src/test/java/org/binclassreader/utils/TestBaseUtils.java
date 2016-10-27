@@ -110,14 +110,14 @@ public class TestBaseUtils {
             String descriptor = ((ConstUtf8Info) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.DESCRIPTOR)).getAsNewString();
             List<MethodAccessFlagsEnum> accessFlags = (List<MethodAccessFlagsEnum>) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.ACCESS_FLAGS);
             List<Short> rawBytecode;
-            List<CodeAttr.ExceptionHandler> exceptions;
+            List<CodeAttr.ExceptionTableItem> exceptionsTable;
 
             if (codeAttr != null) {
                 rawBytecode = codeAttr.getRawBytecode();
-                exceptions = codeAttr.getExceptions();
+                exceptionsTable = codeAttr.getExceptionTable();
             } else {
                 rawBytecode = new ArrayList<Short>();
-                exceptions = new ArrayList<CodeAttr.ExceptionHandler>();
+                exceptionsTable = new ArrayList<CodeAttr.ExceptionTableItem>();
             }
 
             for (CtMethod ctMember : ctMethods) {
@@ -139,21 +139,21 @@ public class TestBaseUtils {
                     int ctRawAccessFlags = ctMember.getModifiers();
                     short mask = MethodAccessFlagsEnum.getMask(accessFlags);
 
-
                     boolean isExceptionsEquals = true;
-                    for (int i = 0; i < exceptions.size(); i++) {
-                        CodeAttr.ExceptionHandler exceptionHandler = exceptions.get(i);
-
-                        isExceptionsEquals &= exceptionHandler.getStartPc() == exceptionTable.startPc(i) &&
-                                exceptionHandler.getEndPc() == exceptionTable.endPc(i) &&
-                                exceptionHandler.getHandlerPc() == exceptionTable.handlerPc(i) &&
-                                exceptionHandler.getCatchType() == exceptionTable.catchType(i);
+                    for (int i = 0; i < exceptionsTable.size(); i++) {
+                        CodeAttr.ExceptionTableItem exceptionTableItem = exceptionsTable.get(i);
+                        isExceptionsEquals &= exceptionTableItem.compareValues(
+                                exceptionTable.startPc(i),
+                                exceptionTable.endPc(i),
+                                exceptionTable.handlerPc(i),
+                                exceptionTable.catchType(i));
                     }
 
+                    List attributes = codeAttribute.getAttributes();
 
                     value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
                             && mask == ctRawAccessFlags //Compare the access flag mask
-                            && isExceptionsEquals; //Compare the exceptions
+                            && isExceptionsEquals; //Compare the exceptionsTable
                 }
             }
         }
