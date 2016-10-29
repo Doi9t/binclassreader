@@ -24,10 +24,12 @@ import java.lang.reflect.Field;
 public class FieldPojo {
     private final Field fieldToWrite;
     private final byte nbByteToRead;
+    private final boolean isManualMode;
 
-    public FieldPojo(Field fieldToWrite, byte nbByteToRead) {
+    public FieldPojo(Field fieldToWrite, byte nbByteToRead, boolean isManualMode) {
         this.fieldToWrite = fieldToWrite;
         this.nbByteToRead = nbByteToRead;
+        this.isManualMode = isManualMode;
     }
 
     public Field getFieldToWrite() {
@@ -36,5 +38,9 @@ public class FieldPojo {
 
     public byte getNbByteToRead() {
         return nbByteToRead;
+    }
+
+    public boolean isManualMode() {
+        return isManualMode;
     }
 }

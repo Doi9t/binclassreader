@@ -28,13 +28,13 @@ import java.util.List;
 /**
  * Created by Yannick on 10/26/2016.
  */
-public class LineNumberTableAttr extends AbstractMethodAttribute {
+public class LocalVariableTableAttr extends AbstractMethodAttribute {
 
-    private List<LineHolder> lines;
+    private List<LocalVariable> variableList;
 
-    public LineNumberTableAttr() {
-        attributeName = "LineNumberTable";
-        lines = new ArrayList<LineHolder>();
+    public LocalVariableTableAttr() {
+        attributeName = "LocalVariableTypeTable";
+        variableList = new ArrayList<LocalVariable>();
     }
 
     @Override
@@ -55,23 +55,44 @@ public class LineNumberTableAttr extends AbstractMethodAttribute {
 //        int nbEntries = getNbOfEntries();
 //
 //        for (int i = 0; i < nbEntries; i++) {
-//            lines.add(reader.read(new LineHolder()));
+//            variableList.add(reader.read(new LocalVariable()));
 //        }
     }
 
-    private class LineHolder {
+    private class LocalVariable {
         @BinClassParser(byteToRead = 2)
         private short[] start_pc;
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
-        private short[] line_number;
+        private short[] length;
+
+        @BinClassParser(readOrder = 3, byteToRead = 2)
+        private short[] name_index;
+
+        @BinClassParser(readOrder = 4, byteToRead = 2)
+        private short[] descriptor_index;
+
+        @BinClassParser(readOrder = 5, byteToRead = 2)
+        private short[] index;
 
         public int getStartPc() {
             return BaseUtils.combineBytesToInt(start_pc);
         }
 
-        public int getLineNumber() {
-            return BaseUtils.combineBytesToInt(line_number);
+        public int getLength() {
+            return BaseUtils.combineBytesToInt(length);
+        }
+
+        public int getNameIndex() {
+            return BaseUtils.combineBytesToInt(name_index);
+        }
+
+        public int getDescriptorIndex() {
+            return BaseUtils.combineBytesToInt(descriptor_index);
+        }
+
+        public int getIndex() {
+            return BaseUtils.combineBytesToInt(index);
         }
     }
 }

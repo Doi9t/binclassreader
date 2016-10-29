@@ -16,54 +16,47 @@
 
 package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.Readable;
+import org.binclassreader.abstracts.AbstractMethodAttribute;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Yannick on 10/26/2016.
  */
-public class LocalVariableTypeTableAttr extends Readable {
-
-    @BinClassParser(byteToRead = 2)
-    private short[] name_index;
-
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    private short[] length;
-
-    @BinClassParser(readOrder = 3, byteToRead = 2)
-    private short[] nb_entries;
+public class LocalVariableTypeTableAttr extends AbstractMethodAttribute {
 
     private List<LocalVariable> variableList;
 
     public LocalVariableTypeTableAttr() {
+        attributeName = "LocalVariableTypeTable";
         variableList = new ArrayList<LocalVariable>();
     }
 
-    public int getNameIndex() {
-        return BaseUtils.combineBytesToInt(name_index);
-    }
-
-    public int getLength() {
-        return BaseUtils.combineBytesToInt(length);
-    }
-
-    public int getNbEntries() {
-        return BaseUtils.combineBytesToInt(nb_entries);
-    }
-
-
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
-        int nbEntries = getNbEntries();
 
-        for (int i = 0; i < nbEntries; i++) {
-            variableList.add(reader.read(new LocalVariable()));
+        int length = getLength();
+
+        if (length == 0) {
+            return;
         }
+
+        try {
+            bytes = reader.readFromCurrentStream(length - 2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        int nbEntries = getNbOfEntries();
+//
+//        for (int i = 0; i < nbEntries; i++) {
+//            variableList.add(reader.read(new LocalVariable()));
+//        }
     }
 
     private class LocalVariable {

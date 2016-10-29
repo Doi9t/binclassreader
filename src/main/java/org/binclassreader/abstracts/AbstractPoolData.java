@@ -81,7 +81,7 @@ public abstract class AbstractPoolData extends Readable {
         return POOL.get();
     }
 
-    protected <T> T getPoolByClass(Class<?> clazz) {
+    public <T> T getPoolByClass(Class<?> clazz) {
         return (T) (POOL.get()).get(clazz);
     }
 }

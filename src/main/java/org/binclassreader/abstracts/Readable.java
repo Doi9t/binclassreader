@@ -24,6 +24,8 @@ import org.binclassreader.tree.Tree;
  */
 public abstract class Readable {
 
+    private boolean eventsEnabled = true;
+
     /**
      * This method is called after the Fields have been initialized.
      *
@@ -34,9 +36,20 @@ public abstract class Readable {
 
     /**
      * This method is called after the tree have been initialized.
-     *  @param tree
      *
+     * @param tree
      */
     public void afterTreeIsBuilt(final Tree tree) {
+    }
+
+    /**
+     * This value allow to block the events propagation
+     */
+    public final void enableEvents(boolean enabled) {
+        eventsEnabled = enabled;
+    }
+
+    public final boolean isEventsEnabled() {
+        return eventsEnabled;
     }
 }

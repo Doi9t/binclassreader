@@ -22,12 +22,12 @@ import org.binclassreader.reader.ClassReader;
 import java.io.IOException;
 
 /**
- * Created by Yannick on 10/26/2016.
+ * Created by Yannick on 10/27/2016.
  */
-public class StackMapTableAttr extends AbstractMethodAttribute {
+public class RuntimeInvisibleTypeAnnotationsAttr extends AbstractMethodAttribute {
 
-    public StackMapTableAttr() {
-        attributeName = "StackMapTable";
+    public RuntimeInvisibleTypeAnnotationsAttr() {
+        attributeName = "RuntimeInvisibleTypeAnnotationsAttr";
     }
 
     @Override

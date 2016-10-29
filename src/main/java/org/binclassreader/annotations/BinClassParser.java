@@ -30,5 +30,12 @@ import java.lang.annotation.Target;
 public @interface BinClassParser {
     short readOrder() default 1;
 
-    byte byteToRead();
+    byte byteToRead() default 1;
+
+    /**
+     * Allows to set the value manually
+     *
+     * @return
+     */
+    boolean manualMode() default false;
 }

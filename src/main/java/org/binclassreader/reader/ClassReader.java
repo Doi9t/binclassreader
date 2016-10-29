@@ -82,7 +82,12 @@ public class ClassReader extends AbstractPoolData {
         return values;
     }
 
-    public <T> T read(T obj) {
+    /**
+     * @param obj
+     * @param values - This parameter is only used when there's a manual value (set via {@link org.binclassreader.annotations.BinClassParser#manualMode()}))
+     * @return
+     */
+    public <T> T read(T obj, short[]... values) {
         fieldSorter.clear();
 
         if (obj == null) {
@@ -91,27 +96,36 @@ public class ClassReader extends AbstractPoolData {
 
         Class<?> currentClass = obj.getClass();
 
+        //Fetch all readable fields (from child to top parent)
         while (currentClass != null) {
             for (Field field : currentClass.getDeclaredFields()) {
                 field.setAccessible(true);
                 for (Annotation annotation : field.getDeclaredAnnotations()) {
                     if (annotation instanceof BinClassParser) {
-                        BinClassParser anno = (BinClassParser) annotation;
-                        fieldSorter.put(anno.readOrder(), new FieldPojo(field, anno.byteToRead()));
+                        BinClassParser binClassParser = (BinClassParser) annotation;
+                        fieldSorter.put(binClassParser.readOrder(), new FieldPojo(field, binClassParser.byteToRead(), binClassParser.manualMode()));
                     }
                 }
             }
             currentClass = currentClass.getSuperclass();
         }
 
-        if (!fieldSorter.isEmpty()) {
+        if (!fieldSorter.isEmpty()) { //Sort the fields
+            short manualInx = 0;
             for (FieldPojo value : fieldSorter.values()) {
                 Field fieldToWrite = value.getFieldToWrite();
+                boolean isManual = value.isManualMode();
+
+                if (isManual && values == null || isManual && values.length == 0) {
+                    continue;
+                }
+
                 fieldToWrite.setAccessible(true);
 
                 try {
                     byte nbByteToRead = value.getNbByteToRead();
-                    short[] bytes = readFromCurrentStream(nbByteToRead);
+
+                    short[] bytes = (isManual) ? values[manualInx++] : readFromCurrentStream(nbByteToRead);
                     fieldToWrite.set(obj, bytes);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -121,7 +135,11 @@ public class ClassReader extends AbstractPoolData {
             }
 
             if (obj instanceof Readable) {
-                ((Readable) obj).afterFieldsInitialized(this);
+                Readable readable = (Readable) obj;
+
+                if (readable.isEventsEnabled()) {
+                    readable.afterFieldsInitialized(this);
+                }
             }
         }
 
@@ -178,7 +196,10 @@ public class ClassReader extends AbstractPoolData {
                     data.put(poolTypeEnum, tree);
 
                     if (interfaceObj instanceof Readable) {
-                        ((Readable) interfaceObj).afterTreeIsBuilt(tree);
+                        Readable readable = (Readable) interfaceObj;
+                        if (readable.isEventsEnabled()) {
+                            readable.afterTreeIsBuilt(tree);
+                        }
                     }
                 }
             }
