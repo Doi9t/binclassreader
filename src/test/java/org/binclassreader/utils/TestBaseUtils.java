@@ -19,8 +19,10 @@ package org.binclassreader.utils;
 import javassist.CtClass;
 import javassist.CtMember;
 import javassist.CtMethod;
+import javassist.bytecode.AttributeInfo;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.ExceptionTable;
+import org.binclassreader.abstracts.AbstractMethodAttribute;
 import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
@@ -28,7 +30,10 @@ import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.tree.TreeElement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.binclassreader.utils.BaseUtils.safeList;
 
 /**
  * Created by Yannick on 10/23/2016.
@@ -111,10 +116,16 @@ public class TestBaseUtils {
             List<MethodAccessFlagsEnum> accessFlags = (List<MethodAccessFlagsEnum>) keyValueHolder.getFirstMatchingValue(ClassHelperEnum.ACCESS_FLAGS);
             List<Short> rawBytecode;
             List<CodeAttr.ExceptionTableItem> exceptionsTable;
+            List<String> methodAttributeName = null;
 
             if (codeAttr != null) {
                 rawBytecode = codeAttr.getRawBytecode();
                 exceptionsTable = codeAttr.getExceptionTable();
+                methodAttributeName = new ArrayList<String>();
+
+                for (AbstractMethodAttribute o : safeList(codeAttr.getAttributes())) {
+                    methodAttributeName.add(o.getAttributeName());
+                }
             } else {
                 rawBytecode = new ArrayList<Short>();
                 exceptionsTable = new ArrayList<CodeAttr.ExceptionTableItem>();
@@ -123,6 +134,7 @@ public class TestBaseUtils {
             for (CtMethod ctMember : ctMethods) {
                 String ctMemberDescriptor = ctMember.getSignature();
                 String ctName = ctMember.getName();
+                List<String> methodAttributeNameJavaAssist = null;
 
                 if (ctName.equals(name) && ctMemberDescriptor.equals(descriptor)) {
                     CodeAttribute codeAttribute = ctMember.getMethodInfo2().getCodeAttribute();
@@ -133,6 +145,11 @@ public class TestBaseUtils {
                     if (codeAttribute != null) {
                         code = codeAttribute.getCode();
                         exceptionTable = codeAttribute.getExceptionTable();
+                        methodAttributeNameJavaAssist = new ArrayList<String>();
+
+                        for (AttributeInfo o : (List<AttributeInfo>) safeList(codeAttribute.getAttributes())) {
+                            methodAttributeNameJavaAssist.add(o.getName());
+                        }
                     }
 
                     List<Short> list = BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code));
@@ -149,11 +166,17 @@ public class TestBaseUtils {
                                 exceptionTable.catchType(i));
                     }
 
-                    List attributes = codeAttribute.getAttributes();
+
+                    methodAttributeName = safeList(methodAttributeName);
+                    Collections.sort(methodAttributeName);
+                    methodAttributeNameJavaAssist = safeList(methodAttributeNameJavaAssist);
+                    Collections.sort(methodAttributeNameJavaAssist);
+
 
                     value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
                             && mask == ctRawAccessFlags //Compare the access flag mask
-                            && isExceptionsEquals; //Compare the exceptionsTable
+                            && isExceptionsEquals
+                            && methodAttributeName.equals(methodAttributeNameJavaAssist); //Compare the exceptionsTable
                 }
             }
         }

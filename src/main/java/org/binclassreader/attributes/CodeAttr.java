@@ -17,6 +17,7 @@
 package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractAttribute;
+import org.binclassreader.abstracts.AbstractMethodAttribute;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.parsers.PoolParser;
 import org.binclassreader.reader.ClassReader;
@@ -46,7 +47,7 @@ public class CodeAttr extends AbstractAttribute {
 
     private final List<Short> CODE;
     private final List<ExceptionTableItem> EXCEPTIONS_TABLE_ITEMS;
-    private final List<Object> ATTRIBUTES_TABLE_ITEMS;
+    private final List<AbstractMethodAttribute> ATTRIBUTES_TABLE_ITEMS;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
@@ -57,7 +58,7 @@ public class CodeAttr extends AbstractAttribute {
     public CodeAttr() {
         CODE = new ArrayList<Short>();
         EXCEPTIONS_TABLE_ITEMS = new ArrayList<ExceptionTableItem>();
-        ATTRIBUTES_TABLE_ITEMS = new ArrayList<Object>();
+        ATTRIBUTES_TABLE_ITEMS = new ArrayList<AbstractMethodAttribute>();
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
@@ -92,7 +93,7 @@ public class CodeAttr extends AbstractAttribute {
                 Class<?> attributeByName = getAttributeByName(((ConstUtf8Info) objFromPool).getAsNewString());
 
                 if (attributeByName != null) {
-                    ATTRIBUTES_TABLE_ITEMS.add(reader.read(attributeByName.newInstance(), rawNameIndexAttribute));
+                    ATTRIBUTES_TABLE_ITEMS.add((AbstractMethodAttribute) reader.read(attributeByName.newInstance(), rawNameIndexAttribute));
                 }
             }
         } catch (IOException e) {
@@ -151,32 +152,6 @@ public class CodeAttr extends AbstractAttribute {
         }
     }
 
-
-    public class AttributeItem {
-
-        @BinClassParser(byteToRead = 2)
-        private short[] name_index;
-
-        @BinClassParser(readOrder = 2, byteToRead = 4)
-        private short[] length;
-
-        @BinClassParser(readOrder = 3)
-        private short[] info;
-
-        public int getNameIndex() {
-            return BaseUtils.combineBytesToInt(name_index);
-        }
-
-        public int getLength() {
-            return BaseUtils.combineBytesToInt(length);
-        }
-
-        public int getInfo() {
-            return BaseUtils.combineBytesToInt(info);
-        }
-
-    }
-
     private Class<?> getAttributeByName(String name) {
 
         Class<?> clazz = null;
@@ -196,5 +171,9 @@ public class CodeAttr extends AbstractAttribute {
         }
 
         return clazz;
+    }
+
+    public List<AbstractMethodAttribute> getAttributes() {
+        return ATTRIBUTES_TABLE_ITEMS;
     }
 }

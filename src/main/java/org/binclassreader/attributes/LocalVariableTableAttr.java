@@ -33,7 +33,7 @@ public class LocalVariableTableAttr extends AbstractMethodAttribute {
     private List<LocalVariable> variableList;
 
     public LocalVariableTableAttr() {
-        attributeName = "LocalVariableTypeTable";
+        attributeName = "LocalVariableTable";
         variableList = new ArrayList<LocalVariable>();
     }
 
