@@ -17,17 +17,14 @@
 package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractAttribute;
-import org.binclassreader.abstracts.AbstractMethodAttribute;
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.parsers.PoolParser;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.utils.AttributeUtils;
 import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Yannick on 5/23/2016.
@@ -47,7 +44,7 @@ public class CodeAttr extends AbstractAttribute {
 
     private final List<Short> CODE;
     private final List<ExceptionTableItem> EXCEPTIONS_TABLE_ITEMS;
-    private final List<AbstractMethodAttribute> ATTRIBUTES_TABLE_ITEMS;
+    private final List<AbstractAttribute> ATTRIBUTES_TABLE_ITEMS;
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] max_stack;
     @BinClassParser(readOrder = 4, byteToRead = 2)
@@ -58,7 +55,7 @@ public class CodeAttr extends AbstractAttribute {
     public CodeAttr() {
         CODE = new ArrayList<Short>();
         EXCEPTIONS_TABLE_ITEMS = new ArrayList<ExceptionTableItem>();
-        ATTRIBUTES_TABLE_ITEMS = new ArrayList<AbstractMethodAttribute>();
+        ATTRIBUTES_TABLE_ITEMS = new ArrayList<AbstractAttribute>();
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
@@ -80,20 +77,13 @@ public class CodeAttr extends AbstractAttribute {
             for (int i = 0; i < exceptionLength; i++) {
                 EXCEPTIONS_TABLE_ITEMS.add(reader.read(new ExceptionTableItem()));
             }
-
             int attributesLength = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
 
             for (int i = 0; i < attributesLength; i++) {
-
-                short[] rawNameIndexAttribute = reader.readFromCurrentStream(2);
-                int nameIndexAttribute = BaseUtils.combineBytesToInt(rawNameIndexAttribute);
-
-                Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
-                Object objFromPool = constPool.get(nameIndexAttribute - 1);
-                Class<?> attributeByName = getAttributeByName(((ConstUtf8Info) objFromPool).getAsNewString());
+                AbstractAttribute attributeByName = AttributeUtils.getNextAttribute(reader);
 
                 if (attributeByName != null) {
-                    ATTRIBUTES_TABLE_ITEMS.add((AbstractMethodAttribute) reader.read(attributeByName.newInstance(), rawNameIndexAttribute));
+                    ATTRIBUTES_TABLE_ITEMS.add(attributeByName);
                 }
             }
         } catch (IOException e) {
@@ -103,7 +93,6 @@ public class CodeAttr extends AbstractAttribute {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 
     public List<Short> getRawBytecode() {
@@ -152,28 +141,7 @@ public class CodeAttr extends AbstractAttribute {
         }
     }
 
-    private Class<?> getAttributeByName(String name) {
-
-        Class<?> clazz = null;
-
-        if ("LineNumberTable".equals(name)) {
-            clazz = LineNumberTableAttr.class;
-        } else if ("LocalVariableTable".equals(name)) {
-            clazz = LocalVariableTableAttr.class;
-        } else if ("LocalVariableTypeTable".equals(name)) {
-            clazz = LocalVariableTypeTableAttr.class;
-        } else if ("RuntimeInvisibleTypeAnnotations".equals(name)) {
-            clazz = RuntimeInvisibleTypeAnnotationsAttr.class;
-        } else if ("RuntimeVisibleTypeAnnotations".equals(name)) {
-            clazz = RuntimeVisibleTypeAnnotationsAttr.class;
-        } else if ("StackMapTable".equals(name)) {
-            clazz = StackMapTableAttr.class;
-        }
-
-        return clazz;
-    }
-
-    public List<AbstractMethodAttribute> getAttributes() {
+    public List<AbstractAttribute> getAttributes() {
         return ATTRIBUTES_TABLE_ITEMS;
     }
 }

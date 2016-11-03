@@ -16,33 +16,10 @@
 
 package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.AbstractIterableAttribute;
-import org.binclassreader.reader.ClassReader;
-
-import java.io.IOException;
+import org.binclassreader.abstracts.AbstractAttribute;
 
 /**
- * Created by Yannick on 10/26/2016.
+ * Created by Yannick on 11/2/2016.
  */
-public class StackMapTableAttr extends AbstractIterableAttribute {
-
-    public StackMapTableAttr() {
-        attributeName = "StackMapTable";
-    }
-
-    @Override
-    public void afterFieldsInitialized(ClassReader reader) {
-
-        int length = getLength();
-
-        if (length == 0) {
-            return;
-        }
-
-        try {
-            bytes = reader.readFromCurrentStream(length - 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+public class DeprecatedAttr extends AbstractAttribute {
 }

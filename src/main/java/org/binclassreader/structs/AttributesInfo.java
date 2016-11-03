@@ -29,14 +29,14 @@ public class AttributesInfo extends AbstractAttribute {
     @Override
     public String toString() {
         return "ConstAttributeInfo{" +
-                "attribute_name_index=" + getAttributeNameIndex() +
-                ", attribute_length=" + getAttributeLength() +
+                "attribute_name_index=" + getNameIndex() +
+                ", attribute_length=" + getLength() +
                 '}';
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
         try {
-            reader.skipFromCurrentStream(getAttributeLength());//FIXME: Parse the bytes instead of wasting them ...
+            reader.skipFromCurrentStream(getLength());//FIXME: Parse the bytes instead of wasting them ...
         } catch (IOException e) {
             e.printStackTrace();
         }

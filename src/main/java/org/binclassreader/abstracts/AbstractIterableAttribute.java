@@ -22,28 +22,14 @@ import org.binclassreader.utils.BaseUtils;
 /**
  * Created by Yannick on 10/27/2016.
  */
-public abstract class AbstractMethodAttribute extends Readable {
+public abstract class AbstractIterableAttribute extends AbstractAttribute {
 
-    protected String attributeName = "AbstractMethodAttribute";
-
-    @BinClassParser(manualMode = true)
-    private short[] name_index;
-
-    @BinClassParser(readOrder = 2, byteToRead = 4)
-    private short[] length;
+    protected String attributeName = "AbstractIterableAttribute";
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] nb_entries;
 
     protected short[] bytes;
-
-    public int getNameIndex() {
-        return BaseUtils.combineBytesToInt(name_index);
-    }
-
-    public int getLength() {
-        return BaseUtils.combineBytesToInt(length);
-    }
 
     public int getNbOfEntries() {
         return BaseUtils.combineBytesToInt(nb_entries);

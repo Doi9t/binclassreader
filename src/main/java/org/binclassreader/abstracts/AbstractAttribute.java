@@ -26,18 +26,18 @@ import org.binclassreader.utils.BaseUtils;
  */
 public class AbstractAttribute extends Readable {
 
-    @BinClassParser(byteToRead = 2)
-    private short[] attribute_name_index;
+    @BinClassParser(manualMode = true)
+    private short[] name_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 4)
-    private short[] attribute_length;
+    private short[] length;
 
     @PoolItemIndex(mustBeOfType = ConstUtf8Info.class)
-    public int getAttributeNameIndex() {
-        return BaseUtils.combineBytesToInt(attribute_name_index);
+    public int getNameIndex() {
+        return BaseUtils.combineBytesToInt(name_index);
     }
 
-    public int getAttributeLength() {
-        return BaseUtils.combineBytesToInt(attribute_length);
+    public int getLength() {
+        return BaseUtils.combineBytesToInt(length);
     }
 }

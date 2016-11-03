@@ -16,6 +16,9 @@
 
 package org.binclassreader.testclasses;
 
+import javax.xml.ws.Action;
+import javax.xml.ws.soap.MTOM;
+
 /**
  * Created by Yannick on 5/15/2016.
  */
@@ -28,6 +31,9 @@ public class TestTwo {
         Object obj = new Object();
     }
 
+    @Deprecated
+    @Action
+    @MTOM
     public Object returnFunction(Object x, final Object y) {
         this.x = x;
         this.y = y;

@@ -14,36 +14,43 @@
  *    limitations under the License.
  */
 
-package org.binclassreader.parsers;
+package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.AbstractParser;
-import org.binclassreader.annotations.PoolDataOptions;
-import org.binclassreader.enums.CollectionTypeEnum;
+import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.AttributesInfo;
 
 import java.io.IOException;
 
 /**
- * Created by Yannick on 4/18/2016.
+ * Created by Yannick on 11/2/2016.
  */
+public class RuntimeVisibleAnnotationsAttr extends AbstractIterableAttribute {
 
-@PoolDataOptions(storageType = CollectionTypeEnum.LIST)
-public class AttributesParser extends AbstractParser {
+    public RuntimeVisibleAnnotationsAttr() {
+        attributeName = "RuntimeVisibleAnnotations";
+    }
 
+    @Override
     public void afterFieldsInitialized(ClassReader reader) {
-        count = getCount();
 
-        if (count > 65535) {
+        int length = getLength();
+
+        if (length == 0) {
             return;
         }
 
-        for (int i = 0; i < count; i++) {
-            try {
-                addItemToList(reader.read(new AttributesInfo(), reader.readFromCurrentStream(2)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+
+            int nbOfEntries = getNbOfEntries();
+
+//            for (int i = 0; i < nbOfEntries; i++) {
+//                System.out.println();
+//            }
+
+            bytes = reader.readFromCurrentStream(length);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
 }

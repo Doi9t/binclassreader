@@ -16,18 +16,25 @@
 
 package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.AbstractMethodAttribute;
+import org.binclassreader.abstracts.AbstractIterableAttribute;
+import org.binclassreader.abstracts.Readable;
+import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.reader.ClassReader;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yannick on 10/27/2016.
  */
-public class RuntimeVisibleTypeAnnotationsAttr extends AbstractMethodAttribute {
+public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
+
+    private final List<Annotation> ANNOTATIONS;
 
     public RuntimeVisibleTypeAnnotationsAttr() {
         attributeName = "RuntimeInvisibleTypeAnnotationsAttr";
+        ANNOTATIONS = new ArrayList<Annotation>();
     }
 
     @Override
@@ -40,9 +47,35 @@ public class RuntimeVisibleTypeAnnotationsAttr extends AbstractMethodAttribute {
         }
 
         try {
-            bytes = reader.readFromCurrentStream(length - 2);
+
+            int nbOfEntries = getNbOfEntries();
+
+//            for (int i = 0; i < nbOfEntries; i++) {
+//                System.out.println();
+//            }
+
+            bytes = reader.readFromCurrentStream(length);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /*
+    annotation {
+    u2 type_index;
+    u2 num_element_value_pairs;
+    {   u2            element_name_index;
+        element_value value;
+    } element_value_pairs[num_element_value_pairs];
+}
+     */
+
+    public class Annotation extends Readable {
+        @BinClassParser(byteToRead = 2)
+        private short[] name_index;
+
+        @BinClassParser(readOrder = 2, byteToRead = 2)
+        private short[] num_element_value_pairs;
     }
 }

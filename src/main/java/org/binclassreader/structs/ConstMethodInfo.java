@@ -16,6 +16,7 @@
 
 package org.binclassreader.structs;
 
+import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
@@ -25,9 +26,11 @@ import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.tree.Tree;
 import org.binclassreader.tree.TreeElement;
+import org.binclassreader.utils.AttributeUtils;
 import org.binclassreader.utils.BaseUtils;
 import org.binclassreader.utils.MethodUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +75,7 @@ public class ConstMethodInfo extends Readable {
         ------------------------------------------------------------------------------
      */
 
-    private List<AttributesInfo> attList;
+    private List<AbstractAttribute> attList;
 
     public List<MethodAccessFlagsEnum> getAccessFlags() {
         return MethodAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));
@@ -103,7 +106,7 @@ public class ConstMethodInfo extends Readable {
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
-        attList = new ArrayList<AttributesInfo>();
+        attList = new ArrayList<org.binclassreader.abstracts.AbstractAttribute>();
 
         List<MethodAccessFlagsEnum> flags = getAccessFlags();
         boolean isCodeAttrPresent = flags != null && //Code Attribute
@@ -111,7 +114,11 @@ public class ConstMethodInfo extends Readable {
                 !flags.contains(MethodAccessFlagsEnum.ACC_ABSTRACT);
 
         if (isCodeAttrPresent) {
-            codeAttr = reader.read(new CodeAttr());
+            try {
+                codeAttr = reader.read(new CodeAttr(), reader.readFromCurrentStream(2));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         int attributesCount = getAttributesCount();
@@ -119,7 +126,15 @@ public class ConstMethodInfo extends Readable {
 
         if (attributesCount >= 0) {
             for (int i = 0; i < attributesCount; i++) {
-                attList.add(reader.read(new AttributesInfo()));
+                try {
+                    attList.add(AttributeUtils.getNextAttribute(reader));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

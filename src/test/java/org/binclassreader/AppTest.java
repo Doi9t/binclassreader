@@ -133,25 +133,27 @@ public class AppTest {
     @Test
     public void existingClassComparisonTest() throws Exception {
 
-        //CtClass accessBridgeCtClass = POOL.get("com.sun.java.accessibility.AccessBridge");
-        CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl");
-        //CtClass accessBridgeCtClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
+        //CtClass ctClass = POOL.get("com.sun.java.accessibility.AccessBridge");
+        //CtClass ctClass = POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl");
+        //CtClass ctClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
+        CtClass ctClass = POOL.get("org.binclassreader.testclasses.TestTwo");
 
-        ClassHelperService.loadClass(new ByteArrayInputStream(accessBridgeCtClass.toBytecode()));
+
+        ClassHelperService.loadClass(new ByteArrayInputStream(ctClass.toBytecode()));
 
         List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
-        CtField[] ctFields = accessBridgeCtClass.getDeclaredFields();
+        CtField[] ctFields = ctClass.getDeclaredFields();
 
         List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
-        CtMethod[] ctMethods = accessBridgeCtClass.getDeclaredMethods();
+        CtMethod[] ctMethods = ctClass.getDeclaredMethods();
 
         List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
-        List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(accessBridgeCtClass.getInterfaces());
+        List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(ctClass.getInterfaces());
 
         Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getClassName()),
-                ClassUtil.getBinaryPath(accessBridgeCtClass.getName())); //Compare the class name
+                ClassUtil.getBinaryPath(ctClass.getName())); //Compare the class name
         Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
-                ClassUtil.getBinaryPath(accessBridgeCtClass.getSuperclass().getName())); //Compare the super class name
+                ClassUtil.getBinaryPath(ctClass.getSuperclass().getName())); //Compare the super class name
         Assert.assertTrue("The fields are not similar !", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
         Assert.assertTrue("The methods are not similar !", TestBaseUtils.deepMethodComparator(methods, ctMethods)); //Compare the methods
         Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces

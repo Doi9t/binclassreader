@@ -24,6 +24,7 @@ import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,11 @@ public class ConstFieldInfo extends Readable {
 
         int attributesCount = getAttributesCount();
         for (int i = 0; i < attributesCount; i++) {
-            attList.add(reader.read(new AttributesInfo()));
+            try {
+                attList.add(reader.read(new AttributesInfo(), reader.readFromCurrentStream(2)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

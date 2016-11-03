@@ -16,7 +16,7 @@
 
 package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.AbstractMethodAttribute;
+import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.reader.ClassReader;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * Created by Yannick on 10/27/2016.
  */
-public class RuntimeInvisibleTypeAnnotationsAttr extends AbstractMethodAttribute {
+public class RuntimeInvisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
 
     public RuntimeInvisibleTypeAnnotationsAttr() {
         attributeName = "RuntimeInvisibleTypeAnnotationsAttr";

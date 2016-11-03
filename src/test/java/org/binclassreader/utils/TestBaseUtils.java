@@ -22,7 +22,8 @@ import javassist.CtMethod;
 import javassist.bytecode.AttributeInfo;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.ExceptionTable;
-import org.binclassreader.abstracts.AbstractMethodAttribute;
+import org.binclassreader.abstracts.AbstractAttribute;
+import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.attributes.CodeAttr;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
@@ -123,8 +124,11 @@ public class TestBaseUtils {
                 exceptionsTable = codeAttr.getExceptionTable();
                 methodAttributeName = new ArrayList<String>();
 
-                for (AbstractMethodAttribute o : safeList(codeAttr.getAttributes())) {
-                    methodAttributeName.add(o.getAttributeName());
+                for (AbstractAttribute o : safeList(codeAttr.getAttributes())) {
+
+                    if (o instanceof AbstractIterableAttribute) {
+                        methodAttributeName.add(((AbstractIterableAttribute) o).getAttributeName());
+                    }
                 }
             } else {
                 rawBytecode = new ArrayList<Short>();

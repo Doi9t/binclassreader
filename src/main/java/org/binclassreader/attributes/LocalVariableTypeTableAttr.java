@@ -16,7 +16,7 @@
 
 package org.binclassreader.attributes;
 
-import org.binclassreader.abstracts.AbstractMethodAttribute;
+import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by Yannick on 10/26/2016.
  */
-public class LocalVariableTypeTableAttr extends AbstractMethodAttribute {
+public class LocalVariableTypeTableAttr extends AbstractIterableAttribute {
 
     private List<LocalVariable> variableList;
 
