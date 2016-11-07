@@ -106,7 +106,7 @@ public class ConstMethodInfo extends Readable {
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
-        attList = new ArrayList<org.binclassreader.abstracts.AbstractAttribute>();
+        attList = new ArrayList<AbstractAttribute>();
 
         List<MethodAccessFlagsEnum> flags = getAccessFlags();
         boolean isCodeAttrPresent = flags != null && //Code Attribute

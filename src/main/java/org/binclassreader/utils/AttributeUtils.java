@@ -30,46 +30,79 @@ import java.util.Map;
  */
 public class AttributeUtils extends BaseUtils {
 
-    private static Class<?> getNextAttribute(String name) {
+    private static Class<?> getAttributeWithName(String name) {
 
         Class<?> clazz = null;
 
-        if ("LineNumberTable".equalsIgnoreCase(name)) {
+        if ("AnnotationDefault".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("BootstrapMethods".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("ConstantValue".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("Deprecated".equalsIgnoreCase(name)) {
+            clazz = DeprecatedAttr.class;
+        } else if ("EnclosingMethod".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("Exceptions".equalsIgnoreCase(name)) {
+            clazz = ExceptionAttr.class;
+        } else if ("InnerClasses".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("LineNumberTable".equalsIgnoreCase(name)) {
             clazz = LineNumberTableAttr.class;
         } else if ("LocalVariableTable".equalsIgnoreCase(name)) {
             clazz = LocalVariableTableAttr.class;
         } else if ("LocalVariableTypeTable".equalsIgnoreCase(name)) {
             clazz = LocalVariableTypeTableAttr.class;
+        } else if ("MethodParameters".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("RuntimeInvisibleAnnotations".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("RuntimeInvisibleParameterAnnotations".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
         } else if ("RuntimeInvisibleTypeAnnotations".equalsIgnoreCase(name)) {
             clazz = RuntimeInvisibleTypeAnnotationsAttr.class;
-        } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = RuntimeVisibleTypeAnnotationsAttr.class;
         } else if ("RuntimeVisibleAnnotations".equalsIgnoreCase(name)) {
             clazz = RuntimeVisibleAnnotationsAttr.class;
+        } else if ("RuntimeVisibleParameterAnnotations".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
+            clazz = RuntimeVisibleTypeAnnotationsAttr.class;
+        } else if ("Signature".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("SourceDebugExtension".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
+        } else if ("SourceFile".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
         } else if ("StackMapTable".equalsIgnoreCase(name)) {
-            clazz = StackMapTableAttr.class;
-        } else if ("Deprecated".equalsIgnoreCase(name)) {
-            clazz = DeprecatedAttr.class;
+            clazz = UnimplementedAttr.class;
+        } else if ("Synthetic".equalsIgnoreCase(name)) {
+            clazz = UnimplementedAttr.class;
         }
 
         return clazz;
     }
 
     public static AbstractAttribute getNextAttribute(ClassReader reader) throws IOException, IllegalAccessException, InstantiationException {
-        Object value = null;
+        AbstractAttribute value = null;
 
         short[] rawNameIndexAttribute = reader.readFromCurrentStream(2);
         int nameIndexAttribute = BaseUtils.combineBytesToInt(rawNameIndexAttribute);
 
         Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
         Object objFromPool = constPool.get(nameIndexAttribute - 1);
-        Class<?> attributeByName = getNextAttribute(((ConstUtf8Info) objFromPool).getAsNewString());
 
-        if (attributeByName != null) {
-            value = reader.read(attributeByName.newInstance(), rawNameIndexAttribute);
+        Class<?> attributeByName = null;
+
+        if (objFromPool != null) {
+            attributeByName = getAttributeWithName(((ConstUtf8Info) objFromPool).getAsNewString());
         }
 
-        return (AbstractAttribute) value;
+        if (attributeByName != null) {
+            value = (AbstractAttribute) reader.read(attributeByName.newInstance(), rawNameIndexAttribute);
+        }
+
+        return value;
     }
 
 }

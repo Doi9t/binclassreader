@@ -16,12 +16,14 @@
 
 package org.binclassreader.structs;
 
+import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
+import org.binclassreader.utils.AttributeUtils;
 import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class ConstFieldInfo extends Readable {
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private short[] attributes_count;
 
-    private List<AttributesInfo> attList;
+    private List<AbstractAttribute> attList;
 
     public List<FieldAccessFlagsEnum> getAccessFlags() {
         return FieldAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));
@@ -77,13 +79,17 @@ public class ConstFieldInfo extends Readable {
     }
 
     public void afterFieldsInitialized(ClassReader reader) {
-        attList = new ArrayList<AttributesInfo>();
+        attList = new ArrayList<AbstractAttribute>();
 
         int attributesCount = getAttributesCount();
         for (int i = 0; i < attributesCount; i++) {
             try {
-                attList.add(reader.read(new AttributesInfo(), reader.readFromCurrentStream(2)));
+                attList.add(AttributeUtils.getNextAttribute(reader));
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

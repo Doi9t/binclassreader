@@ -22,17 +22,17 @@ import org.binclassreader.reader.ClassReader;
 import java.io.IOException;
 
 /**
- * Created by Yannick on 10/26/2016.
+ * Created by Yannick on 11/3/2016.
  */
-public class StackMapTableAttr extends AbstractIterableAttribute {
+public class ExceptionAttr extends AbstractIterableAttribute {
 
-    public StackMapTableAttr() {
-        attributeName = "StackMapTable";
+    public ExceptionAttr() {
+        attributeName = "Exceptions";
     }
+
 
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
-
         int length = getLength();
 
         if (length == 0) {
@@ -40,9 +40,18 @@ public class StackMapTableAttr extends AbstractIterableAttribute {
         }
 
         try {
+
+            int nbOfEntries = getNbOfEntries();
+
+//
+//            for (int i = 0; i < nbOfEntries; i++) {
+//                ANNOTATIONS.add(reader.read(new Annotation()));
+//            }
+
             bytes = reader.readFromCurrentStream(length - 2);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }

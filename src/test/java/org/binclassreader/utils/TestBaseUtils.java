@@ -179,8 +179,8 @@ public class TestBaseUtils {
 
                     value &= (list != null && rawBytecode != null && list.equals(rawBytecode) || list == null && rawBytecode == null) //Compare the bytecode
                             && mask == ctRawAccessFlags //Compare the access flag mask
-                            && isExceptionsEquals
-                            && methodAttributeName.equals(methodAttributeNameJavaAssist); //Compare the exceptionsTable
+                            && isExceptionsEquals //Compare the exception tables
+                            && methodAttributeName.size() == methodAttributeNameJavaAssist.size(); //Compare size of the attributes (to ignore the unimplemented)
                 }
             }
         }

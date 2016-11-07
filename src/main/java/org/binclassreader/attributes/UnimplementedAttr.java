@@ -20,24 +20,19 @@ import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.reader.ClassReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by Yannick on 10/27/2016.
+ * Created by Yannick on 11/6/2016.
  */
-public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
+public class UnimplementedAttr extends AbstractIterableAttribute {
 
-    private final List<Annotation> ANNOTATIONS;
-
-    public RuntimeVisibleTypeAnnotationsAttr() {
-        attributeName = "RuntimeInvisibleTypeAnnotationsAttr";
-        ANNOTATIONS = new ArrayList<Annotation>();
+    public UnimplementedAttr() {
+        attributeName = "UnimplementedAttribute";
     }
+
 
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
-
         int length = getLength();
 
         if (length == 0) {
@@ -48,8 +43,9 @@ public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute
 
             int nbOfEntries = getNbOfEntries();
 
+//
 //            for (int i = 0; i < nbOfEntries; i++) {
-//                System.out.println();
+//                ANNOTATIONS.add(reader.read(new Annotation()));
 //            }
 
             bytes = reader.readFromCurrentStream(length - 2);
@@ -57,15 +53,4 @@ public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute
             e.printStackTrace();
         }
     }
-
-
-    /*
-    annotation {
-    u2 type_index;
-    u2 num_element_value_pairs;
-    {   u2            element_name_index;
-        element_value value;
-    } element_value_pairs[num_element_value_pairs];
-}
-     */
 }

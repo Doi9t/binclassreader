@@ -85,31 +85,34 @@ public class ClassHelperService {
 
     public static List<KeyValueHolder<ClassHelperEnum, Object>> getFields() {
         List<KeyValueHolder<ClassHelperEnum, Object>> values = new ArrayList<KeyValueHolder<ClassHelperEnum, Object>>();
-        for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.FIELD))) {
-            if (o instanceof Tree) {
 
-                TreeElement element = ((Tree) o).getRoot();
-                List<TreeElement> child = element.getChild();
+        if (mappedPool != null) {
+            for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.FIELD))) {
+                if (o instanceof Tree) {
 
-                TreeElement treeElementZero = child.get(0);
-                TreeElement treeElementOne = child.get(1);
+                    TreeElement element = ((Tree) o).getRoot();
+                    List<TreeElement> child = element.getChild();
 
-                Object nameValue = null, descriptorValue = null;
+                    TreeElement treeElementZero = child.get(0);
+                    TreeElement treeElementOne = child.get(1);
 
-                if (name.equals(treeElementZero.getMappingType())) {
-                    nameValue = treeElementZero;
-                    descriptorValue = treeElementOne;
-                } else {
-                    nameValue = treeElementOne;
-                    descriptorValue = treeElementZero;
+                    Object nameValue = null, descriptorValue = null;
+
+                    if (name.equals(treeElementZero.getMappingType())) {
+                        nameValue = treeElementZero;
+                        descriptorValue = treeElementOne;
+                    } else {
+                        nameValue = treeElementOne;
+                        descriptorValue = treeElementZero;
+                    }
+
+                    KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
+                    value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstFieldInfo) element.getCurrent()).getAccessFlags());
+                    value.addPair(name, nameValue);
+                    value.addPair(descriptor, descriptorValue);
+
+                    values.add(value);
                 }
-
-                KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
-                value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstFieldInfo) element.getCurrent()).getAccessFlags());
-                value.addPair(name, nameValue);
-                value.addPair(descriptor, descriptorValue);
-
-                values.add(value);
             }
         }
 
@@ -120,40 +123,42 @@ public class ClassHelperService {
     public static List<KeyValueHolder<ClassHelperEnum, Object>> getMethods(boolean keepSpecial) {
         List<KeyValueHolder<ClassHelperEnum, Object>> values = new ArrayList<KeyValueHolder<ClassHelperEnum, Object>>();
 
-        for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.METHOD))) {
-            if (o instanceof Tree) {
-                TreeElement element = ((Tree) o).getRoot();
-                List<TreeElement> child = element.getChild();
+        if (mappedPool != null) {
+            for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.METHOD))) {
+                if (o instanceof Tree) {
+                    TreeElement element = ((Tree) o).getRoot();
+                    List<TreeElement> child = element.getChild();
 
-                KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
+                    KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
 
-                if (child.size() > 1) {
+                    if (child.size() > 1) {
 
-                    ConstMethodInfo currentElement = (ConstMethodInfo) element.getCurrent();
+                        ConstMethodInfo currentElement = (ConstMethodInfo) element.getCurrent();
 
-                    if (currentElement.isSpecialMethod() && !keepSpecial) {
-                        continue;
+                        if (currentElement.isSpecialMethod() && !keepSpecial) {
+                            continue;
+                        }
+
+                        TreeElement treeElementZero = child.get(0);
+                        TreeElement treeElementOne = child.get(1);
+
+                        TreeElement nameValue = null, descriptorValue = null;
+
+                        if (name.equals(treeElementZero.getMappingType())) {
+                            nameValue = treeElementZero;
+                            descriptorValue = treeElementOne;
+                        } else {
+                            nameValue = treeElementOne;
+                            descriptorValue = treeElementZero;
+                        }
+
+                        value.addPair(ClassHelperEnum.ACCESS_FLAGS, currentElement.getAccessFlags());
+                        value.addPair(name, nameValue.getCurrent());
+                        value.addPair(descriptor, descriptorValue.getCurrent());
+                        value.addPair(ClassHelperEnum.CODE_ATTR, currentElement.getCodeAttr());
+
+                        values.add(value);
                     }
-
-                    TreeElement treeElementZero = child.get(0);
-                    TreeElement treeElementOne = child.get(1);
-
-                    TreeElement nameValue = null, descriptorValue = null;
-
-                    if (name.equals(treeElementZero.getMappingType())) {
-                        nameValue = treeElementZero;
-                        descriptorValue = treeElementOne;
-                    } else {
-                        nameValue = treeElementOne;
-                        descriptorValue = treeElementZero;
-                    }
-
-                    value.addPair(ClassHelperEnum.ACCESS_FLAGS, currentElement.getAccessFlags());
-                    value.addPair(name, nameValue.getCurrent());
-                    value.addPair(descriptor, descriptorValue.getCurrent());
-                    value.addPair(ClassHelperEnum.CODE_ATTR, currentElement.getCodeAttr());
-
-                    values.add(value);
                 }
             }
         }
@@ -165,12 +170,14 @@ public class ClassHelperService {
 
         List<String> values = new ArrayList<String>();
 
-        for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.INTERFACE))) {
-            if (o instanceof Tree) {
-                TreeElement element = ((Tree) o).getRoot();
-                TreeElement child = element.getChild().get(0);
+        if (mappedPool != null) {
+            for (Object o : BaseUtils.safeList(mappedPool.get(PoolTypeEnum.INTERFACE))) {
+                if (o instanceof Tree) {
+                    TreeElement element = ((Tree) o).getRoot();
+                    TreeElement child = element.getChild().get(0);
 
-                values.add(((ConstUtf8Info) child.getCurrent()).getAsNewString());
+                    values.add(((ConstUtf8Info) child.getCurrent()).getAsNewString());
+                }
             }
         }
 

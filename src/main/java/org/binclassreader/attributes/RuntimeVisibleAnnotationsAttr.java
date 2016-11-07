@@ -20,19 +20,23 @@ import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.reader.ClassReader;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yannick on 11/2/2016.
  */
 public class RuntimeVisibleAnnotationsAttr extends AbstractIterableAttribute {
 
+    private final List<Annotation> ANNOTATIONS;
+
     public RuntimeVisibleAnnotationsAttr() {
         attributeName = "RuntimeVisibleAnnotations";
+        ANNOTATIONS = new ArrayList<Annotation>();
     }
 
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
-
         int length = getLength();
 
         if (length == 0) {
@@ -43,14 +47,14 @@ public class RuntimeVisibleAnnotationsAttr extends AbstractIterableAttribute {
 
             int nbOfEntries = getNbOfEntries();
 
+//
 //            for (int i = 0; i < nbOfEntries; i++) {
-//                System.out.println();
+//                ANNOTATIONS.add(reader.read(new Annotation()));
 //            }
 
-            bytes = reader.readFromCurrentStream(length);
+            bytes = reader.readFromCurrentStream(length - 2);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }

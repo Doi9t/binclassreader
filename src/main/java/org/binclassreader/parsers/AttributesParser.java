@@ -20,7 +20,7 @@ import org.binclassreader.abstracts.AbstractParser;
 import org.binclassreader.annotations.PoolDataOptions;
 import org.binclassreader.enums.CollectionTypeEnum;
 import org.binclassreader.reader.ClassReader;
-import org.binclassreader.structs.AttributesInfo;
+import org.binclassreader.utils.AttributeUtils;
 
 import java.io.IOException;
 
@@ -40,8 +40,12 @@ public class AttributesParser extends AbstractParser {
 
         for (int i = 0; i < count; i++) {
             try {
-                addItemToList(reader.read(new AttributesInfo(), reader.readFromCurrentStream(2)));
+                addItemToList(AttributeUtils.getNextAttribute(reader));
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
