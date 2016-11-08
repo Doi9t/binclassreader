@@ -18,6 +18,7 @@ package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.utils.BaseUtils;
 
@@ -25,6 +26,8 @@ import org.binclassreader.utils.BaseUtils;
  * Created by Yannick on 5/23/2016.
  */
 public class AbstractAttribute extends Readable {
+
+    protected AttributeTypeEnum attributeName = null;
 
     @BinClassParser(manualMode = true)
     private short[] name_index;
@@ -39,5 +42,13 @@ public class AbstractAttribute extends Readable {
 
     public int getLength() {
         return BaseUtils.combineBytesToInt(length);
+    }
+
+    public AttributeTypeEnum getAttributeType() {
+        return attributeName;
+    }
+
+    public void setAttributeType(AttributeTypeEnum attributeName) {
+        this.attributeName = attributeName;
     }
 }

@@ -21,6 +21,7 @@ import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.annotations.PoolItemIndex;
 import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
@@ -108,26 +109,21 @@ public class ConstMethodInfo extends Readable {
     public void afterFieldsInitialized(ClassReader reader) {
         attList = new ArrayList<AbstractAttribute>();
 
-        List<MethodAccessFlagsEnum> flags = getAccessFlags();
-        boolean isCodeAttrPresent = flags != null && //Code Attribute
-                !flags.contains(MethodAccessFlagsEnum.ACC_NATIVE) &&
-                !flags.contains(MethodAccessFlagsEnum.ACC_ABSTRACT);
-
-        if (isCodeAttrPresent) {
-            try {
-                codeAttr = reader.read(new CodeAttr(), reader.readFromCurrentStream(2));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         int attributesCount = getAttributesCount();
-        attributesCount = ((isCodeAttrPresent) ? attributesCount - 1 : attributesCount);
 
         if (attributesCount >= 0) {
             for (int i = 0; i < attributesCount; i++) {
                 try {
-                    attList.add(AttributeUtils.getNextAttribute(reader));
+                    AbstractAttribute nextAttribute = AttributeUtils.getNextAttribute(reader);
+
+                    if (nextAttribute != null) {
+
+                        if (AttributeTypeEnum.CODE.equals(nextAttribute.getAttributeType())) {
+                            codeAttr = (CodeAttr) nextAttribute;
+                        }
+
+                        attList.add(nextAttribute);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {

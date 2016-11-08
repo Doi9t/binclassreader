@@ -24,8 +24,6 @@ import org.binclassreader.utils.BaseUtils;
  */
 public abstract class AbstractIterableAttribute extends AbstractAttribute {
 
-    protected String attributeName = "AbstractIterableAttribute";
-
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] nb_entries;
 
@@ -35,7 +33,4 @@ public abstract class AbstractIterableAttribute extends AbstractAttribute {
         return BaseUtils.combineBytesToInt(nb_entries);
     }
 
-    public String getAttributeName() {
-        return attributeName;
-    }
 }

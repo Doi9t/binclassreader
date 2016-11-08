@@ -18,6 +18,7 @@ package org.binclassreader.utils;
 
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.attributes.*;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.parsers.PoolParser;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.structs.ConstUtf8Info;
@@ -30,57 +31,54 @@ import java.util.Map;
  */
 public class AttributeUtils extends BaseUtils {
 
-    private static Class<?> getAttributeWithName(String name) {
+    private static Object getAttributeInstanceByName(String name) {
 
-        Class<?> clazz = null;
+        AttributeTypeEnum attributeTypeEnum = null;
+        AbstractAttribute attribute = null;
+        Class<?> clazz;
 
-        if ("AnnotationDefault".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("BootstrapMethods".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("ConstantValue".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+        if ("Code".equalsIgnoreCase(name)) {
+            clazz = CodeAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.CODE;
         } else if ("Deprecated".equalsIgnoreCase(name)) {
             clazz = DeprecatedAttr.class;
-        } else if ("EnclosingMethod".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.DEPRECATED;
         } else if ("Exceptions".equalsIgnoreCase(name)) {
             clazz = ExceptionAttr.class;
-        } else if ("InnerClasses".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.EXCEPTIONS;
         } else if ("LineNumberTable".equalsIgnoreCase(name)) {
             clazz = LineNumberTableAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.LINE_NUMBER_TABLE;
         } else if ("LocalVariableTable".equalsIgnoreCase(name)) {
             clazz = LocalVariableTableAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.LOCAL_VARIABLE_TABLE;
         } else if ("LocalVariableTypeTable".equalsIgnoreCase(name)) {
             clazz = LocalVariableTypeTableAttr.class;
-        } else if ("MethodParameters".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("RuntimeInvisibleAnnotations".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("RuntimeInvisibleParameterAnnotations".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.LOCAL_VARIABLE_TYPE_TABLE;
         } else if ("RuntimeInvisibleTypeAnnotations".equalsIgnoreCase(name)) {
             clazz = RuntimeInvisibleTypeAnnotationsAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_TYPE_ANNOTATIONS;
         } else if ("RuntimeVisibleAnnotations".equalsIgnoreCase(name)) {
             clazz = RuntimeVisibleAnnotationsAttr.class;
-        } else if ("RuntimeVisibleParameterAnnotations".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_ANNOTATIONS;
         } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
             clazz = RuntimeVisibleTypeAnnotationsAttr.class;
-        } else if ("Signature".equalsIgnoreCase(name)) {
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_TYPE_ANNOTATIONS;
+        } else {
             clazz = UnimplementedAttr.class;
-        } else if ("SourceDebugExtension".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("SourceFile".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("StackMapTable".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
-        } else if ("Synthetic".equalsIgnoreCase(name)) {
-            clazz = UnimplementedAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.UNKNOWN;
         }
 
-        return clazz;
+        try {
+            attribute = (AbstractAttribute) clazz.newInstance();
+            attribute.setAttributeType(attributeTypeEnum);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return attribute;
     }
 
     public static AbstractAttribute getNextAttribute(ClassReader reader) throws IOException, IllegalAccessException, InstantiationException {
@@ -92,14 +90,14 @@ public class AttributeUtils extends BaseUtils {
         Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
         Object objFromPool = constPool.get(nameIndexAttribute - 1);
 
-        Class<?> attributeByName = null;
+        Object attributeByName = null;
 
         if (objFromPool != null) {
-            attributeByName = getAttributeWithName(((ConstUtf8Info) objFromPool).getAsNewString());
+            attributeByName = getAttributeInstanceByName(((ConstUtf8Info) objFromPool).getAsNewString());
         }
 
         if (attributeByName != null) {
-            value = (AbstractAttribute) reader.read(attributeByName.newInstance(), rawNameIndexAttribute);
+            value = (AbstractAttribute) reader.read(attributeByName, rawNameIndexAttribute);
         }
 
         return value;

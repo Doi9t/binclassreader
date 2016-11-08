@@ -33,7 +33,6 @@ public class LocalVariableTableAttr extends AbstractIterableAttribute {
     private List<LocalVariable> variableList;
 
     public LocalVariableTableAttr() {
-        attributeName = "LocalVariableTable";
         variableList = new ArrayList<LocalVariable>();
     }
 

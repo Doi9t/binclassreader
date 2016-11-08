@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -125,37 +126,35 @@ public class AppTest {
     }
 
 
-    /*
-        com.sun.java.accessibility.AccessBridge
-        com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl
-        com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler
-     */
     @Test
     public void existingClassComparisonTest() throws Exception {
 
-        //CtClass ctClass = POOL.get("com.sun.java.accessibility.AccessBridge");
-        //CtClass ctClass = POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl");
-        CtClass ctClass = POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler");
-        //CtClass ctClass = POOL.get("org.binclassreader.testclasses.TestTwo");
+        for (CtClass ctClass : Arrays.asList(
+                POOL.get("com.sun.java.accessibility.AccessBridge"),
+                POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl"),
+                POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler"),
+                POOL.get("org.binclassreader.testclasses.TestTwo"))) {
 
+            ClassHelperService.loadClass(new ByteArrayInputStream(ctClass.toBytecode()));
 
-        ClassHelperService.loadClass(new ByteArrayInputStream(ctClass.toBytecode()));
+            List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
+            CtField[] ctFields = ctClass.getDeclaredFields();
 
-        List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
-        CtField[] ctFields = ctClass.getDeclaredFields();
+            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
+            CtMethod[] ctMethods = ctClass.getDeclaredMethods();
 
-        List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
-        CtMethod[] ctMethods = ctClass.getDeclaredMethods();
+            List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
+            List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(ctClass.getInterfaces());
 
-        List<String> interfaces = ClassUtil.getBinaryPath(ClassHelperService.getInterfaces());
-        List<String> ctInterfaces = TestBaseUtils.extractInterfaceFromCtClass(ctClass.getInterfaces());
+            String name = ctClass.getName();
+            Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getClassName()),
+                    ClassUtil.getBinaryPath(name)); //Compare the class name
+            Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
+                    ClassUtil.getBinaryPath(ctClass.getSuperclass().getName())); //Compare the super class name
 
-        Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getClassName()),
-                ClassUtil.getBinaryPath(ctClass.getName())); //Compare the class name
-        Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
-                ClassUtil.getBinaryPath(ctClass.getSuperclass().getName())); //Compare the super class name
-        Assert.assertTrue("The fields are not similar !", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
-        Assert.assertTrue("The methods are not similar !", TestBaseUtils.deepMethodComparator(methods, ctMethods)); //Compare the methods
-        Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
+            Assert.assertTrue("The fields are not similar ! ( " + name + " )", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+            Assert.assertTrue("The methods are not similar ! ( " + name + " )", TestBaseUtils.deepMethodComparator(methods, ctMethods)); //Compare the methods
+            Assert.assertTrue("The interfaces are not similar ! ( " + name + " )", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
+        }
     }
 }

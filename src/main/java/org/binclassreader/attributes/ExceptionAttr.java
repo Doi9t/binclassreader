@@ -26,11 +26,6 @@ import java.io.IOException;
  */
 public class ExceptionAttr extends AbstractIterableAttribute {
 
-    public ExceptionAttr() {
-        attributeName = "Exceptions";
-    }
-
-
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
         int length = getLength();

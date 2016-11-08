@@ -26,10 +26,6 @@ import java.io.IOException;
  */
 public class RuntimeInvisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
 
-    public RuntimeInvisibleTypeAnnotationsAttr() {
-        attributeName = "RuntimeInvisibleTypeAnnotationsAttr";
-    }
-
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
 

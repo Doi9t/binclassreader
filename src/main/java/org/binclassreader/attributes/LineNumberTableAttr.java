@@ -33,7 +33,6 @@ public class LineNumberTableAttr extends AbstractIterableAttribute {
     private List<LineHolder> lines;
 
     public LineNumberTableAttr() {
-        attributeName = "LineNumberTable";
         lines = new ArrayList<LineHolder>();
     }
 

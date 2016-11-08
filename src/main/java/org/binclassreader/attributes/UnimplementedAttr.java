@@ -26,11 +26,6 @@ import java.io.IOException;
  */
 public class UnimplementedAttr extends AbstractIterableAttribute {
 
-    public UnimplementedAttr() {
-        attributeName = "UnimplementedAttribute";
-    }
-
-
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
         int length = getLength();

@@ -25,6 +25,7 @@ import javassist.bytecode.ExceptionTable;
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.structs.ConstUtf8Info;
@@ -127,7 +128,8 @@ public class TestBaseUtils {
                 for (AbstractAttribute o : safeList(codeAttr.getAttributes())) {
 
                     if (o instanceof AbstractIterableAttribute) {
-                        methodAttributeName.add(((AbstractIterableAttribute) o).getAttributeName());
+                        AttributeTypeEnum attributeType = o.getAttributeType();
+                        methodAttributeName.add((attributeType != null) ? attributeType.getAttributeName() : null);
                     }
                 }
             } else {

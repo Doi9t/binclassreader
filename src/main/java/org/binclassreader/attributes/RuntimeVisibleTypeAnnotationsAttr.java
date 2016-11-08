@@ -31,7 +31,6 @@ public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute
     private final List<Annotation> ANNOTATIONS;
 
     public RuntimeVisibleTypeAnnotationsAttr() {
-        attributeName = "RuntimeInvisibleTypeAnnotationsAttr";
         ANNOTATIONS = new ArrayList<Annotation>();
     }
 
