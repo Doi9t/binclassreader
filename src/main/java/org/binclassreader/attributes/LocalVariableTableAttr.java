@@ -18,47 +18,18 @@ package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.annotations.BinClassParser;
-import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Yannick on 10/26/2016.
  */
-public class LocalVariableTableAttr extends AbstractIterableAttribute {
-
-    private List<LocalVariable> variableList;
+public class LocalVariableTableAttr extends AbstractIterableAttribute<LocalVariableTableAttr.LocalVariable> {
 
     public LocalVariableTableAttr() {
-        variableList = new ArrayList<LocalVariable>();
+        super(LocalVariable.class);
     }
 
-    @Override
-    public void afterFieldsInitialized(ClassReader reader) {
-
-        int length = getLength();
-
-        if (length == 0) {
-            return;
-        }
-
-        try {
-            bytes = reader.readFromCurrentStream(length - 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        int nbEntries = getNbOfEntries();
-//
-//        for (int i = 0; i < nbEntries; i++) {
-//            variableList.add(reader.read(new LocalVariable()));
-//        }
-    }
-
-    private class LocalVariable {
+    public static class LocalVariable {
         @BinClassParser(byteToRead = 2)
         private short[] start_pc;
 

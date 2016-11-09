@@ -198,7 +198,7 @@ public class BaseUtils {
 
     /**
      * @param varArgs - The item to be returned as a list
-     * @return Aa list containing the items
+     * @return Aa list containing the ITEMS
      */
     public static <T> List toList(T... varArgs) {
         return (varArgs == null || varArgs.length == 0) ? Collections.EMPTY_LIST : Arrays.asList(varArgs);
@@ -229,7 +229,7 @@ public class BaseUtils {
         }
 
         int size = bytecode.size();
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         Map<BytecodeExtraByteEnum, Short> extraByteMapping = new HashMap<BytecodeExtraByteEnum, Short>();
 
         for (int i = 0; i < size; i++) {

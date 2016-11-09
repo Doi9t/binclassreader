@@ -57,11 +57,6 @@ public enum MethodAccessFlagsEnum {
         return values;
     }
 
-    public short getValue() {
-        return value;
-    }
-
-
     public static short getMask(List<MethodAccessFlagsEnum> list) {
 
         short value = 0;
@@ -85,6 +80,10 @@ public enum MethodAccessFlagsEnum {
             value += fieldAccessFlagsEnum.getValue();
         }
 
+        return value;
+    }
+
+    public short getValue() {
         return value;
     }
 }

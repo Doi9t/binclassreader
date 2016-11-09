@@ -56,10 +56,7 @@ public class ConstMethodInfo extends Readable {
     private CodeAttr codeAttr;
 
     private boolean isSpecialMethod;
-
-    public ConstMethodInfo() {
-        isSpecialMethod = false;
-    }
+    private List<AbstractAttribute> attList;
 
     /*
         ----------------------------------Attributes----------------------------------
@@ -76,7 +73,9 @@ public class ConstMethodInfo extends Readable {
         ------------------------------------------------------------------------------
      */
 
-    private List<AbstractAttribute> attList;
+    public ConstMethodInfo() {
+        isSpecialMethod = false;
+    }
 
     public List<MethodAccessFlagsEnum> getAccessFlags() {
         return MethodAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));

@@ -17,28 +17,12 @@
 package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractIterableAttribute;
-import org.binclassreader.reader.ClassReader;
-
-import java.io.IOException;
 
 /**
  * Created by Yannick on 10/27/2016.
  */
 public class RuntimeInvisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
-
-    @Override
-    public void afterFieldsInitialized(ClassReader reader) {
-
-        int length = getLength();
-
-        if (length == 0) {
-            return;
-        }
-
-        try {
-            bytes = reader.readFromCurrentStream(length - 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public RuntimeInvisibleTypeAnnotationsAttr() {
+        super(null);
     }
 }

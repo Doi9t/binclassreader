@@ -17,35 +17,12 @@
 package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.AbstractIterableAttribute;
-import org.binclassreader.reader.ClassReader;
-
-import java.io.IOException;
 
 /**
  * Created by Yannick on 11/6/2016.
  */
 public class UnimplementedAttr extends AbstractIterableAttribute {
-
-    @Override
-    public void afterFieldsInitialized(ClassReader reader) {
-        int length = getLength();
-
-        if (length == 0) {
-            return;
-        }
-
-        try {
-
-            int nbOfEntries = getNbOfEntries();
-
-//
-//            for (int i = 0; i < nbOfEntries; i++) {
-//                ANNOTATIONS.add(reader.read(new Annotation()));
-//            }
-
-            bytes = reader.readFromCurrentStream(length - 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public UnimplementedAttr() {
+        super(null);
     }
 }

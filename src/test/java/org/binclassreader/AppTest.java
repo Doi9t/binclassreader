@@ -133,6 +133,8 @@ public class AppTest {
                 POOL.get("com.sun.java.accessibility.AccessBridge"),
                 POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl"),
                 POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler"),
+                POOL.get("org.binclassreader.testclasses.TestZero"),
+                POOL.get("org.binclassreader.testclasses.TestOne"),
                 POOL.get("org.binclassreader.testclasses.TestTwo"))) {
 
             ClassHelperService.loadClass(new ByteArrayInputStream(ctClass.toBytecode()));

@@ -17,20 +17,64 @@
 package org.binclassreader.abstracts;
 
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yannick on 10/27/2016.
  */
-public abstract class AbstractIterableAttribute extends AbstractAttribute {
+public abstract class AbstractIterableAttribute<T> extends AbstractAttribute {
 
     @BinClassParser(readOrder = 3, byteToRead = 2)
     private short[] nb_entries;
 
-    protected short[] bytes;
+    protected final List<T> ITEMS;
+    protected final Class<T> ITERABLE_CLASS;
+
+    public AbstractIterableAttribute(Class<T> iterableItemClass) {
+        this.ITERABLE_CLASS = iterableItemClass;
+        ITEMS = iterableItemClass != null ? new ArrayList<T>() : null;
+    }
 
     public int getNbOfEntries() {
         return BaseUtils.combineBytesToInt(nb_entries);
     }
 
+    @Override
+    public final void afterFieldsInitialized(ClassReader reader) {
+
+        if (ITERABLE_CLASS != null) {
+            int nbEntries = getNbOfEntries();
+
+            for (int i = 0; i < nbEntries; i++) {
+                try {
+                    ITEMS.add(reader.read(ITERABLE_CLASS.newInstance()));
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            int length = getLength();
+
+            if (length == 0) {
+                return;
+            }
+
+            try {
+                reader.skipFromCurrentStream(length - 2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<T> getItems() {
+        return ITEMS;
+    }
 }
