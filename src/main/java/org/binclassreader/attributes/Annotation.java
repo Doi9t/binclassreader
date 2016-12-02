@@ -18,7 +18,11 @@ package org.binclassreader.attributes;
 
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,17 +31,33 @@ import org.binclassreader.utils.BaseUtils;
 
 public class Annotation extends Readable {
     @BinClassParser(byteToRead = 2)
-    private short[] name_index;
+    private short[] type_index;
 
     @BinClassParser(readOrder = 2, byteToRead = 2)
     private short[] num_element_value_pairs;
 
+    private final List<ElementPair> ELEMENTS;
 
-    public int getNameIndex() {
-        return BaseUtils.combineBytesToInt(name_index);
+
+    public Annotation() {
+        ELEMENTS = new ArrayList<ElementPair>();
+    }
+
+    public int getTypeIndex() {
+        return BaseUtils.combineBytesToInt(type_index);
     }
 
     public int getNbElementPair() {
         return BaseUtils.combineBytesToInt(num_element_value_pairs);
+    }
+
+
+    @Override
+    public void afterFieldsInitialized(ClassReader reader) {
+        int nbElementPair = getNbElementPair();
+
+        for (int i = 0; i < nbElementPair; i++) {
+            ELEMENTS.add(reader.read(new ElementPair()));
+        }
     }
 }

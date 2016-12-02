@@ -55,15 +55,24 @@ public class AttributeUtils extends BaseUtils {
         } else if ("LocalVariableTypeTable".equalsIgnoreCase(name)) {
             clazz = LocalVariableTypeTableAttr.class;
             attributeTypeEnum = AttributeTypeEnum.LOCAL_VARIABLE_TYPE_TABLE;
+        } else if ("RuntimeInvisibleAnnotations".equalsIgnoreCase(name)) {
+            clazz = InvisibleAnnotationsAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_ANNOTATIONS;
         } else if ("RuntimeInvisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = RuntimeInvisibleTypeAnnotationsAttr.class;
+            clazz = InvisibleTypeAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_TYPE_ANNOTATIONS;
         } else if ("RuntimeVisibleAnnotations".equalsIgnoreCase(name)) {
-            clazz = RuntimeVisibleAnnotationsAttr.class;
+            clazz = VisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_ANNOTATIONS;
         } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = RuntimeVisibleTypeAnnotationsAttr.class;
+            clazz = VisibleTypeAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_TYPE_ANNOTATIONS;
+        } else if ("RuntimeInvisibleParameterAnnotations".equalsIgnoreCase(name)) {
+            clazz = InvisibleParameterAnnotationsAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS;
+        } else if ("RuntimeVisibleParameterAnnotations".equalsIgnoreCase(name)) {
+            clazz = VisibleParameterAnnotationsAttr.class;
+            attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS;
         } else {
             clazz = UnimplementedAttr.class;
             attributeTypeEnum = AttributeTypeEnum.UNKNOWN;

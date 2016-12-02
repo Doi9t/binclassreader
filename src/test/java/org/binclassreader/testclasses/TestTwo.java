@@ -18,30 +18,64 @@ package org.binclassreader.testclasses;
 
 import javax.xml.ws.Action;
 import javax.xml.ws.soap.MTOM;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Created by Yannick on 5/15/2016.
  */
+@MTOM
+@TestTwo.GlobalAnnotation
+@TestTwo.PackageAnnotation(stringArray = {"arrayParam", "arrayParam2", "arrayParam3"}, integerArray = {1, 2, 385644898}, bool = false, annotation = ElementType.TYPE, clazz = Integer.class)
 public class TestTwo {
 
+    @GlobalAnnotation
     private transient Object x, y;
     private Object z;
 
     public TestTwo() {
         Object obj = new Object();
+        returnFunction(10, this);
     }
 
     @Deprecated
     @Action
     @MTOM
-    public Object returnFunction(Object x, final Object y) {
+    @GlobalAnnotation
+    public Object returnFunction(@GlobalAnnotation Integer x, @GlobalAnnotation final Object y) {
+
+        if (x == 5000)
+            return Integer.MAX_VALUE;
+
         this.x = x;
         this.y = y;
 
         z = new Object();
 
-        return y;
+        return returnFunction(x, y);
     }
+
+
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface GlobalAnnotation {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.PACKAGE})
+    public @interface PackageAnnotation {
+        String[] stringArray() default {};
+
+        int[] integerArray() default {};
+
+        boolean bool() default true;
+
+        ElementType annotation() default ElementType.PACKAGE;
+
+        Class<?> clazz() default Object.class;
+    }
+
 }
 
 

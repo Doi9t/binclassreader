@@ -19,31 +19,37 @@ package org.binclassreader.enums;
 /**
  * Created by Yannick on 10/6/2016.
  */
-public enum FieldTypeEnum {
+
+public enum TypeEnum {
+
     BYTE('B'),
     CHAR('C'),
     DOUBLE('D'),
     FLOAT('F'),
     INT('I'),
     LONG('J'),
-    REFERENCE_CLASS('L'),
     SHORT('S'),
     BOOLEAN('Z'),
-    REFERENCE_ARRAY('[');
+    STRING('s'),
+    ENUM('e'),
+    CLASS('c'),
+    ANNOTATION('@'),
+    REFERENCE_ARRAY('['),
+    REFERENCE_CLASS('L');
 
     private char value;
 
-    FieldTypeEnum(char value) {
+    TypeEnum(char value) {
         this.value = value;
     }
 
-    public static FieldTypeEnum getFieldTypeEnumByString(String str) {
+    public static TypeEnum getFieldTypeEnumByString(String str) {
         if (str == null) {
             return null;
         }
 
-        FieldTypeEnum value = null;
-        for (FieldTypeEnum fieldTypeEnum : values()) {
+        TypeEnum value = null;
+        for (TypeEnum fieldTypeEnum : values()) {
             if (str.contains(Character.toString(fieldTypeEnum.getValue()))) {
                 value = fieldTypeEnum;
                 break;

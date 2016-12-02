@@ -19,10 +19,10 @@ package org.binclassreader.attributes;
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 
 /**
- * Created by Yannick on 10/27/2016.
+ * Created by Yannick on 11/2/2016.
  */
-public class RuntimeVisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
-    public RuntimeVisibleTypeAnnotationsAttr() {
+public class VisibleParameterAnnotationsAttr extends AbstractIterableAttribute {
+    public VisibleParameterAnnotationsAttr() {
         super(null);
     }
 }

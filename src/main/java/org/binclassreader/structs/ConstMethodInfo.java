@@ -69,7 +69,7 @@ public class ConstMethodInfo extends Readable {
         Deprecated................................................................45.3
         Signature.................................................................49.0
         RuntimeVisibleAnnotations, RuntimeInvisibleAnnotations....................49.0
-        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotationsAttr............52.0
+        RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotationsAttr........52.0
         ------------------------------------------------------------------------------
      */
 

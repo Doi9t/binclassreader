@@ -27,14 +27,10 @@ import javax.accessibility.AccessibleAction;
 import javax.accessibility.AccessibleHyperlink;
 import javax.accessibility.AccessibleHypertext;
 import javax.swing.text.AttributeSet;
-import javax.xml.bind.annotation.XmlAccessorOrder;
-import javax.xml.bind.annotation.XmlEnum;
 import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 
-@XmlEnum
-@XmlAccessorOrder
 public class TestOne extends ZoomRadialBlurState implements Serializable, Appendable, AccessibleAction, AccessibleHypertext {
 
     private static String TEST_STR = "SALUT_VARIABLE";

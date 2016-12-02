@@ -21,8 +21,8 @@ import org.binclassreader.abstracts.AbstractIterableAttribute;
 /**
  * Created by Yannick on 11/2/2016.
  */
-public class RuntimeVisibleAnnotationsAttr extends AbstractIterableAttribute {
-    public RuntimeVisibleAnnotationsAttr() {
+public class InvisibleParameterAnnotationsAttr extends AbstractIterableAttribute {
+    public InvisibleParameterAnnotationsAttr() {
         super(null);
     }
 }
