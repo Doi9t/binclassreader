@@ -166,6 +166,15 @@ public class BaseUtils {
         return (list != null) ? list : new ArrayList<V>();
     }
 
+
+    /**
+     * @param col - The Collection
+     * @return the current list if not null, or an empty ArrayList otherwise
+     */
+    public static <V> Collection<V> safeCollection(Collection<V> col) {
+        return (col != null) ? col : new ArrayList<V>();
+    }
+
     /**
      * @param clazzArr - An array of class to be transformed into a array of object
      * @return An array of object
@@ -221,6 +230,22 @@ public class BaseUtils {
         return values;
     }
 
+    /**
+     * Cast an object to the passed type
+     *
+     * @param obj
+     * @param type
+     * @param <T>
+     * @return
+     */
+    public static <T> T as(Object obj, Class<T> type) {
+
+        if (obj == null || type == null) {
+            return null;
+        }
+
+        return type.cast(obj);
+    }
 
     public static String getBytecodeAsFormattedString(List<Short> bytecode, Map<Integer, Object> constPool) {
 

@@ -35,6 +35,7 @@ import org.binclassreader.utils.Assert;
 import org.binclassreader.utils.BaseUtils;
 import org.multiarraymap.MultiArrayMap;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -64,11 +65,15 @@ public class ClassReader extends AbstractPoolData {
 
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();
-        sections = this.read(BaseUtils.createNewArrayOfObject(classSections));
+        sections = this.initSections(BaseUtils.createNewArrayOfObject(classSections));
         pool = generateTree();
     }
 
-    public Map<Class<?>, Object> read(Object... type) {
+    public ClassReader() {
+        fieldSorter = new TreeMap<Short, FieldPojo>();
+    }
+
+    public Map<Class<?>, Object> initSections(Object... type) {
         Map<Class<?>, Object> values = new HashMap<Class<?>, Object>();
         if (type != null) {
             for (Object obj : type) {
@@ -80,6 +85,15 @@ public class ClassReader extends AbstractPoolData {
         }
 
         return values;
+    }
+
+    public void overwriteStreamWithBytes(byte[] bytes) {
+
+        if (bytes == null || bytes.length == 0) {
+            return;
+        }
+
+        this.classData = new ByteArrayInputStream(bytes);
     }
 
     /**

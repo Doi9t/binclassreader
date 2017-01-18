@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.binclassreader.enums.ClassHelperEnum.*;
+
 /**
  * Created by Yannick on 9/26/2016.
  */
@@ -40,8 +42,6 @@ public class ClassHelperService {
     private static MultiArrayMap<PoolTypeEnum, Object> mappedPool;
     private static Map<Class<?>, Object> sections;
     private static Map<Integer, Object> constPool;
-    private static ClassHelperEnum name = ClassHelperEnum.NAME;
-    private static ClassHelperEnum descriptor = ClassHelperEnum.DESCRIPTOR;
 
     private ClassHelperService() {
     }
@@ -93,12 +93,13 @@ public class ClassHelperService {
                     TreeElement element = ((Tree) o).getRoot();
                     List<TreeElement> child = element.getChild();
 
+                    ConstFieldInfo current = (ConstFieldInfo) element.getCurrent();
+
                     TreeElement treeElementZero = child.get(0);
                     TreeElement treeElementOne = child.get(1);
-
                     Object nameValue = null, descriptorValue = null;
 
-                    if (name.equals(treeElementZero.getMappingType())) {
+                    if (NAME.equals(treeElementZero.getMappingType())) {
                         nameValue = treeElementZero;
                         descriptorValue = treeElementOne;
                     } else {
@@ -107,9 +108,11 @@ public class ClassHelperService {
                     }
 
                     KeyValueHolder<ClassHelperEnum, Object> value = new KeyValueHolder<ClassHelperEnum, Object>();
-                    value.addPair(ClassHelperEnum.ACCESS_FLAGS, ((ConstFieldInfo) element.getCurrent()).getAccessFlags());
-                    value.addPair(name, nameValue);
-                    value.addPair(descriptor, descriptorValue);
+
+                    value.addPair(ACCESS_FLAGS, current.getAccessFlags());
+                    value.addPair(NAME, nameValue);
+                    value.addPair(DESCRIPTOR, descriptorValue);
+                    value.addPair(OTHER_ATTR, current.getAttributesList());
 
                     values.add(value);
                 }
@@ -144,7 +147,7 @@ public class ClassHelperService {
 
                         TreeElement nameValue = null, descriptorValue = null;
 
-                        if (name.equals(treeElementZero.getMappingType())) {
+                        if (NAME.equals(treeElementZero.getMappingType())) {
                             nameValue = treeElementZero;
                             descriptorValue = treeElementOne;
                         } else {
@@ -152,10 +155,10 @@ public class ClassHelperService {
                             descriptorValue = treeElementZero;
                         }
 
-                        value.addPair(ClassHelperEnum.ACCESS_FLAGS, currentElement.getAccessFlags());
-                        value.addPair(name, nameValue.getCurrent());
-                        value.addPair(descriptor, descriptorValue.getCurrent());
-                        value.addPair(ClassHelperEnum.CODE_ATTR, currentElement.getCodeAttr());
+                        value.addPair(ACCESS_FLAGS, currentElement.getAccessFlags());
+                        value.addPair(NAME, nameValue.getCurrent());
+                        value.addPair(DESCRIPTOR, descriptorValue.getCurrent());
+                        value.addPair(CODE_ATTR, currentElement.getCodeAttr());
 
                         values.add(value);
                     }

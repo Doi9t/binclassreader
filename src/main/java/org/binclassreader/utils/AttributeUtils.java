@@ -56,13 +56,13 @@ public class AttributeUtils extends BaseUtils {
             clazz = LocalVariableTypeTableAttr.class;
             attributeTypeEnum = AttributeTypeEnum.LOCAL_VARIABLE_TYPE_TABLE;
         } else if ("RuntimeInvisibleAnnotations".equalsIgnoreCase(name)) {
-            clazz = InvisibleAnnotationsAttr.class;
+            clazz = VisibleAndInvisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_ANNOTATIONS;
         } else if ("RuntimeInvisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = InvisibleTypeAnnotationsAttr.class;
+            clazz = VisibleAndInvisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_TYPE_ANNOTATIONS;
         } else if ("RuntimeVisibleAnnotations".equalsIgnoreCase(name)) {
-            clazz = VisibleAnnotationsAttr.class;
+            clazz = VisibleAndInvisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_ANNOTATIONS;
         } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
             clazz = VisibleTypeAnnotationsAttr.class;

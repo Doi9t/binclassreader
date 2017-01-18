@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package org.binclassreader.testclasses;
 
 import javax.xml.ws.Action;
@@ -21,21 +20,27 @@ import javax.xml.ws.soap.MTOM;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Created by Yannick on 5/15/2016.
  */
 @MTOM
-@TestTwo.GlobalAnnotation
-@TestTwo.PackageAnnotation(stringArray = {"arrayParam", "arrayParam2", "arrayParam3"}, integerArray = {1, 2, 385644898}, bool = false, annotation = ElementType.TYPE, clazz = Integer.class)
-public class TestTwo {
+@TestAnnotations.GlobalAnnotationSource
+@TestAnnotations.GlobalAnnotationRuntime
+@TestAnnotations.GlobalAnnotationClass
+@TestAnnotations.GlobalAnnotationWithParameters(
+        stringArray = {"Class annotation", "arrayParam", "arrayParam2", "arrayParam3"},
+        integerArray = {1, 2, 385644898},
+        bool = false,
+        annotation = ElementType.TYPE, clazz = Integer.class)
+public class TestAnnotations {
 
-    @GlobalAnnotation
+    @GlobalAnnotationWithParameters(stringArray = {"Class variable annotation [1]", "Class variable annotation [2]"})
     private transient Object x, y;
     private Object z;
 
-    public TestTwo() {
+    public TestAnnotations() {
+        @TestAnnotations.GlobalAnnotationWithParameters(stringArray = {"Member variable annotation"})
         Object obj = new Object();
         returnFunction(10, this);
     }
@@ -43,8 +48,7 @@ public class TestTwo {
     @Deprecated
     @Action
     @MTOM
-    @GlobalAnnotation
-    public Object returnFunction(@GlobalAnnotation Integer x, @GlobalAnnotation final Object y) {
+    public Object returnFunction(@GlobalAnnotationWithParameters(stringArray = {"Parameter function variable annotation"}) Integer x, final Object y) {
 
         if (x == 5000)
             return Integer.MAX_VALUE;
@@ -57,25 +61,30 @@ public class TestTwo {
         return returnFunction(x, y);
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @GlobalAnnotationWithParameters(stringArray = {"Annotation on annotation"})
+    public @interface GlobalAnnotationSource {
+    }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface GlobalAnnotation {
+    @Retention(RetentionPolicy.CLASS)
+    public @interface GlobalAnnotationClass {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE, ElementType.PACKAGE})
-    public @interface PackageAnnotation {
-        String[] stringArray() default {};
+    public @interface GlobalAnnotationRuntime {
+    }
+
+    public @interface GlobalAnnotationWithParameters {
+        @GlobalAnnotationWithParameters(stringArray = {"Annotation element annotation"}) String[] stringArray() default {};
 
         int[] integerArray() default {};
 
         boolean bool() default true;
 
-        ElementType annotation() default ElementType.PACKAGE;
+        ElementType annotation() default ElementType.CONSTRUCTOR;
 
         Class<?> clazz() default Object.class;
     }
-
 }
 
 

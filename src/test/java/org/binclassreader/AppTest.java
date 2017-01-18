@@ -16,11 +16,7 @@
 
 package org.binclassreader;
 
-import com.google.common.base.Stopwatch;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
+import javassist.*;
 import org.apache.commons.lang.WordUtils;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.services.ClassHelperService;
@@ -32,12 +28,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.binclassreader.utils.ClassGenerator.getRandomName;
 import static org.binclassreader.utils.ClassGenerator.getRandomParameters;
@@ -54,34 +46,7 @@ public class AppTest {
     private String[] interfacesList = {"java.io.Serializable", "java.lang.Runnable", "java.lang.CharSequence", "java.lang.Comparable"};
 
     @Test
-    public void classTestOne() throws Exception {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        URL classResource = AppTest.class.getResource("testclasses/TestOne.class");
-
-        if (classResource != null) {
-            ClassHelperService.loadClass(new FileInputStream(new File(classResource.toURI())));
-
-            List<KeyValueHolder<ClassHelperEnum, Object>> fields = ClassHelperService.getFields();
-            List<KeyValueHolder<ClassHelperEnum, Object>> methods = ClassHelperService.getMethods(false);
-            List<String> interfaces = ClassHelperService.getInterfaces();
-
-            System.out.println("SuperClassName -> " + ClassHelperService.getSuperClassName());
-            System.out.println("********************************************************");
-            System.out.println("Fields (" + fields.size() + ") -> " + fields);
-            System.out.println("********************************************************");
-            System.out.println("Methods (" + methods.size() + ") -> " + methods);
-            System.out.println("********************************************************");
-            System.out.println("Interfaces (" + interfaces.size() + ") -> " + interfaces);
-            System.out.println("********************************************************");
-        }
-        System.out.println("Elapsed time => " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " MILLISECONDS");
-    }
-
-    @Test
     public void classBasicEmptyFunctionMultiplesRandomTest() throws Exception {
-        long totalTime = 0, start = 0;
-
         for (short i = 0; i < 1000; i++) {
             ClassGenerator classGenerator = new ClassGenerator();
 
@@ -96,8 +61,6 @@ public class AppTest {
             }
 
             classGenerator.addInterfaces(interfacesList);
-
-            start = System.nanoTime();
             ClassHelperService.loadClass(new ByteArrayInputStream(classGenerator.getRawCtClass()));
             CtClass ctClass = classGenerator.getCtClass();
 
@@ -113,29 +76,37 @@ public class AppTest {
             String superClassName = ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName());
             String simpleName = ctClass.getSuperclass().getName();
 
-            totalTime += System.nanoTime() - start;
-
             Assert.assertEquals(ClassHelperService.getClassName(), ctClass.getName()); //Compare the class name
             Assert.assertEquals(superClassName, simpleName); //Compare the super class name
-            Assert.assertTrue("The fields are not similar !", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
-            Assert.assertTrue("The methods are not similar !", TestBaseUtils.signatureCtMemberComparator(methods, ctMethods)); //Compare the methods
+            Assert.assertTrue("The fields are not similar !", TestBaseUtils.deepCtMemberComparator(fields, ctFields)); //Compare the fields
+            Assert.assertTrue("The methods are not similar !", TestBaseUtils.deepCtMemberComparator(methods, ctMethods)); //Compare the methods
             Assert.assertTrue("The interfaces are not similar !", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
         }
-
-        System.out.println("Elapsed time => " + (totalTime / 1000000000) + " second(s)");
     }
 
 
     @Test
-    public void existingClassComparisonTest() throws Exception {
+    public void existingClassAnnotationComparisonTest() throws Exception {
+        deepClassComparator(POOL.get("org.binclassreader.testclasses.TestAnnotations"));
+    }
 
-        for (CtClass ctClass : Arrays.asList(
+    @Test
+    public void existingClassComparisonTest() throws Exception {
+        deepClassComparator(
                 POOL.get("com.sun.java.accessibility.AccessBridge"),
                 POOL.get("com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl"),
                 POOL.get("com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler"),
-                POOL.get("org.binclassreader.testclasses.TestZero"),
-                POOL.get("org.binclassreader.testclasses.TestOne"),
-                POOL.get("org.binclassreader.testclasses.TestTwo"))) {
+                POOL.get("org.binclassreader.testclasses.TestAnnotations"));
+    }
+
+
+    private void deepClassComparator(CtClass... ctClasses) throws NotFoundException, IOException, CannotCompileException {
+
+        if (ctClasses == null) {
+            return;
+        }
+
+        for (CtClass ctClass : ctClasses) {
 
             ClassHelperService.loadClass(new ByteArrayInputStream(ctClass.toBytecode()));
 
@@ -154,7 +125,7 @@ public class AppTest {
             Assert.assertEquals(ClassUtil.getBinaryPath(ClassHelperService.getSuperClassName()),
                     ClassUtil.getBinaryPath(ctClass.getSuperclass().getName())); //Compare the super class name
 
-            Assert.assertTrue("The fields are not similar ! ( " + name + " )", TestBaseUtils.signatureCtMemberComparator(fields, ctFields)); //Compare the fields
+            Assert.assertTrue("The fields are not similar ! ( " + name + " )", TestBaseUtils.deepCtMemberComparator(fields, ctFields)); //Compare the fields
             Assert.assertTrue("The methods are not similar ! ( " + name + " )", TestBaseUtils.deepMethodComparator(methods, ctMethods)); //Compare the methods
             Assert.assertTrue("The interfaces are not similar ! ( " + name + " )", interfaces.equals(ctInterfaces) && interfaces.size() == ctInterfaces.size()); //Compare the interfaces
         }

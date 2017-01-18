@@ -21,6 +21,8 @@ import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,22 +49,10 @@ public abstract class AbstractIterableAttribute<T> extends AbstractAttribute {
     @Override
     public final void afterFieldsInitialized(ClassReader reader) {
 
-        if (ITERABLE_CLASS != null) {
-            int nbEntries = getNbOfEntries();
-
-            for (int i = 0; i < nbEntries; i++) {
-                try {
-                    ITEMS.add(reader.read(ITERABLE_CLASS.newInstance()));
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
+        if (ITERABLE_CLASS == null) {
             int length = getLength();
 
-            if (length == 0) {
+            if (length < 3) {
                 return;
             }
 
@@ -70,6 +60,37 @@ public abstract class AbstractIterableAttribute<T> extends AbstractAttribute {
                 reader.skipFromCurrentStream(length - 2);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        } else {
+            int nbEntries = getNbOfEntries();
+
+            for (int i = 0; i < nbEntries; i++) {
+                try {
+                    T instance = null;
+                    if (ITERABLE_CLASS.isMemberClass()) {
+                        try {
+                            Constructor<?> ctor = ITERABLE_CLASS.getDeclaredConstructor(getClass());
+                            instance = (T) ctor.newInstance(this);
+                        } catch (NoSuchMethodException e) { //Static inner class ?
+                            instance = ITERABLE_CLASS.newInstance();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        instance = ITERABLE_CLASS.newInstance();
+                    }
+
+                    if (instance == null) {
+                        continue;
+                    }
+
+                    ITEMS.add(reader.read(instance));
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

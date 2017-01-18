@@ -25,9 +25,9 @@ import org.binclassreader.enums.FieldAccessFlagsEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.AttributeUtils;
 import org.binclassreader.utils.BaseUtils;
+import org.multiarraymap.MultiArrayMap;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +48,7 @@ public class ConstFieldInfo extends Readable {
     @BinClassParser(readOrder = 4, byteToRead = 2)
     private short[] attributes_count;
 
-    private List<AbstractAttribute> attList;
+    private MultiArrayMap<Class<?>, AbstractAttribute> attList;
 
     public List<FieldAccessFlagsEnum> getAccessFlags() {
         return FieldAccessFlagsEnum.getFlagsByMask((short) BaseUtils.combineBytesToInt(access_flags));
@@ -78,13 +78,18 @@ public class ConstFieldInfo extends Readable {
                 '}';
     }
 
+    public MultiArrayMap<Class<?>, AbstractAttribute> getAttributesList() {
+        return attList;
+    }
+
     public void afterFieldsInitialized(ClassReader reader) {
-        attList = new ArrayList<AbstractAttribute>();
+        attList = new MultiArrayMap<Class<?>, AbstractAttribute>();
 
         int attributesCount = getAttributesCount();
         for (int i = 0; i < attributesCount; i++) {
             try {
-                attList.add(AttributeUtils.getNextAttribute(reader));
+                AbstractAttribute nextAttribute = AttributeUtils.getNextAttribute(reader);
+                attList.put(nextAttribute.getClass(), nextAttribute);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {

@@ -19,6 +19,7 @@ package org.binclassreader.attributes;
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
 
@@ -26,44 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Yannick on 10/27/2016.
+ * Created by Yannick on 11/2/2016.
  */
-public class VisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
-    public VisibleTypeAnnotationsAttr() {
+public class VisibleAndInvisibleAnnotationsAttr extends AbstractIterableAttribute<VisibleAndInvisibleAnnotationsAttr.Annotation> {
+
+    public VisibleAndInvisibleAnnotationsAttr() {
         super(Annotation.class);
     }
 
-    /*
-        type_annotation {
-             u1 target_type;
-
-             union {
-                 type_parameter_target;
-                 supertype_target;
-                 type_parameter_bound_target;
-                 empty_target;
-                 method_formal_parameter_target;
-                 throws_target;
-                 localvar_target;
-                 catch_target;
-                 offset_target;
-                 type_argument_target;
-             } target_info;
-
-             type_path target_path;
-             u2 type_index;
-
-             u2 num_element_value_pairs;
-             {
-                u2 element_name_index;
-                element_value value;
-             } element_value_pairs[num_element_value_pairs];
-        }
-     */
 
     public class Annotation extends Readable {
-        @BinClassParser
-        private short[] target_type;
+        @BinClassParser(byteToRead = 2)
+        private short[] type_index;
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
         private short[] num_element_value_pairs;
@@ -75,13 +50,16 @@ public class VisibleTypeAnnotationsAttr extends AbstractIterableAttribute {
         }
 
         public int getTypeIndex() {
-            return BaseUtils.combineBytesToInt(target_type);
+            return BaseUtils.combineBytesToInt(type_index);
         }
 
         public int getNbElementPair() {
             return BaseUtils.combineBytesToInt(num_element_value_pairs);
         }
 
+        public AttributeTypeEnum getAttributeType() {
+            return attributeName;
+        }
 
         @Override
         public void afterFieldsInitialized(ClassReader reader) {

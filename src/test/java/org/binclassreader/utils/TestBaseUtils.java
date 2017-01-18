@@ -17,6 +17,7 @@
 package org.binclassreader.utils;
 
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.bytecode.AttributeInfo;
@@ -25,15 +26,18 @@ import javassist.bytecode.ExceptionTable;
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.attributes.VisibleAndInvisibleAnnotationsAttr;
 import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.tree.TreeElement;
+import org.multiarraymap.MultiArrayMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.binclassreader.utils.BaseUtils.safeList;
 
@@ -63,7 +67,7 @@ public class TestBaseUtils {
      * @param members
      * @return
      */
-    public static boolean signatureCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
+    public static boolean deepCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
         boolean isAll = true, isCurrent;
 
         for (KeyValueHolder<ClassHelperEnum, Object> holder : holders) {
@@ -90,9 +94,39 @@ public class TestBaseUtils {
                 continue;
             }
 
+            MultiArrayMap<Class<?>, AbstractAttribute> attributes = (MultiArrayMap<Class<?>, AbstractAttribute>) holder.getFirstMatchingValue(ClassHelperEnum.OTHER_ATTR);
+
             isCurrent = false;
             for (CtMember ctMember : members) {
                 if (ctMember.getSignature().equals(utfDescriptor.getAsNewString()) && ctMember.getName().equals(utfName.getAsNewString())) {
+                    if (attributes != null && !attributes.isEmpty()) {
+                        for (Map.Entry<Class<?>, List<AbstractAttribute>> entry : attributes.entrySet()) {
+                            for (AbstractAttribute attribute : entry.getValue()) {
+                                if (attribute instanceof AbstractIterableAttribute) {
+                                    if (entry.getKey().equals(VisibleAndInvisibleAnnotationsAttr.class)) {
+                                        VisibleAndInvisibleAnnotationsAttr currentAttribute = (VisibleAndInvisibleAnnotationsAttr) attribute;
+                                        for (VisibleAndInvisibleAnnotationsAttr.Annotation innerAnnotation : BaseUtils.safeList(currentAttribute.getItems())) {
+
+                                            AttributeTypeEnum attributeType = innerAnnotation.getAttributeType();
+                                            String tag = attributeType.getAttributeName();
+
+
+                                            AttributeInfo attributeInfo = null;
+
+                                            if (ctMember instanceof CtField) {
+                                                attributeInfo = ((CtField) ctMember).getFieldInfo2().getAttribute(tag);
+                                            } else if (ctMember instanceof CtMethod) {
+                                                attributeInfo = ((CtMethod) ctMember).getMethodInfo2().getAttribute(tag);
+                                            }
+
+                                            System.out.println(attributeInfo);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     isCurrent = true;
                     break;
                 }

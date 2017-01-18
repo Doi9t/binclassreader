@@ -19,11 +19,14 @@ package org.binclassreader.attributes;
 import org.binclassreader.abstracts.Readable;
 import org.binclassreader.annotations.BinClassParser;
 import org.binclassreader.enums.AnnotationEnum;
+import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.parsers.PoolParser;
 import org.binclassreader.reader.ClassReader;
 import org.binclassreader.utils.BaseUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,11 +43,16 @@ public class ElementPair extends Readable {
 
     private Object value;
 
+    private AttributeTypeEnum attributeTypeEnum;
+
+    public ElementPair(AttributeTypeEnum attributeTypeEnum) {
+        this.attributeTypeEnum = attributeTypeEnum;
+    }
+
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
 
         AnnotationEnum annotationByChar = AnnotationEnum.getAnnotationByChar((char) BaseUtils.combineBytesToInt(tag));
-
         Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
 
         try {
@@ -60,39 +68,48 @@ public class ElementPair extends Readable {
                 case STRING:
                 case CLASS:
                     int index = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
-
                     value = constPool.get(index - 1);
                     break;
-                case ANNOTATION_TYPE: //RuntimeVisibleAnnotations
-                    value = reader.read(new VisibleAnnotationsAttr());
-
-                    System.out.println(value);
+                case ANNOTATION_TYPE:
+                    VisibleAndInvisibleAnnotationsAttr attr = new VisibleAndInvisibleAnnotationsAttr();
+                    attr.setAttributeType(attributeTypeEnum);
+                    value = reader.read(attr);
                     break;
                 case ARRAY_VALUE:
                     int nbElements = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
+                    List<ArrayValue> list = new ArrayList<ArrayValue>(nbElements);
 
                     for (int i = 0; i < nbElements; i++) {
-                        int itemType = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(1));
-                        int itemIndex = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
-                        Object item = constPool.get(itemIndex - 1);
-
-                        System.out.println(item);
+                        list.add(reader.read(new ArrayValue()));
                     }
+                    value = list;
                     break;
                 case ENUM_TYPE:
-                    //CONSTANT_Utf8_info
-                    int type_name_index = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
-                    int const_name_index = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
-
-                    Object itemTypeName = constPool.get(type_name_index);
-                    Object itemName = constPool.get(const_name_index);
-
-                    System.out.println(itemTypeName);
-                    System.out.println(itemName);
+                    value = reader.read(new EnumValue());
                     break;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    private static class ArrayValue {
+        @BinClassParser()
+        private short[] type; //AnnotationEnum
+
+        @BinClassParser(readOrder = 2, byteToRead = 2)
+        private short[] itemIndex;
+    }
+
+    private static class EnumValue {
+        @BinClassParser(byteToRead = 2)
+        private short[] type_name_index; //CONSTANT_Utf8_info
+
+        @BinClassParser(readOrder = 2, byteToRead = 2)
+        private short[] const_name_index; //CONSTANT_Utf8_info
     }
 }

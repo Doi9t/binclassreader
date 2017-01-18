@@ -29,15 +29,6 @@ import java.util.List;
 /**
  * Created by Yannick on 5/23/2016.
  */
-/*
-    ********************************** Complete
-    StackMapTable....................| 	❌ & ✔
-    LineNumberTable..................| 	❌ & ✔
-    LocalVariableTable...............| 	❌ & ✔
-    LocalVariableTypeTable...........|  ❌ & ✔
-    RuntimeVisibleTypeAnnotations....| 	❌ & ✔
-    RuntimeInvisibleTypeAnnotations..| 	❌ & ✔
-*/
 
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.3
 public class CodeAttr extends AbstractAttribute {
