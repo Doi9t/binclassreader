@@ -45,6 +45,8 @@ public class ElementPair extends Readable {
 
     private AttributeTypeEnum attributeTypeEnum;
 
+    private AnnotationEnum annotationEnum;
+
     public ElementPair(AttributeTypeEnum attributeTypeEnum) {
         this.attributeTypeEnum = attributeTypeEnum;
     }
@@ -52,11 +54,11 @@ public class ElementPair extends Readable {
     @Override
     public void afterFieldsInitialized(ClassReader reader) {
 
-        AnnotationEnum annotationByChar = AnnotationEnum.getAnnotationByChar((char) BaseUtils.combineBytesToInt(tag));
+        annotationEnum = AnnotationEnum.getAnnotationByChar((char) BaseUtils.combineBytesToInt(tag));
         Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
 
         try {
-            switch (annotationByChar) {
+            switch (annotationEnum) {
                 case BOOLEAN:
                 case BYTE:
                 case CHAR:
@@ -97,19 +99,27 @@ public class ElementPair extends Readable {
         return value;
     }
 
-    private static class ArrayValue {
+    public static class ArrayValue {
         @BinClassParser()
         private short[] type; //AnnotationEnum
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
         private short[] itemIndex;
+
+        public int getItemIndex() {
+            return BaseUtils.combineBytesToInt(itemIndex);
+        }
     }
 
-    private static class EnumValue {
+    public static class EnumValue {
         @BinClassParser(byteToRead = 2)
         private short[] type_name_index; //CONSTANT_Utf8_info
 
         @BinClassParser(readOrder = 2, byteToRead = 2)
         private short[] const_name_index; //CONSTANT_Utf8_info
+    }
+
+    public AnnotationEnum getAnnotationEnum() {
+        return annotationEnum;
     }
 }

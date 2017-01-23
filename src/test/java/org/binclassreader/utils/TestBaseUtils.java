@@ -20,24 +20,26 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMember;
 import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.AttributeInfo;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.ExceptionTable;
+import javassist.bytecode.annotation.*;
 import org.binclassreader.abstracts.AbstractAttribute;
 import org.binclassreader.abstracts.AbstractIterableAttribute;
 import org.binclassreader.attributes.CodeAttr;
+import org.binclassreader.attributes.ElementPair;
 import org.binclassreader.attributes.VisibleAndInvisibleAnnotationsAttr;
+import org.binclassreader.enums.AnnotationEnum;
 import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
+import org.binclassreader.services.ClassHelperService;
 import org.binclassreader.structs.ConstUtf8Info;
 import org.binclassreader.tree.TreeElement;
 import org.multiarraymap.MultiArrayMap;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.binclassreader.utils.BaseUtils.safeList;
 
@@ -45,8 +47,10 @@ import static org.binclassreader.utils.BaseUtils.safeList;
  * Created by Yannick on 10/23/2016.
  */
 public class TestBaseUtils {
+    private static Map<Integer, Object> CONST_POOL = ClassHelperService.getConstPool();
 
     public static List<String> extractInterfaceFromCtClass(CtClass... classes) {
+
         List<String> values = new ArrayList<String>();
 
         if (classes == null || classes.length == 0) {
@@ -109,17 +113,113 @@ public class TestBaseUtils {
 
                                             AttributeTypeEnum attributeType = innerAnnotation.getAttributeType();
                                             String tag = attributeType.getAttributeName();
+                                            AnnotationsAttribute attributeInfo = null;
 
-
-                                            AttributeInfo attributeInfo = null;
 
                                             if (ctMember instanceof CtField) {
-                                                attributeInfo = ((CtField) ctMember).getFieldInfo2().getAttribute(tag);
+                                                CtField ctMember1 = (CtField) ctMember;
+                                                attributeInfo = (AnnotationsAttribute) ctMember1.getFieldInfo2().getAttribute(tag);
                                             } else if (ctMember instanceof CtMethod) {
-                                                attributeInfo = ((CtMethod) ctMember).getMethodInfo2().getAttribute(tag);
+                                                attributeInfo = (AnnotationsAttribute) ((CtMethod) ctMember).getMethodInfo2().getAttribute(tag);
                                             }
 
-                                            System.out.println(attributeInfo);
+                                            ConstUtf8Info constUtf8InfoName = BaseUtils.as(CONST_POOL.get(innerAnnotation.getTypeIndex() - 1), ConstUtf8Info.class);
+                                            String completeName = ClassUtil.getBinaryPath(constUtf8InfoName.getAsNewString());
+                                            completeName = completeName.substring(1, completeName.length() - 1);
+
+                                            List<ElementPair> elementPairs = innerAnnotation.getElementPairs();
+                                            List<Annotation> annotationList = (List<Annotation>) BaseUtils.toList(attributeInfo.getAnnotations());
+                                            List<Object> elementPairValues = new ArrayList<Object>();
+
+                                            for (ElementPair elementPair : elementPairs) {
+
+                                                AnnotationEnum annotationEnum = elementPair.getAnnotationEnum();
+                                                if (AnnotationEnum.ARRAY_VALUE.equals(annotationEnum)) {
+                                                    elementPairValues.addAll((List) elementPair.getValue());
+                                                } else {
+                                                    elementPairValues.add(elementPair.getValue());
+                                                }
+                                            }
+
+                                            Annotation currentAnnotation = getAnnotationFromName(completeName, annotationList);
+
+                                            if (currentAnnotation == null) {
+                                                return false;
+                                            }
+                                            //Compare the values of the current annotation
+                                            for (String memberName : (Set<String>) currentAnnotation.getMemberNames()) {
+                                                MemberValue memberValue = currentAnnotation.getMemberValue(memberName);
+                                                List<MemberValue> memberValues = new ArrayList<MemberValue>();
+
+                                                if (memberValue instanceof ArrayMemberValue) {
+                                                    memberValues.addAll(Arrays.asList(((ArrayMemberValue) memberValue).getValue()));
+                                                } else {
+                                                    memberValues.add(memberValue);
+                                                }
+
+                                                //FIXME: Implements a "NOT FOUND" for the inner items
+                                                for (MemberValue innerMemberValue : memberValues) {
+                                                    for (Object elementPairValue : elementPairValues) {
+                                                        Object obj = null;
+
+                                                        if (elementPairValue instanceof ElementPair.ArrayValue) {
+                                                            ElementPair.ArrayValue arrayValue = (ElementPair.ArrayValue) elementPairValue;
+                                                            obj = CONST_POOL.get(arrayValue.getItemIndex() - 1);
+                                                        } else if (elementPairValue instanceof ElementPair.EnumValue) {
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (elementPairValue instanceof VisibleAndInvisibleAnnotationsAttr) {
+                                                            throw new UnsupportedOperationException();
+                                                        } else { //Structs
+                                                            throw new UnsupportedOperationException();
+                                                        }
+
+
+                                                        if (innerMemberValue instanceof AnnotationMemberValue) {
+                                                            AnnotationMemberValue annotationMember = (AnnotationMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof BooleanMemberValue) {
+                                                            BooleanMemberValue annotationMember = (BooleanMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof ByteMemberValue) {
+                                                            ByteMemberValue annotationMember = (ByteMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof CharMemberValue) {
+                                                            CharMemberValue annotationMember = (CharMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof ClassMemberValue) {
+                                                            ClassMemberValue annotationMember = (ClassMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof DoubleMemberValue) {
+                                                            DoubleMemberValue annotationMember = (DoubleMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof EnumMemberValue) {
+                                                            EnumMemberValue annotationMember = (EnumMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof FloatMemberValue) {
+                                                            FloatMemberValue annotationMember = (FloatMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof IntegerMemberValue) {
+                                                            IntegerMemberValue annotationMember = (IntegerMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof LongMemberValue) {
+                                                            LongMemberValue annotationMember = (LongMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof ShortMemberValue) {
+                                                            ShortMemberValue annotationMember = (ShortMemberValue) innerMemberValue;
+                                                            throw new UnsupportedOperationException();
+                                                        } else if (innerMemberValue instanceof StringMemberValue) {
+                                                            StringMemberValue annotationMember = (StringMemberValue) innerMemberValue;
+                                                            String value = annotationMember.getValue();
+
+                                                            ConstUtf8Info constUtf8Info = (ConstUtf8Info) obj;
+
+                                                            if (constUtf8Info.getAsNewString().equals(value)) {
+                                                                System.out.println();
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -135,6 +235,25 @@ public class TestBaseUtils {
         }
 
         return isAll && members.length == holders.size();
+    }
+
+    private static Annotation getAnnotationFromName(String completeName, List<Annotation> annotationList) {
+
+        if (annotationList == null || annotationList.isEmpty()) {
+            return null;
+        }
+
+        Annotation currentAnnotation = null;
+
+        for (Annotation annotation : annotationList) {
+
+            if (completeName.equals(annotation.getTypeName())) {
+                currentAnnotation = annotation;
+                break;
+            }
+        }
+
+        return currentAnnotation;
     }
 
     public static boolean deepMethodComparator(List<KeyValueHolder<ClassHelperEnum, Object>> methods, CtMethod[] ctMethods) {

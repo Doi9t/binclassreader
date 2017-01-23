@@ -34,6 +34,7 @@ public class SingleComponentTest {
 
     @Test
     public void annotationComponentTest() throws Exception {
+        //FIXME
         reader.overwriteStreamWithBytes(new byte[]{0, 1, 0, 24, 0, 1, 0, 25, 91, 0, 2, 115, 0, 26, 115, 0, 27});
 
         System.out.println(reader.read(new VisibleAndInvisibleAnnotationsAttr()));

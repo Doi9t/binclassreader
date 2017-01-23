@@ -61,6 +61,10 @@ public class VisibleAndInvisibleAnnotationsAttr extends AbstractIterableAttribut
             return attributeName;
         }
 
+        public List<ElementPair> getElementPairs() {
+            return ELEMENTS;
+        }
+
         @Override
         public void afterFieldsInitialized(ClassReader reader) {
             int nbElementPair = getNbElementPair();
