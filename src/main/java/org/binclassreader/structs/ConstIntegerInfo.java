@@ -17,10 +17,21 @@
 package org.binclassreader.structs;
 
 import org.binclassreader.abstracts.AbstractIntFloatConst;
+import org.binclassreader.utils.BaseUtils;
 
 /**
  * Created by Yannick on 1/25/2016.
  */
 ////https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.4
 public class ConstIntegerInfo extends AbstractIntFloatConst {
+
+    public int getIntValue() {
+        return BaseUtils.combineBytesToInt(bytes);
+    }
+
+
+    @Override
+    public String toString() {
+        return "ConstIntegerInfo{ Integer = " + getIntValue() + "}";
+    }
 }

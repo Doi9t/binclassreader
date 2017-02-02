@@ -24,6 +24,7 @@ import org.binclassreader.utils.BaseUtils;
  */
 //https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.5
 public class ConstLongInfo extends AbstractLongDoubleConst {
+
     public long getLongValue() {
         return (BaseUtils.combineBytesToLong(getHigh_bytes_data()) << 32) + BaseUtils.combineBytesToLong(getLow_bytes_data());
     }

@@ -57,20 +57,25 @@ public class ElementPair extends Readable {
         annotationEnum = AnnotationEnum.getAnnotationByChar((char) BaseUtils.combineBytesToInt(tag));
         Map<Integer, Object> constPool = reader.getPoolByClass(PoolParser.class);
 
+        int decBaseIndex = 0;
+        boolean isIndexable = false;
+
         try {
             switch (annotationEnum) {
+                case LONG:
+                case DOUBLE:
+                    isIndexable = true;
+                    break;
                 case BOOLEAN:
                 case BYTE:
                 case CHAR:
-                case DOUBLE:
                 case FLOAT:
                 case INT:
-                case LONG:
                 case SHORT:
                 case STRING:
                 case CLASS:
-                    int index = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2));
-                    value = constPool.get(index - 1);
+                    isIndexable = true;
+                    decBaseIndex = 1;
                     break;
                 case ANNOTATION_TYPE:
                     VisibleAndInvisibleAnnotationsAttr attr = new VisibleAndInvisibleAnnotationsAttr();
@@ -90,6 +95,12 @@ public class ElementPair extends Readable {
                     value = reader.read(new EnumValue());
                     break;
             }
+
+            if (isIndexable) {
+                int calculatedIndex = BaseUtils.combineBytesToInt(reader.readFromCurrentStream(2)) - decBaseIndex;
+                value = constPool.get(calculatedIndex);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

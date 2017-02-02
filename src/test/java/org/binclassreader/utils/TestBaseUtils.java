@@ -35,7 +35,7 @@ import org.binclassreader.enums.AttributeTypeEnum;
 import org.binclassreader.enums.ClassHelperEnum;
 import org.binclassreader.enums.MethodAccessFlagsEnum;
 import org.binclassreader.services.ClassHelperService;
-import org.binclassreader.structs.ConstUtf8Info;
+import org.binclassreader.structs.*;
 import org.binclassreader.tree.TreeElement;
 import org.multiarraymap.MultiArrayMap;
 
@@ -72,7 +72,12 @@ public class TestBaseUtils {
      * @return
      */
     public static boolean deepCtMemberComparator(List<KeyValueHolder<ClassHelperEnum, Object>> holders, CtMember[] members) {
-        boolean isAll = true, isCurrent;
+
+        if (members.length != holders.size()) {
+            return false;
+        }
+
+        boolean isAllSame = true;
 
         for (KeyValueHolder<ClassHelperEnum, Object> holder : holders) {
 
@@ -99,142 +104,236 @@ public class TestBaseUtils {
             }
 
             MultiArrayMap<Class<?>, AbstractAttribute> attributes = (MultiArrayMap<Class<?>, AbstractAttribute>) holder.getFirstMatchingValue(ClassHelperEnum.OTHER_ATTR);
-
-            isCurrent = false;
-            for (CtMember ctMember : members) {
-                if (ctMember.getSignature().equals(utfDescriptor.getAsNewString()) && ctMember.getName().equals(utfName.getAsNewString())) {
-                    if (attributes != null && !attributes.isEmpty()) {
-                        for (Map.Entry<Class<?>, List<AbstractAttribute>> entry : attributes.entrySet()) {
-                            for (AbstractAttribute attribute : entry.getValue()) {
-                                if (attribute instanceof AbstractIterableAttribute) {
-                                    if (entry.getKey().equals(VisibleAndInvisibleAnnotationsAttr.class)) {
-                                        VisibleAndInvisibleAnnotationsAttr currentAttribute = (VisibleAndInvisibleAnnotationsAttr) attribute;
-                                        for (VisibleAndInvisibleAnnotationsAttr.Annotation innerAnnotation : BaseUtils.safeList(currentAttribute.getItems())) {
-
-                                            AttributeTypeEnum attributeType = innerAnnotation.getAttributeType();
-                                            String tag = attributeType.getAttributeName();
-                                            AnnotationsAttribute attributeInfo = null;
+            CtMember currentCtMember = getCtMemberFromName(utfName.getAsNewString(), utfDescriptor.getAsNewString(), members);
 
 
-                                            if (ctMember instanceof CtField) {
-                                                CtField ctMember1 = (CtField) ctMember;
-                                                attributeInfo = (AnnotationsAttribute) ctMember1.getFieldInfo2().getAttribute(tag);
-                                            } else if (ctMember instanceof CtMethod) {
-                                                attributeInfo = (AnnotationsAttribute) ((CtMethod) ctMember).getMethodInfo2().getAttribute(tag);
+            isAllSame &= isAnnotationEquals(attributes, currentCtMember);
+        }
+
+        return isAllSame && members.length == holders.size();
+    }
+
+    /**
+     * Return the CtMember based on the name and the descriptor
+     *
+     * @param name
+     * @param descriptor
+     * @param members
+     * @return
+     */
+    private static CtMember getCtMemberFromName(String name, String descriptor, CtMember[] members) {
+
+        CtMember currentCtMember = null;
+
+        for (CtMember ctMember : members) {
+            if (ctMember.getSignature().equals(descriptor) && ctMember.getName().equals(name)) {
+                currentCtMember = ctMember;
+                break;
+            }
+        }
+
+        return currentCtMember;
+    }
+
+    private static boolean isAnnotationEquals(MultiArrayMap<Class<?>, AbstractAttribute> attributes, CtMember ctMember) {
+
+        boolean isEquals = true;
+
+        if (attributes != null && !attributes.isEmpty()) {
+            mainLoop:
+            for (Map.Entry<Class<?>, List<AbstractAttribute>> entry : attributes.entrySet()) {
+                for (AbstractAttribute attribute : entry.getValue()) {
+                    if (attribute instanceof AbstractIterableAttribute) {
+                        if (entry.getKey().equals(VisibleAndInvisibleAnnotationsAttr.class)) {
+                            VisibleAndInvisibleAnnotationsAttr currentAttribute = (VisibleAndInvisibleAnnotationsAttr) attribute;
+                            for (VisibleAndInvisibleAnnotationsAttr.Annotation innerAnnotation : BaseUtils.safeList(currentAttribute.getItems())) {
+
+                                AttributeTypeEnum attributeType = innerAnnotation.getAttributeType();
+                                String tag = attributeType.getAttributeName();
+                                AnnotationsAttribute attributeInfo = null;
+
+
+                                if (ctMember instanceof CtField) {
+                                    CtField ctMember1 = (CtField) ctMember;
+                                    attributeInfo = (AnnotationsAttribute) ctMember1.getFieldInfo2().getAttribute(tag);
+                                } else if (ctMember instanceof CtMethod) {
+                                    attributeInfo = (AnnotationsAttribute) ((CtMethod) ctMember).getMethodInfo2().getAttribute(tag);
+                                }
+
+                                ConstUtf8Info constUtf8InfoName = BaseUtils.as(CONST_POOL.get(innerAnnotation.getTypeIndex() - 1), ConstUtf8Info.class);
+                                String completeName = ClassUtil.getBinaryPath(constUtf8InfoName.getAsNewString());
+                                completeName = completeName.substring(1, completeName.length() - 1);
+
+                                List<ElementPair> elementPairs = innerAnnotation.getElementPairs();
+                                List<Annotation> annotationList = (List<Annotation>) BaseUtils.toList(attributeInfo.getAnnotations());
+                                List<Object> elementPairValues = new ArrayList<Object>();
+
+                                for (ElementPair elementPair : elementPairs) {
+
+                                    AnnotationEnum annotationEnum = elementPair.getAnnotationEnum();
+                                    if (AnnotationEnum.ARRAY_VALUE.equals(annotationEnum)) {
+                                        elementPairValues.addAll((List) elementPair.getValue());
+                                    } else {
+                                        elementPairValues.add(elementPair.getValue());
+                                    }
+                                }
+
+                                Annotation currentAnnotation = getAnnotationFromName(completeName, annotationList);
+
+                                if (currentAnnotation == null) {
+                                    return false;
+                                }
+
+                                //Compare the values of the current annotation
+                                for (String memberName : (Set<String>) currentAnnotation.getMemberNames()) {
+
+                                    MemberValue memberValue = currentAnnotation.getMemberValue(memberName);
+                                    List<MemberValue> memberValues = new ArrayList<MemberValue>();
+
+                                    if (memberValue instanceof ArrayMemberValue) {
+                                        memberValues.addAll(Arrays.asList(((ArrayMemberValue) memberValue).getValue()));
+                                    } else {
+                                        memberValues.add(memberValue);
+                                    }
+
+                                    //For each values in the current member
+                                    for (MemberValue innerMemberValue : memberValues) {
+                                        boolean isCurrentEquals = false;
+                                        for (Object elementPairValue : elementPairValues) {
+                                            Object obj;
+
+                                            if (elementPairValue instanceof ElementPair.ArrayValue) {
+                                                ElementPair.ArrayValue arrayValue = (ElementPair.ArrayValue) elementPairValue;
+                                                obj = CONST_POOL.get(arrayValue.getItemIndex() - 1);
+                                            } else if (elementPairValue instanceof ElementPair.EnumValue) {
+                                                throw new UnsupportedOperationException();
+                                            } else if (elementPairValue instanceof VisibleAndInvisibleAnnotationsAttr) {
+                                                throw new UnsupportedOperationException();
+                                            } else if (elementPairValue instanceof ConstIntegerInfo) {
+                                                ConstIntegerInfo value = (ConstIntegerInfo) elementPairValue;
+                                                obj = value.getIntValue();
+                                            } else if (elementPairValue instanceof ConstLongInfo) {
+                                                ConstLongInfo value = (ConstLongInfo) elementPairValue;
+                                                obj = value.getLongValue();
+                                            } else if (elementPairValue instanceof ConstFloatInfo) {
+                                                ConstFloatInfo value = (ConstFloatInfo) elementPairValue;
+                                                obj = value.getFloatValue();
+                                            } else if (elementPairValue instanceof ConstDoubleInfo) {
+                                                ConstDoubleInfo value = (ConstDoubleInfo) elementPairValue;
+                                                obj = value.getDoubleValue();
+                                            } else {
+                                                throw new UnsupportedOperationException("Unable to find the input type !");
                                             }
 
-                                            ConstUtf8Info constUtf8InfoName = BaseUtils.as(CONST_POOL.get(innerAnnotation.getTypeIndex() - 1), ConstUtf8Info.class);
-                                            String completeName = ClassUtil.getBinaryPath(constUtf8InfoName.getAsNewString());
-                                            completeName = completeName.substring(1, completeName.length() - 1);
+                                            if (obj instanceof Number) {
+                                                String numberStrRep = obj.toString();
 
-                                            List<ElementPair> elementPairs = innerAnnotation.getElementPairs();
-                                            List<Annotation> annotationList = (List<Annotation>) BaseUtils.toList(attributeInfo.getAnnotations());
-                                            List<Object> elementPairValues = new ArrayList<Object>();
+                                                if (innerMemberValue instanceof DoubleMemberValue) {
+                                                    DoubleMemberValue annotationMember = (DoubleMemberValue) innerMemberValue;
 
-                                            for (ElementPair elementPair : elementPairs) {
+                                                    if (Double.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof FloatMemberValue) {
+                                                    FloatMemberValue annotationMember = (FloatMemberValue) innerMemberValue;
 
-                                                AnnotationEnum annotationEnum = elementPair.getAnnotationEnum();
-                                                if (AnnotationEnum.ARRAY_VALUE.equals(annotationEnum)) {
-                                                    elementPairValues.addAll((List) elementPair.getValue());
-                                                } else {
-                                                    elementPairValues.add(elementPair.getValue());
-                                                }
-                                            }
+                                                    if (Float.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof IntegerMemberValue) {
+                                                    IntegerMemberValue annotationMember = (IntegerMemberValue) innerMemberValue;
 
-                                            Annotation currentAnnotation = getAnnotationFromName(completeName, annotationList);
+                                                    if (Integer.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof LongMemberValue) {
+                                                    LongMemberValue annotationMember = (LongMemberValue) innerMemberValue;
 
-                                            if (currentAnnotation == null) {
-                                                return false;
-                                            }
-                                            //Compare the values of the current annotation
-                                            for (String memberName : (Set<String>) currentAnnotation.getMemberNames()) {
-                                                MemberValue memberValue = currentAnnotation.getMemberValue(memberName);
-                                                List<MemberValue> memberValues = new ArrayList<MemberValue>();
+                                                    if (Long.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof ShortMemberValue) {
+                                                    ShortMemberValue annotationMember = (ShortMemberValue) innerMemberValue;
 
-                                                if (memberValue instanceof ArrayMemberValue) {
-                                                    memberValues.addAll(Arrays.asList(((ArrayMemberValue) memberValue).getValue()));
-                                                } else {
-                                                    memberValues.add(memberValue);
-                                                }
+                                                    if (Short.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof ByteMemberValue) {
+                                                    ByteMemberValue annotationMember = (ByteMemberValue) innerMemberValue;
 
-                                                //FIXME: Implements a "NOT FOUND" for the inner items
-                                                for (MemberValue innerMemberValue : memberValues) {
-                                                    for (Object elementPairValue : elementPairValues) {
-                                                        Object obj = null;
+                                                    if (Byte.valueOf(numberStrRep).equals(annotationMember.getValue())) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof CharMemberValue) {
+                                                    CharMemberValue annotationMember = (CharMemberValue) innerMemberValue;
+                                                    char value = annotationMember.getValue();
 
-                                                        if (elementPairValue instanceof ElementPair.ArrayValue) {
-                                                            ElementPair.ArrayValue arrayValue = (ElementPair.ArrayValue) elementPairValue;
-                                                            obj = CONST_POOL.get(arrayValue.getItemIndex() - 1);
-                                                        } else if (elementPairValue instanceof ElementPair.EnumValue) {
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (elementPairValue instanceof VisibleAndInvisibleAnnotationsAttr) {
-                                                            throw new UnsupportedOperationException();
-                                                        } else { //Structs
-                                                            throw new UnsupportedOperationException();
+                                                    if ((int) value == Integer.valueOf(numberStrRep)) {
+                                                        isCurrentEquals = true;
+                                                        break;
+                                                    }
+                                                } else if (innerMemberValue instanceof BooleanMemberValue) {
+                                                    BooleanMemberValue annotationMember = (BooleanMemberValue) innerMemberValue;
+                                                    boolean value = annotationMember.getValue();
+
+                                                    try {
+                                                        Integer integer = Integer.valueOf(numberStrRep);
+
+                                                        if (integer == 0 && !value || integer == 1 && value) {
+                                                            isCurrentEquals = true;
+                                                            break;
                                                         }
+                                                    } catch (NumberFormatException nfe) {
+                                                        System.err.println("Unable to convert " + numberStrRep + " to integer !");
+                                                    }
+                                                }
+                                            } else {
+                                                if (innerMemberValue instanceof AnnotationMemberValue) {
+                                                    //TODO
+                                                    AnnotationMemberValue annotationMember = (AnnotationMemberValue) innerMemberValue;
+                                                    throw new UnsupportedOperationException();
+                                                } else if (innerMemberValue instanceof ClassMemberValue) {
+                                                    //TODO
+                                                    ClassMemberValue annotationMember = (ClassMemberValue) innerMemberValue;
+                                                    throw new UnsupportedOperationException();
+                                                } else if (innerMemberValue instanceof EnumMemberValue) {
+                                                    //TODO
+                                                    EnumMemberValue annotationMember = (EnumMemberValue) innerMemberValue;
+                                                    throw new UnsupportedOperationException();
+                                                } else if (innerMemberValue instanceof StringMemberValue) {
+                                                    StringMemberValue annotationMember = (StringMemberValue) innerMemberValue;
+                                                    String value = annotationMember.getValue();
 
+                                                    ConstUtf8Info constUtf8Info = (ConstUtf8Info) obj;
 
-                                                        if (innerMemberValue instanceof AnnotationMemberValue) {
-                                                            AnnotationMemberValue annotationMember = (AnnotationMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof BooleanMemberValue) {
-                                                            BooleanMemberValue annotationMember = (BooleanMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof ByteMemberValue) {
-                                                            ByteMemberValue annotationMember = (ByteMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof CharMemberValue) {
-                                                            CharMemberValue annotationMember = (CharMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof ClassMemberValue) {
-                                                            ClassMemberValue annotationMember = (ClassMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof DoubleMemberValue) {
-                                                            DoubleMemberValue annotationMember = (DoubleMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof EnumMemberValue) {
-                                                            EnumMemberValue annotationMember = (EnumMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof FloatMemberValue) {
-                                                            FloatMemberValue annotationMember = (FloatMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof IntegerMemberValue) {
-                                                            IntegerMemberValue annotationMember = (IntegerMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof LongMemberValue) {
-                                                            LongMemberValue annotationMember = (LongMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof ShortMemberValue) {
-                                                            ShortMemberValue annotationMember = (ShortMemberValue) innerMemberValue;
-                                                            throw new UnsupportedOperationException();
-                                                        } else if (innerMemberValue instanceof StringMemberValue) {
-                                                            StringMemberValue annotationMember = (StringMemberValue) innerMemberValue;
-                                                            String value = annotationMember.getValue();
-
-                                                            ConstUtf8Info constUtf8Info = (ConstUtf8Info) obj;
-
-                                                            if (constUtf8Info.getAsNewString().equals(value)) {
-                                                                System.out.println();
-                                                            }
-                                                        }
+                                                    if (constUtf8Info.getAsNewString().equals(value)) {
+                                                        isCurrentEquals = true;
+                                                        break;
                                                     }
                                                 }
                                             }
+                                        }
+
+                                        if (!isCurrentEquals) {
+                                            isEquals = false;
+                                            break mainLoop;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-
-                    isCurrent = true;
-                    break;
                 }
             }
-            isAll &= isCurrent;
         }
 
-        return isAll && members.length == holders.size();
+        return isEquals;
     }
 
     private static Annotation getAnnotationFromName(String completeName, List<Annotation> annotationList) {

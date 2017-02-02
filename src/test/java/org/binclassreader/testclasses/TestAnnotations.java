@@ -35,7 +35,7 @@ import java.lang.annotation.RetentionPolicy;
         annotation = ElementType.TYPE, clazz = Integer.class)
 public class TestAnnotations {
 
-    @GlobalAnnotationWithParameters(stringArray = {"Class variable annotation [1]", "Class variable annotation [2]"})
+    @GlobalAnnotationWithParameters(stringArray = {"Class variable annotation [1]", "Class variable annotation [2]"}, byteValue = 13, charValue = 'a', shortValue = 13, intValue = 13, longValue = 13, floatValue = 13f, doubleValue = 13d, bool = true)
     private transient Object x, y;
     private Object z;
 
@@ -79,7 +79,21 @@ public class TestAnnotations {
 
         int[] integerArray() default {};
 
-        boolean bool() default true;
+        byte byteValue() default 0;
+
+        char charValue() default ' ';
+
+        short shortValue() default 0;
+
+        int intValue() default 0;
+
+        long longValue() default 0;
+
+        float floatValue() default 0;
+
+        double doubleValue() default 0;
+
+        boolean bool() default false;
 
         ElementType annotation() default ElementType.CONSTRUCTOR;
 

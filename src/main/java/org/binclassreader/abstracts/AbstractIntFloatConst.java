@@ -24,10 +24,10 @@ import org.binclassreader.utils.BaseUtils;
  */
 public abstract class AbstractIntFloatConst {
 
-    @BinClassParser(readOrder = 1, byteToRead = 4)
+    @BinClassParser(byteToRead = 4)
     protected short[] bytes;
 
-    protected short[] getBytes() {
+    public short[] getBytes() {
         return BaseUtils.safeArrayClone(bytes);
     }
 }
