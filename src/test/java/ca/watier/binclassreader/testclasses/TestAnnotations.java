@@ -15,12 +15,19 @@
  */
 package ca.watier.binclassreader.testclasses;
 
+import javax.xml.ws.Action;
+import javax.xml.ws.soap.MTOM;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yannick on 5/15/2016.
  */
-/*
+
 @MTOM
 @TestAnnotations.GlobalAnnotationSource
 @TestAnnotations.GlobalAnnotationRuntime
@@ -28,13 +35,12 @@ import java.lang.annotation.ElementType;
 @TestAnnotations.GlobalAnnotationWithParameters(
         stringArray = {"Class annotation", "arrayParam", "arrayParam2", "arrayParam3"},
         integerArray = {1, 2, 385644898},
-        bool = false,
-        annotation = ElementType.TYPE, clazz = Integer.class)*/
+        boolValue = true,
+        annotationValue = ElementType.TYPE, classValue = Integer.class)
 public class TestAnnotations {
 
     @GlobalAnnotationWithParameters(
-            /*
-            stringArray = {"Class variable annotation [1]", "Class variable annotation [2]", "Class variable annotation [3]"}           ,
+            stringArray = {"Class variable annotation [1]", "Class variable annotation [2]", "Class variable annotation [3]"},
             byteValue = 13,
             charValue = 'a',
             shortValue = 14,
@@ -42,30 +48,27 @@ public class TestAnnotations {
             longValue = 16,
             floatValue = 17f,
             doubleValue = 18d,
+            doubleArray = {0.00003555d, 0.256415d, -1324156.545455654d, 156456465456.01d},
             boolValue = true,
-            annotationValue = ElementType.FIELD,       */
+            annotationValue = ElementType.FIELD,
             annotationArray = {ElementType.CONSTRUCTOR, ElementType.FIELD}
-
-
-            //FIXME
-            //doubleArray = {0.00003555d, 0.256415d, -1324156.545455654d, 156456465456.01d}
 
     )
     private transient Object x, y;
     private Object z;
 
-    public TestAnnotations() {
-        //@TestAnnotations.GlobalAnnotationWithParameters(stringArray = {"Member variable annotation"})
+    public TestAnnotations() throws @GlobalAnnotationWithParameters IllegalArgumentException {
+        @TestAnnotations.GlobalAnnotationWithParameters(stringArray = {"Member variable annotation"})
         Object obj = new Object();
         returnFunction(10, this);
     }
 
-    /*
-        @Deprecated
-        @Action
-        @MTOM
-    */
-    public Object returnFunction(/*@GlobalAnnotationWithParameters(stringArray = {"Parameter function variable annotation"})*/ Integer x, final Object y) {
+    @Deprecated
+    @Action
+    @MTOM
+    public Object returnFunction(@GlobalAnnotationWithParameters(stringArray = {"Parameter function variable annotation"}) Integer x, final Object y) {
+
+        List<@GlobalAnnotationWithParameters String> uselessList = new ArrayList<>();
 
         if (x == 5000)
             return Integer.MAX_VALUE;
@@ -73,26 +76,30 @@ public class TestAnnotations {
         this.x = x;
         this.y = y;
 
-        z = new Object();
+        z = new @GlobalAnnotationWithParameters Object();
+
+        z = (@GlobalAnnotationWithParameters Object) z;
 
         return returnFunction(x, y);
     }
 
-    /*
-        @Retention(RetentionPolicy.SOURCE)
-        @GlobalAnnotationWithParameters(stringArray = {"Annotation on annotation"})
-    */
+    @Retention(RetentionPolicy.SOURCE)
+    @GlobalAnnotationWithParameters(stringArray = {"Annotation on annotation"})
     public @interface GlobalAnnotationSource {
     }
 
-    //@Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.CLASS)
     public @interface GlobalAnnotationClass {
     }
 
-    //@Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.RUNTIME)
     public @interface GlobalAnnotationRuntime {
     }
 
+
+    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER,
+            ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE, ElementType.ANNOTATION_TYPE,
+            ElementType.PACKAGE, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
     public @interface GlobalAnnotationWithParameters {
         String stringValue() default "";
 
@@ -134,9 +141,9 @@ public class TestAnnotations {
 
         boolean[] boolArray() default {};
 
-        Class<?> clazzValue() default Object.class;
+        Class<?> classValue() default Object.class;
 
-        Class<?>[] clazzArray() default {};
+        Class<?>[] classArray() default {};
 
         ElementType annotationValue() default ElementType.CONSTRUCTOR;
 

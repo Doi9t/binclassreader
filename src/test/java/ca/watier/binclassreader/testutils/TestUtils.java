@@ -168,7 +168,7 @@ public class TestUtils {
                                 completeName = completeName.substring(1, completeName.length() - 1);
 
                                 List<ElementPair> elementPairs = innerAnnotation.getElementPairs();
-                                List<Annotation> annotationList = (List<Annotation>) BaseUtils.toList(attributeInfo.getAnnotations());
+                                List<Annotation> annotationList = (List<Annotation>) BaseUtils.safeToList(attributeInfo.getAnnotations());
                                 List<Object> elementPairValues = new ArrayList<Object>();
 
                                 for (ElementPair elementPair : elementPairs) {
@@ -218,12 +218,16 @@ public class TestUtils {
                                                     continue;
                                                 }
 
-                                                obj = contValue.get(0);
+                                                elementPairValue = contValue.get(0);
                                             }
 
 
-                                            if (obj instanceof ElementPair.ItemContainer) {
-                                                obj = ElementPair.getLeafItem(((ElementPair.ItemContainer) obj).getObjValue());
+                                            if (elementPairValue instanceof ElementPair.ItemContainer) {
+                                                elementPairValue = ElementPair.getLeafItem(((ElementPair.ItemContainer) elementPairValue).getObjValue());
+                                            }
+
+                                            if (elementPairValue instanceof ElementPair.EnumValue) {
+                                                obj = elementPairValue;
                                             } else if (elementPairValue instanceof VisibleAndInvisibleAnnotationsAttr) {
                                                 throw new UnsupportedOperationException();
                                             } else if (elementPairValue instanceof ConstIntegerInfo) {
@@ -238,8 +242,9 @@ public class TestUtils {
                                             } else if (elementPairValue instanceof ConstDoubleInfo) {
                                                 ConstDoubleInfo value = (ConstDoubleInfo) elementPairValue;
                                                 obj = value.getDoubleValue();
-                                            } else if (elementPairValue instanceof List) {
-                                                System.out.println();
+                                            } else if (elementPairValue instanceof ConstUtf8Info) {
+                                                ConstUtf8Info value = (ConstUtf8Info) elementPairValue;
+                                                obj = value.getAsNewString();
                                             } else {
                                                 throw new UnsupportedOperationException("Unable to find the input type !");
                                             }
@@ -312,47 +317,44 @@ public class TestUtils {
                                                         System.err.println("Unable to convert " + numberStrRep + " to integer !");
                                                     }
                                                 }
-                                            } else {
-                                                if (innerMemberValue instanceof AnnotationMemberValue) {
-                                                    //TODO
-                                                    AnnotationMemberValue annotationMember = (AnnotationMemberValue) innerMemberValue;
-                                                    throw new UnsupportedOperationException();
-                                                } else if (innerMemberValue instanceof ClassMemberValue) {
-                                                    //TODO
-                                                    ClassMemberValue annotationMember = (ClassMemberValue) innerMemberValue;
-                                                    throw new UnsupportedOperationException();
-                                                } else if (innerMemberValue instanceof EnumMemberValue && obj instanceof ElementPair.EnumValue) {
+                                            } else if (innerMemberValue instanceof AnnotationMemberValue) {
+                                                //TODO
+                                                AnnotationMemberValue annotationMember = (AnnotationMemberValue) innerMemberValue;
+                                                throw new UnsupportedOperationException();
+                                            } else if (innerMemberValue instanceof ClassMemberValue) {
+                                                //TODO
+                                                ClassMemberValue annotationMember = (ClassMemberValue) innerMemberValue;
+                                                throw new UnsupportedOperationException();
+                                            } else if (innerMemberValue instanceof EnumMemberValue && obj instanceof ElementPair.EnumValue) {
 
-                                                    ElementPair.EnumValue enumValue = (ElementPair.EnumValue) obj;
-                                                    EnumMemberValue annotationMember = (EnumMemberValue) innerMemberValue;
+                                                ElementPair.EnumValue enumValue = (ElementPair.EnumValue) obj;
+                                                EnumMemberValue annotationMember = (EnumMemberValue) innerMemberValue;
 
-                                                    ConstUtf8Info constName = (ConstUtf8Info) CONST_POOL.get(enumValue.getConstNameIndex() - 1);
-                                                    ConstUtf8Info constTypeName = (ConstUtf8Info) CONST_POOL.get(enumValue.getTypeNameIndex() - 1);
+                                                ConstUtf8Info constName = (ConstUtf8Info) CONST_POOL.get(enumValue.getConstNameIndex() - 1);
+                                                ConstUtf8Info constTypeName = (ConstUtf8Info) CONST_POOL.get(enumValue.getTypeNameIndex() - 1);
 
-                                                    String parsedConstName = constName.getAsNewString();
-                                                    String rawConstTypeName = constTypeName.getAsNewString();
-                                                    String parsedConstTypeName = ClassUtil.getBinaryPath(rawConstTypeName).substring(1, rawConstTypeName.length() - 1);
+                                                String parsedConstName = constName.getAsNewString();
+                                                String rawConstTypeName = constTypeName.getAsNewString();
+                                                String parsedConstTypeName = ClassUtil.getBinaryPath(rawConstTypeName).substring(1, rawConstTypeName.length() - 1);
 
-                                                    String constNameAssist = annotationMember.getValue();
-                                                    String constTypeNameAssist = annotationMember.getType();
+                                                String constNameAssist = annotationMember.getValue();
+                                                String constTypeNameAssist = annotationMember.getType();
 
-                                                    if (parsedConstTypeName.equals(constTypeNameAssist) && parsedConstName.equals(constNameAssist)) {
-                                                        isCurrentEquals = true;
-                                                        break;
-                                                    }
+                                                if (parsedConstTypeName.equals(constTypeNameAssist) && parsedConstName.equals(constNameAssist)) {
+                                                    isCurrentEquals = true;
+                                                    break;
+                                                }
 
-                                                } else if (innerMemberValue instanceof StringMemberValue) {
-                                                    StringMemberValue annotationMember = (StringMemberValue) innerMemberValue;
-                                                    String value = annotationMember.getValue();
+                                            } else if (innerMemberValue instanceof StringMemberValue) {
+                                                StringMemberValue annotationMember = (StringMemberValue) innerMemberValue;
+                                                String value = annotationMember.getValue();
 
-                                                    ConstUtf8Info constUtf8Info = (ConstUtf8Info) obj;
-
-                                                    if (constUtf8Info.getAsNewString().equals(value)) {
-                                                        isCurrentEquals = true;
-                                                        break;
-                                                    }
+                                                if (obj.equals(value)) {
+                                                    isCurrentEquals = true;
+                                                    break;
                                                 }
                                             }
+
                                         }
 
                                         if (!isCurrentEquals) {
@@ -445,7 +447,8 @@ public class TestUtils {
                         }
                     }
 
-                    List<Short> list = BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code));
+                    List<Short> list = code != null ? BaseUtils.shortArrayToList(BaseUtils.convertByteToUnsigned(code)) : new ArrayList<>();
+                    ;
                     int ctRawAccessFlags = ctMember.getModifiers();
                     short mask = MethodAccessFlagsEnum.getMask(accessFlags);
 

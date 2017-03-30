@@ -26,7 +26,21 @@ import ca.watier.binclassreader.utils.BaseUtils;
 public class ConstDoubleInfo extends AbstractLongDoubleConst {
 
     public Double getDoubleValue() {
-        return Double.longBitsToDouble((BaseUtils.combineBytesToLong(getHigh_bytes_data()) << 32) + BaseUtils.combineBytesToLong(getLow_bytes_data()));
+
+        byte[] high_bytes_data = getHigh_bytes_data();
+        byte[] low_bytes_data = getLow_bytes_data();
+
+        byte[] arr = new byte[8];
+        arr[0] = high_bytes_data[0];
+        arr[1] = high_bytes_data[1];
+        arr[2] = high_bytes_data[2];
+        arr[3] = high_bytes_data[3];
+        arr[4] = low_bytes_data[0];
+        arr[5] = low_bytes_data[1];
+        arr[6] = low_bytes_data[2];
+        arr[7] = low_bytes_data[3];
+
+        return BaseUtils.combineBytesToDouble(arr);
     }
 
     @Override

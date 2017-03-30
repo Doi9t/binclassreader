@@ -59,13 +59,13 @@ public class AttributeUtils extends BaseUtils {
             clazz = VisibleAndInvisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_ANNOTATIONS;
         } else if ("RuntimeInvisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = VisibleAndInvisibleAnnotationsAttr.class;
+            clazz = VisibleAndInvisibleTypeAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_INVISIBLE_TYPE_ANNOTATIONS;
         } else if ("RuntimeVisibleAnnotations".equalsIgnoreCase(name)) {
             clazz = VisibleAndInvisibleAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_ANNOTATIONS;
         } else if ("RuntimeVisibleTypeAnnotations".equalsIgnoreCase(name)) {
-            clazz = VisibleTypeAnnotationsAttr.class;
+            clazz = VisibleAndInvisibleTypeAnnotationsAttr.class;
             attributeTypeEnum = AttributeTypeEnum.RUNTIME_VISIBLE_TYPE_ANNOTATIONS;
         } else if ("RuntimeInvisibleParameterAnnotations".equalsIgnoreCase(name)) {
             clazz = InvisibleParameterAnnotationsAttr.class;

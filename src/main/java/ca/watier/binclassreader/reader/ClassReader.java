@@ -31,8 +31,8 @@ import ca.watier.binclassreader.structs.ConstFieldInfo;
 import ca.watier.binclassreader.structs.ConstMethodInfo;
 import ca.watier.binclassreader.tree.Tree;
 import ca.watier.binclassreader.tree.TreeElement;
-import ca.watier.binclassreader.utils.Assert;
 import ca.watier.binclassreader.utils.BaseUtils;
+import ca.watier.defassert.Assert;
 import ca.watier.multiarraymap.MultiArrayMap;
 
 import java.io.ByteArrayInputStream;
@@ -60,9 +60,9 @@ public class ClassReader extends AbstractPoolData {
 
 
     public ClassReader(InputStream classData, Class<?>... classSections) {
-        if (!Assert.isArrayReadable(classSections) || classData == null) {
-            return;
-        }
+        Assert.assertNotEmpty(classSections);
+        Assert.assertNotNull(classData);
+
 
         this.classData = classData;
         fieldSorter = new TreeMap<Short, FieldPojo>();

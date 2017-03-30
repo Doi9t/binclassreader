@@ -19,8 +19,10 @@ package ca.watier.binclassreader.utils;
 import ca.watier.binclassreader.enums.BytecodeExtraByteEnum;
 import ca.watier.binclassreader.enums.BytecodeInstructionEnum;
 import ca.watier.binclassreader.enums.ConstValuesEnum;
+import ca.watier.defassert.Assert;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -32,27 +34,39 @@ public class BaseUtils {
 
     /**
      * @param bytes - The byte to be merged
-     * @return The combined byte, -1 if the byte array is empty or null
      */
     public static int combineBytesToInt(byte[] bytes) {
-
-        if (bytes == null || bytes.length == 0) {
-            return -1;
-        }
+        Assert.assertNotEmpty(bytes);
 
         return new BigInteger(bytes).intValue();
     }
 
     /**
      * @param bytes - The byte to be merged
-     * @return The combined byte, -1 if the byte array is empty or null
+     */
+    public static short combineBytesToShort(byte[] bytes) {
+        Assert.assertNotEmpty(bytes);
+
+        return new BigInteger(bytes).shortValue();
+    }
+
+    /**
+     * @param bytes - The byte to be merged
      */
     public static long combineBytesToLong(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return -1;
-        }
+        Assert.assertNotEmpty(bytes);
 
         return new BigInteger(bytes).longValue();
+    }
+
+
+    /**
+     * @param bytes - The byte to be merged
+     */
+    public static double combineBytesToDouble(byte[] bytes) {
+        Assert.assertNotEmpty(bytes);
+
+        return ByteBuffer.wrap(bytes).getDouble();
     }
 
     /**
@@ -81,11 +95,9 @@ public class BaseUtils {
      * @return
      */
     public static List<Short> shortArrayToList(short[] arr) {
-        List<Short> values = new ArrayList<Short>();
+        Assert.assertNotEmpty(arr);
 
-        if (arr == null || arr.length == 0) {
-            return values;
-        }
+        List<Short> values = new ArrayList<Short>();
 
         for (short b : arr) {
             values.add(b);
@@ -165,9 +177,7 @@ public class BaseUtils {
      * @return An array of object
      */
     public static Object[] createNewArrayOfObject(Class<?>... clazzArr) {
-        if (!Assert.isArrayReadable(clazzArr)) {
-            return null;
-        }
+        Assert.assertNotEmpty(clazzArr);
 
         Object[] values = new Object[clazzArr.length];
 
@@ -192,10 +202,12 @@ public class BaseUtils {
 
     /**
      * @param varArgs - The item to be returned as a list
-     * @return Aa list containing the ITEMS
+     * @return A list containing the ITEMS
      */
-    public static <T> List toList(T... varArgs) {
-        return (varArgs == null || varArgs.length == 0) ? Collections.EMPTY_LIST : Arrays.asList(varArgs);
+    public static <T> List safeToList(T... varArgs) {
+        Assert.assertNotEmpty(varArgs);
+
+        return Arrays.asList(varArgs);
     }
 
     /**
@@ -203,9 +215,7 @@ public class BaseUtils {
      * @return An array of byte
      */
     public static byte[] convertIntArrayToByteArray(int[] buffer) {
-        if (!Assert.isArrayReadable(buffer)) {
-            return new byte[0];
-        }
+        Assert.assertNotEmpty(buffer);
 
         byte[] values = new byte[buffer.length];
         for (int i = 0; i < buffer.length; i++) {
@@ -224,19 +234,14 @@ public class BaseUtils {
      * @return
      */
     public static <T> T as(Object obj, Class<T> type) {
-
-        if (obj == null || type == null) {
-            return null;
-        }
+        Assert.assertNotNull(obj);
+        Assert.assertNotNull(type);
 
         return type.cast(obj);
     }
 
     public static String getBytecodeAsFormattedString(List<Short> bytecode, Map<Integer, Object> constPool) {
-
-        if (bytecode == null || bytecode.isEmpty()) {
-            return "";
-        }
+        Assert.assertNotEmpty(bytecode);
 
         int size = bytecode.size();
         StringBuilder stringBuffer = new StringBuilder();
@@ -261,7 +266,7 @@ public class BaseUtils {
                 }
 
             }
-            stringBuffer.append("\n");
+            stringBuffer.append('\n');
         }
 
         return stringBuffer.toString();
@@ -274,10 +279,8 @@ public class BaseUtils {
      * @return
      */
     public static short[] convertByteToUnsigned(byte[] buffer) {
+        Assert.assertNotEmpty(buffer);
 
-        if (buffer == null || buffer.length == 0) {
-            return new short[0];
-        }
         int length = buffer.length;
 
         short[] shortBuffer = new short[length];

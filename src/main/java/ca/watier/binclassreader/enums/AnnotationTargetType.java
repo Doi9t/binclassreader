@@ -16,6 +16,10 @@
 
 package ca.watier.binclassreader.enums;
 
+import ca.watier.defassert.Assert;
+
+import java.util.Arrays;
+
 /**
  * Created by Yannick on 12/6/2016.
  */
@@ -33,14 +37,29 @@ public enum AnnotationTargetType {
     CATCH((short) 0x42),
     OFFSET((short) 0x43, (short) 0x44, (short) 0x45, (short) 0x46),
     TYPE_ARGUMENT((short) 0x47, (short) 0x48, (short) 0x49, (short) 0x4A, (short) 0x4B);
-    private short[] values;
+    private Short[] values;
 
-    AnnotationTargetType(short... values) {
+    AnnotationTargetType(Short... values) {
         this.values = values;
     }
 
-    public short[] getValues() {
+    public Short[] getValues() {
         return values;
+    }
+
+    public static AnnotationTargetType getTargetById(short value) {
+        Assert.assertNumberBetweenOrEqualsTo(value, (short) 0x00, (short) 0x4B);
+
+        AnnotationTargetType rtnValue = null;
+
+        for (AnnotationTargetType annotationTargetType : AnnotationTargetType.values()) {
+            if (Arrays.asList(annotationTargetType.getValues()).contains(value)) {
+                rtnValue = annotationTargetType;
+                break;
+            }
+        }
+
+        return rtnValue;
     }
 }
 
