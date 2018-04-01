@@ -1,5 +1,10 @@
 ##BinClassReader
 - - -
+THIS project is no longer maintained (Only works with Java7).
+
+
+
+
 BinClassReader is a java library that allows you to read the data from the class format (.class file) without loading it with the class loader.<br>
 <br>
 **Warning**<br>
